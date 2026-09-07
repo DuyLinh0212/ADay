@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../application/aday_controller.dart';
+import '../application/avatar_service.dart';
+import '../application/google_drive_backup_service.dart';
 import '../application/settings_service.dart';
 import '../core/theme/aday_theme.dart';
 import '../domain/models/goal.dart' as domain;
@@ -15,6 +19,9 @@ import '../presentation/screens/home/home.dart';
 import '../presentation/screens/profile/profile.dart';
 import '../presentation/screens/statistics/statistics.dart';
 import '../presentation/screens/tomorrow_plan/tomorrow_plan.dart';
+import '../presentation/screens/settings/personalization_screens.dart';
+import '../presentation/screens/tasks/task_list_screen.dart';
+import '../platform/home_widget_bridge.dart';
 
 class ADayApp extends StatelessWidget {
   const ADayApp({
@@ -30,7 +37,9 @@ class ADayApp extends StatelessWidget {
   Widget build(BuildContext context) => MaterialApp(
     title: 'ADay',
     debugShowCheckedModeBanner: false,
-    theme: ADayTheme.light(),
+    theme: ADayTheme.light(
+      accentColor: ADayThemeChoice.byId(controller.settings.themeId).seed,
+    ),
     home: ADayShell(controller: controller, settingsService: settingsService),
   );
 }
@@ -55,12 +64,16 @@ class _ADayShellState extends State<ADayShell> {
   late DateTime _selectedDay;
   StatisticsPeriod _statisticsPeriod = StatisticsPeriod.month;
   bool _askedForNotifications = false;
+  late final GoogleDriveBackupService _driveBackupService;
+  late final AvatarService _avatarService;
 
   ADayController get controller => widget.controller;
 
   @override
   void initState() {
     super.initState();
+    _driveBackupService = GoogleDriveBackupService();
+    _avatarService = AvatarService();
     final now = DateTime.now();
     _selectedDay = DateTime(now.year, now.month, now.day);
     _calendarMonth = DateTime(now.year, now.month);
@@ -108,25 +121,27 @@ class _ADayShellState extends State<ADayShell> {
       greeting: 'Xin chào, ${controller.settings.displayName}!',
       progressData: ADayViewMapper.homeProgress(controller, today),
       todayTasks: ADayViewMapper.homeTasks(controller, today),
+      greetingQuote: _quoteForToday(),
       longTermGoal: ADayViewMapper.longTermSummary(controller),
       showEveningReminder: controller.settings.dailyReviewEnabled,
       reminderMessage:
           'Lúc ${ADayViewMapper.minuteLabel(controller.settings.dailyReviewMinute)}, ADay sẽ nhắc bạn cập nhật tiến độ và tạo kế hoạch cho ngày mai.',
       hasUnreadNotifications: _shouldReviewToday(),
       avatarInitials: _initials(controller.settings.displayName),
+      avatarImage: _avatarImage,
       bottomNavIndex: _tabIndex,
       onToggleTask: _toggleHomeTask,
       onTaskTap: (task) => _openGoal(task.goalId),
-      onAddTodayTask: () => _openCreateGoal(startDate: today),
-      onViewAllTodayTasks: () => _openCreateGoal(startDate: today),
+      onAddTodayTask: () => _openCreateTask(today),
+      onViewAllTodayTasks: () => _openTaskList(today),
       onCreateLongTermGoal: () =>
           _openCreateGoal(startDate: today, goalType: CreateGoalType.longTerm),
       onViewLongTermGoalAction: () =>
           _openGoal(controller.longTermGoals.firstOrNull?.id),
-      onViewAllLongTermGoals: () =>
-          _openGoal(controller.longTermGoals.firstOrNull?.id),
+      onViewAllLongTermGoals: _openLongTermGoals,
       onReminderAction: _openTomorrowPlan,
       onNotificationTap: _openTomorrowPlan,
+      onGreetingQuoteTap: _openQuotes,
       onAvatarTap: () => setState(() => _tabIndex = 3),
       onNavTap: _selectTab,
     );
@@ -176,7 +191,7 @@ class _ADayShellState extends State<ADayShell> {
       },
       onToggleTask: _toggleHomeTask,
       onTaskTap: (task) => _openGoal(task.goalId),
-      onAddTask: () => _openCreateGoal(startDate: _selectedDay),
+      onAddTask: () => _openCreateTask(_selectedDay),
       onNavTap: _selectTab,
     );
   }
@@ -204,11 +219,12 @@ class _ADayShellState extends State<ADayShell> {
       data: profileData,
       bottomNavIndex: _tabIndex,
       hasUnreadNotifications: _shouldReviewToday(),
+      driveAccountEmail: controller.settings.driveAccountEmail,
+      avatarPath: controller.settings.avatarPath,
       onLogoTap: () => _selectTab(0),
       onNotificationTap: _openTomorrowPlan,
       onAvatarTap: () => _selectTab(3),
-      onEditAvatar: () =>
-          _showMessage('Tính năng cập nhật ảnh đại diện sẽ sớm ra mắt!'),
+      onEditAvatar: _editAvatar,
       onEditDisplayName: _editDisplayName,
       onEditEmail: () =>
           _showMessage('Email tài khoản của bạn: ${profileData.email}'),
@@ -231,7 +247,9 @@ class _ADayShellState extends State<ADayShell> {
         }
       },
       onLanguageTap: () => _showMessage('Ngôn ngữ hiện tại: Tiếng Việt'),
-      onThemeTap: () => _showMessage('Giao diện hiện tại: Sáng'),
+      onThemeTap: _openThemePicker,
+      onWidgetTap: _openWidgetSetup,
+      onDriveBackupTap: _openDriveBackup,
       onHelpCenterTap: () => _showMessage(
         'Trung tâm hỗ trợ ADay luôn sẵn sàng đồng hành cùng bạn!',
       ),
@@ -295,7 +313,141 @@ class _ADayShellState extends State<ADayShell> {
           ),
         );
       }
+      await _syncHomeWidget();
     });
+  }
+
+  String _quoteForToday() {
+    final quotes = controller.settings.dailyQuotes;
+    if (quotes.isEmpty) return '“Những kế hoạch nhỏ tạo nên ngày mai lớn hơn.”';
+    final now = DateTime.now();
+    final dayIndex = now.difference(DateTime(now.year)).inDays;
+    return '“${quotes[(now.year * 366 + dayIndex) % quotes.length]}”';
+  }
+
+  Future<void> _openQuotes() => Navigator.of(context).push<void>(
+    MaterialPageRoute(
+      builder: (_) => QuotesScreen(
+        quotes: controller.settings.dailyQuotes,
+        onAdd: (quote) => _guard(() => controller.addDailyQuote(quote)),
+        onRemove: (quote) => _guard(() => controller.removeDailyQuote(quote)),
+      ),
+    ),
+  );
+
+  Future<void> _openThemePicker() => Navigator.of(context).push<void>(
+    MaterialPageRoute(
+      builder: (_) => ThemePickerScreen(
+        selectedId: controller.settings.themeId,
+        onSelected: (id) => _guard(() async {
+          await controller.updateSettings(
+            controller.settings.copyWith(themeId: id),
+          );
+          await HomeWidgetBridge.setLauncherIcon(id);
+          await _syncHomeWidget();
+        }),
+      ),
+    ),
+  );
+
+  Future<void> _openWidgetSetup() => Navigator.of(context).push<void>(
+    MaterialPageRoute(
+      builder: (_) => WidgetSetupScreen(
+        themeId: controller.settings.themeId,
+        onAddWidget: () async {
+          await _syncHomeWidget();
+          return HomeWidgetBridge.requestPin();
+        },
+      ),
+    ),
+  );
+
+  Future<void> _openDriveBackup() => Navigator.of(context).push<void>(
+    MaterialPageRoute(
+      builder: (_) => DriveBackupScreen(
+        accountEmail: controller.settings.driveAccountEmail,
+        lastBackupAt: controller.settings.driveLastBackupAt,
+        onBackup: _backupToDrive,
+      ),
+    ),
+  );
+
+  Future<void> _backupToDrive() async {
+    await _guard(() async {
+      final result = await _driveBackupService.backup(controller.snapshot);
+      await controller.updateSettings(
+        controller.settings.copyWith(
+          driveAccountEmail: result.email,
+          driveLastBackupAt: result.backedUpAt,
+        ),
+      );
+      _showMessage('Đã sao lưu dữ liệu vào Google Drive.');
+    });
+  }
+
+  Future<void> _syncHomeWidget() {
+    final tasks = ADayViewMapper.homeTasks(controller, DateTime.now());
+    return HomeWidgetBridge.update(
+      themeId: controller.settings.themeId,
+      taskCount: tasks.where((task) => !task.isCompleted).length,
+      completedCount: tasks.where((task) => task.isCompleted).length,
+    );
+  }
+
+  Future<void> _openTaskList(DateTime day) async {
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => AnimatedBuilder(
+          animation: controller,
+          builder: (_, _) => TaskListScreen(
+            title: _isSameDay(day, DateTime.now())
+                ? 'Nhiệm vụ hôm nay'
+                : 'Nhiệm vụ đã chọn',
+            tasks: ADayViewMapper.homeTasks(controller, day),
+            onToggleTask: _toggleHomeTask,
+            onTaskTap: (task) => _openGoal(task.goalId),
+            onCreateTask: () => _openCreateTask(day),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openLongTermGoals() async {
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => AnimatedBuilder(
+          animation: controller,
+          builder: (_, _) => TaskListScreen(
+            title: 'Mục tiêu dài hạn',
+            tasks: controller.longTermGoals
+                .map(TaskViewItem.fromGoal)
+                .toList(growable: false),
+            onToggleTask: _toggleHomeTask,
+            onTaskTap: (goal) => _openGoal(goal.goalId),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openCreateTask(DateTime scheduledDate) async {
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => CreateTaskScreen(
+          onSubmit: (title, note, category) async {
+            await _guard<void>(
+              () => controller.createQuickTask(
+                title: title,
+                note: note,
+                category: category,
+                scheduledDate: scheduledDate,
+              ),
+            );
+          },
+        ),
+      ),
+    );
   }
 
   Future<void> _openCreateGoal({
@@ -586,6 +738,22 @@ class _ADayShellState extends State<ADayShell> {
     }
   }
 
+  ImageProvider? get _avatarImage {
+    final path = controller.settings.avatarPath;
+    if (path == null || path.isEmpty || !File(path).existsSync()) return null;
+    return FileImage(File(path));
+  }
+
+  Future<void> _editAvatar() async {
+    await _guard(() async {
+      final path = await _avatarService.chooseAndStore();
+      if (path == null) return;
+      await controller.updateSettings(
+        controller.settings.copyWith(avatarPath: path),
+      );
+    });
+  }
+
   Future<void> _toggleDailyReminder(bool enabled) async {
     await _guard(() async {
       if (enabled) {
@@ -641,6 +809,9 @@ class _ADayShellState extends State<ADayShell> {
           event.occurredAt.day == now.day,
     );
   }
+
+  bool _isSameDay(DateTime a, DateTime b) =>
+      a.year == b.year && a.month == b.month && a.day == b.day;
 
   String _initials(String name) {
     final words = name.trim().split(RegExp(r'\s+'));

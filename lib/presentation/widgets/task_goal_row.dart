@@ -32,6 +32,7 @@ class TaskGoalRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isCompleted = item.isCompleted;
+    final completionColor = Theme.of(context).colorScheme.primary;
 
     return Semantics(
       container: true,
@@ -40,140 +41,149 @@ class TaskGoalRow extends StatelessWidget {
           '${item.title}${item.subtitle != null ? ', ${item.subtitle}' : ''}'
           '${item.timeLabel != null ? ', ${item.timeLabel}' : ''}'
           ', ${isCompleted ? 'Đã hoàn thành' : 'Chưa hoàn thành'}',
-      child: InkWell(
-        onTap: onTap,
-        splashColor: ADayColors.coolSurface,
-        highlightColor: ADayColors.coolSurface.withValues(alpha: 0.5),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: ADaySpacing.md,
-                vertical: ADaySpacing.sm + 2,
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // 1. Accessible Checkbox (min 44x44 target)
-                  Semantics(
-                    checked: isCompleted,
-                    label: isCompleted
-                        ? 'Đánh dấu chưa hoàn thành'
-                        : 'Đánh dấu hoàn thành',
-                    button: true,
-                    child: InkWell(
-                      onTap: onToggleCompleted != null
-                          ? () => onToggleCompleted!(!isCompleted)
-                          : null,
-                      borderRadius: ADaySpacing.smallRadius,
-                      child: ConstrainedBox(
-                        constraints: ADaySpacing.minTouchTargetConstraints,
-                        child: Center(
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 180),
-                            curve: Curves.easeInOut,
-                            width: 24.0,
-                            height: 24.0,
-                            decoration: BoxDecoration(
-                              color: isCompleted
-                                  ? ADayColors.progressTeal
-                                  : Colors.transparent,
-                              borderRadius: ADaySpacing.checkboxRadius,
-                              border: Border.all(
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOut,
+        opacity: isCompleted ? 0.52 : 1,
+        child: InkWell(
+          onTap: onTap,
+          splashColor: ADayColors.coolSurface,
+          highlightColor: ADayColors.coolSurface.withValues(alpha: 0.5),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: ADaySpacing.md,
+                  vertical: ADaySpacing.sm + 2,
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // 1. Accessible Checkbox (min 44x44 target)
+                    Semantics(
+                      checked: isCompleted,
+                      label: isCompleted
+                          ? 'Đánh dấu chưa hoàn thành'
+                          : 'Đánh dấu hoàn thành',
+                      button: true,
+                      child: InkWell(
+                        onTap: onToggleCompleted != null
+                            ? () => onToggleCompleted!(!isCompleted)
+                            : null,
+                        borderRadius: ADaySpacing.smallRadius,
+                        child: ConstrainedBox(
+                          constraints: ADaySpacing.minTouchTargetConstraints,
+                          child: Center(
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 180),
+                              curve: Curves.easeInOut,
+                              width: 24.0,
+                              height: 24.0,
+                              decoration: BoxDecoration(
                                 color: isCompleted
-                                    ? ADayColors.progressTeal
-                                    : ADayColors.dividerMist,
-                                width: 1.8,
+                                    ? completionColor
+                                    : Colors.transparent,
+                                borderRadius: ADaySpacing.checkboxRadius,
+                                border: Border.all(
+                                  color: isCompleted
+                                      ? completionColor
+                                      : ADayColors.dividerMist,
+                                  width: 1.8,
+                                ),
                               ),
+                              child: isCompleted
+                                  ? const Icon(
+                                      Icons.check_rounded,
+                                      size: 16.0,
+                                      color: ADayColors.surface,
+                                    )
+                                  : null,
                             ),
-                            child: isCompleted
-                                ? const Icon(
-                                    Icons.check_rounded,
-                                    size: 16.0,
-                                    color: ADayColors.surface,
-                                  )
-                                : null,
                           ),
                         ),
                       ),
                     ),
-                  ),
 
-                  const SizedBox(width: ADaySpacing.xs),
+                    const SizedBox(width: ADaySpacing.xs),
 
-                  // 2. Category Icon Badge
-                  Container(
-                    width: 36.0,
-                    height: 36.0,
-                    decoration: BoxDecoration(
-                      color: item.iconBackgroundColor,
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    child: Center(
-                      child: Icon(item.icon, color: item.iconColor, size: 20.0),
-                    ),
-                  ),
-
-                  const SizedBox(width: ADaySpacing.md),
-
-                  // 3. Title & Subtitle (Resilient text scaling)
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          item.title,
-                          style: ADayTypography.titleMedium.copyWith(
-                            fontSize: 15.5,
-                            color: isCompleted
-                                ? ADayColors.mutedInk
-                                : ADayColors.brandNavy,
-                            decoration: isCompleted
-                                ? TextDecoration.lineThrough
-                                : TextDecoration.none,
-                            decorationColor: ADayColors.mutedInk,
-                          ),
+                    // 2. Category Icon Badge
+                    Container(
+                      width: 36.0,
+                      height: 36.0,
+                      decoration: BoxDecoration(
+                        color: item.iconBackgroundColor,
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: Center(
+                        child: Icon(
+                          item.icon,
+                          color: item.iconColor,
+                          size: 20.0,
                         ),
-                        if (item.subtitle != null &&
-                            item.subtitle!.isNotEmpty) ...[
-                          const SizedBox(height: 2.0),
+                      ),
+                    ),
+
+                    const SizedBox(width: ADaySpacing.md),
+
+                    // 3. Title & Subtitle (Resilient text scaling)
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
                           Text(
-                            item.subtitle!,
-                            style: ADayTypography.subhead.copyWith(
-                              fontSize: 13.0,
-                              color: ADayColors.mutedInk,
+                            item.title,
+                            style: ADayTypography.titleMedium.copyWith(
+                              fontSize: 15.5,
+                              color: isCompleted
+                                  ? ADayColors.mutedInk
+                                  : ADayColors.brandNavy,
+                              decoration: isCompleted
+                                  ? TextDecoration.lineThrough
+                                  : TextDecoration.none,
+                              decorationColor: ADayColors.mutedInk,
                             ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
                           ),
+                          if (item.subtitle != null &&
+                              item.subtitle!.isNotEmpty) ...[
+                            const SizedBox(height: 2.0),
+                            Text(
+                              item.subtitle!,
+                              style: ADayTypography.subhead.copyWith(
+                                fontSize: 13.0,
+                                color: ADayColors.mutedInk,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
-                  ),
 
-                  const SizedBox(width: ADaySpacing.sm),
+                    const SizedBox(width: ADaySpacing.sm),
 
-                  // 4. Trailing Status / Time Chip
-                  if (item.timeLabel != null)
-                    StatusTimeChip(
-                      label: item.timeLabel!,
-                      type: item.isAllDay
-                          ? StatusChipType.allDay
-                          : StatusChipType.time,
-                    ),
-                ],
+                    // 4. Trailing Status / Time Chip
+                    if (item.timeLabel != null)
+                      StatusTimeChip(
+                        label: item.timeLabel!,
+                        type: item.isAllDay
+                            ? StatusChipType.allDay
+                            : StatusChipType.time,
+                      ),
+                  ],
+                ),
               ),
-            ),
-            if (showDivider)
-              const Divider(
-                indent: ADaySpacing.md,
-                endIndent: ADaySpacing.md,
-                height: 1.0,
-                color: ADayColors.dividerMist,
-              ),
-          ],
+              if (showDivider)
+                const Divider(
+                  indent: ADaySpacing.md,
+                  endIndent: ADaySpacing.md,
+                  height: 1.0,
+                  color: ADayColors.dividerMist,
+                ),
+            ],
+          ),
         ),
       ),
     );

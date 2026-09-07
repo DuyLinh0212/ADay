@@ -36,7 +36,7 @@ class SqliteADayRepository implements ADayRepository {
     final directory = await getDatabasesPath();
     final database = await openDatabase(
       '$directory/$databaseName',
-      version: 2,
+      version: 5,
       onConfigure: (db) => db.execute('PRAGMA foreign_keys = ON'),
       onCreate: (db, _) async {
         await createSchema(db);
@@ -54,6 +54,27 @@ class SqliteADayRepository implements ADayRepository {
           ''');
           await db.execute(
             'CREATE INDEX IF NOT EXISTS tasks_goal_id_idx ON tasks(goal_id)',
+          );
+        }
+        if (oldVersion < 3) {
+          await db.execute(
+            "ALTER TABLE app_settings ADD COLUMN theme_id TEXT NOT NULL DEFAULT 'default'",
+          );
+          await db.execute(
+            "ALTER TABLE app_settings ADD COLUMN daily_quotes_json TEXT NOT NULL DEFAULT '[]'",
+          );
+        }
+        if (oldVersion < 4) {
+          await db.execute(
+            'ALTER TABLE app_settings ADD COLUMN drive_account_email TEXT',
+          );
+          await db.execute(
+            'ALTER TABLE app_settings ADD COLUMN drive_last_backup_at TEXT',
+          );
+        }
+        if (oldVersion < 5) {
+          await db.execute(
+            'ALTER TABLE app_settings ADD COLUMN avatar_path TEXT',
           );
         }
       },
@@ -128,6 +149,11 @@ class SqliteADayRepository implements ADayRepository {
         daily_review_enabled INTEGER NOT NULL,
         daily_review_minute INTEGER NOT NULL,
         notifications_allowed INTEGER NOT NULL
+        ,theme_id TEXT NOT NULL DEFAULT 'default'
+        ,daily_quotes_json TEXT NOT NULL DEFAULT '[]'
+        ,drive_account_email TEXT
+        ,drive_last_backup_at TEXT
+        ,avatar_path TEXT
       )
     ''');
     await db.execute('''
@@ -330,6 +356,11 @@ class SqliteADayRepository implements ADayRepository {
     'daily_review_enabled': settings.dailyReviewEnabled ? 1 : 0,
     'daily_review_minute': settings.dailyReviewMinute,
     'notifications_allowed': settings.notificationsAllowed ? 1 : 0,
+    'theme_id': settings.themeId,
+    'daily_quotes_json': jsonEncode(settings.dailyQuotes),
+    'drive_account_email': settings.driveAccountEmail,
+    'drive_last_backup_at': settings.driveLastBackupAt?.toIso8601String(),
+    'avatar_path': settings.avatarPath,
   };
 
   static Goal goalFromRow(Map<String, Object?> row, List<TaskItem> tasks) =>
@@ -400,7 +431,24 @@ class SqliteADayRepository implements ADayRepository {
     dailyReviewEnabled: parseBool(row['daily_review_enabled']),
     dailyReviewMinute: row['daily_review_minute']! as int,
     notificationsAllowed: parseBool(row['notifications_allowed']),
+    themeId: row['theme_id'] as String? ?? 'default',
+    dailyQuotes: _quotesFromJson(row['daily_quotes_json']),
+    driveAccountEmail: row['drive_account_email'] as String?,
+    driveLastBackupAt: parseDate(row['drive_last_backup_at']),
+    avatarPath: row['avatar_path'] as String?,
   );
+
+  static List<String> _quotesFromJson(Object? value) {
+    if (value is! String || value.isEmpty) return const [];
+    try {
+      return (jsonDecode(value) as List<Object?>)
+          .whereType<String>()
+          .where((quote) => quote.trim().isNotEmpty)
+          .toList(growable: false);
+    } catch (_) {
+      return const [];
+    }
+  }
 
   static bool parseBool(Object? value) => value == true || value == 1;
 

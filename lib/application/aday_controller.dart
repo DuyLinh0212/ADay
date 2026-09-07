@@ -126,6 +126,27 @@ class ADayController extends ChangeNotifier {
     return goal;
   }
 
+  /// Creates one independent daily task without making the user fill a goal
+  /// form. It is stored as a one-task daily goal so existing scheduling,
+  /// completion, statistics and persistence rules remain consistent.
+  Future<void> createQuickTask({
+    required String title,
+    String note = '',
+    String category = 'Khác',
+    DateTime? scheduledDate,
+  }) async {
+    await createGoal(
+      GoalDraft(
+        title: title.trim(),
+        description: note.trim(),
+        category: category.trim().isEmpty ? 'Khác' : category.trim(),
+        kind: GoalKind.daily,
+        startDate: _dateOnly(scheduledDate ?? _clock()),
+        tasks: [TaskDraft(title: title.trim(), note: note.trim())],
+      ),
+    );
+  }
+
   Future<void> updateGoal(Goal goal) async {
     if (goal.title.trim().isEmpty) {
       throw const ADayValidationException(
@@ -306,6 +327,30 @@ class ADayController extends ChangeNotifier {
       throw const ADayValidationException('Giờ nhắc phải nằm trong một ngày.');
     }
     await _commit(_snapshot.copyWith(settings: settings));
+  }
+
+  Future<void> addDailyQuote(String quote) async {
+    final normalized = quote.trim();
+    if (normalized.isEmpty) {
+      throw const ADayValidationException('Câu nói không được để trống.');
+    }
+    if (normalized.length > 180) {
+      throw const ADayValidationException('Câu nói tối đa 180 ký tự.');
+    }
+    if (settings.dailyQuotes.contains(normalized)) return;
+    await updateSettings(
+      settings.copyWith(dailyQuotes: [...settings.dailyQuotes, normalized]),
+    );
+  }
+
+  Future<void> removeDailyQuote(String quote) async {
+    await updateSettings(
+      settings.copyWith(
+        dailyQuotes: settings.dailyQuotes
+            .where((item) => item != quote)
+            .toList(growable: false),
+      ),
+    );
   }
 
   Future<void> ensureRecurringGoalsFor(DateTime day) async {

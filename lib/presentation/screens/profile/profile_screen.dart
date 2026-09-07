@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/aday_colors.dart';
@@ -17,6 +19,8 @@ class ProfileScreen extends StatelessWidget {
     this.showBottomNav = true,
     this.bottomNavIndex = 3,
     this.hasUnreadNotifications = false,
+    this.driveAccountEmail,
+    this.avatarPath,
     this.onLogoTap,
     this.onSearchTap,
     this.onNotificationTap,
@@ -29,6 +33,8 @@ class ProfileScreen extends StatelessWidget {
     this.onToggleDailyNotification,
     this.onLanguageTap,
     this.onThemeTap,
+    this.onWidgetTap,
+    this.onDriveBackupTap,
     this.onHelpCenterTap,
     this.onTermsTap,
     this.onLogoutTap,
@@ -41,6 +47,8 @@ class ProfileScreen extends StatelessWidget {
   final bool showBottomNav;
   final int bottomNavIndex;
   final bool hasUnreadNotifications;
+  final String? driveAccountEmail;
+  final String? avatarPath;
 
   final VoidCallback? onLogoTap;
   final VoidCallback? onSearchTap;
@@ -55,6 +63,8 @@ class ProfileScreen extends StatelessWidget {
   final ValueChanged<bool>? onToggleDailyNotification;
   final VoidCallback? onLanguageTap;
   final VoidCallback? onThemeTap;
+  final VoidCallback? onWidgetTap;
+  final VoidCallback? onDriveBackupTap;
   final VoidCallback? onHelpCenterTap;
   final VoidCallback? onTermsTap;
   final VoidCallback? onLogoutTap;
@@ -79,6 +89,7 @@ class ProfileScreen extends StatelessWidget {
                 avatarInitials: data.displayName.isNotEmpty
                     ? data.displayName.trim().split(' ').last[0].toUpperCase()
                     : 'M',
+                avatarImage: _avatarImage,
               ),
 
             // 2. Scrollable Body
@@ -224,23 +235,32 @@ class ProfileScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: Center(
-                      child: Text(
-                        data.displayName.isNotEmpty
-                            ? data.displayName
-                                  .trim()
-                                  .split(' ')
-                                  .last[0]
-                                  .toUpperCase()
-                            : 'M',
-                        style: const TextStyle(
-                          fontFamily: ADayTypography.fontFamily,
-                          fontSize: 24.0,
-                          fontWeight: FontWeight.w800,
-                          color: ADayColors.actionBlue,
-                        ),
-                      ),
-                    ),
+                    child: _avatarImage == null
+                        ? Center(
+                            child: Text(
+                              data.displayName.isNotEmpty
+                                  ? data.displayName
+                                        .trim()
+                                        .split(' ')
+                                        .last[0]
+                                        .toUpperCase()
+                                  : 'M',
+                              style: const TextStyle(
+                                fontFamily: ADayTypography.fontFamily,
+                                fontSize: 24.0,
+                                fontWeight: FontWeight.w800,
+                                color: ADayColors.actionBlue,
+                              ),
+                            ),
+                          )
+                        : ClipOval(
+                            child: Image(
+                              image: _avatarImage!,
+                              width: 62,
+                              height: 62,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
                   ),
                   Positioned(
                     bottom: 0,
@@ -384,6 +404,12 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
+  ImageProvider? get _avatarImage {
+    final path = avatarPath;
+    if (path == null || path.isEmpty || !File(path).existsSync()) return null;
+    return FileImage(File(path));
+  }
+
   Widget _buildHeroMetric({
     required IconData icon,
     required Color iconColor,
@@ -505,6 +531,21 @@ class ProfileScreen extends StatelessWidget {
           title: 'Giao diện',
           value: data.themeMode,
           onTap: onThemeTap,
+        ),
+        const Divider(height: 1.0, color: Color(0xFFF0F4F8)),
+        _buildActionRow(
+          icon: Icons.widgets_outlined,
+          iconColor: const Color(0xFF168AF2),
+          title: 'Tiện ích màn hình chính',
+          onTap: onWidgetTap,
+        ),
+        const Divider(height: 1.0, color: Color(0xFFF0F4F8)),
+        _buildActionRow(
+          icon: Icons.cloud_upload_outlined,
+          iconColor: const Color(0xFF168AF2),
+          title: 'Sao lưu Google Drive',
+          value: driveAccountEmail ?? 'Chưa kết nối',
+          onTap: onDriveBackupTap,
         ),
       ],
     );

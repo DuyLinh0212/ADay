@@ -1,0 +1,5 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/widget_root" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="16dp" android:background="#168AF2">
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="ADay · Hôm nay" android:textColor="#FFFFFFFF" android:textSize="18sp" android:textStyle="bold" />
+    <TextView android:id="@+id/widget_remaining" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:textColor="#FFFFFFFF" android:textSize="16sp" />
+    <TextView android:id="@+id/widget_completed" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textColor="#DFFFFFFF" android:textSize="14sp" />
+</LinearLayout>

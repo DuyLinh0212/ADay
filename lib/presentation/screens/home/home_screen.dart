@@ -42,6 +42,7 @@ class HomeScreen extends StatelessWidget {
     this.reminderActionLabel = 'Tạo kế hoạch ngày mai',
     this.hasUnreadNotifications = true,
     this.avatarInitials = 'M',
+    this.avatarImage,
     this.showHeader = true,
     this.showBottomNav = true,
     this.bottomNavIndex = 0,
@@ -58,6 +59,7 @@ class HomeScreen extends StatelessWidget {
     this.onViewLongTermGoalAction,
     this.onCreateLongTermGoal,
     this.onReminderAction,
+    this.onGreetingQuoteTap,
     this.onNavTap,
   });
 
@@ -96,6 +98,7 @@ class HomeScreen extends StatelessWidget {
 
   /// Initials displayed inside the profile avatar.
   final String avatarInitials;
+  final ImageProvider? avatarImage;
 
   /// Whether to show the top header bar.
   final bool showHeader;
@@ -120,6 +123,7 @@ class HomeScreen extends StatelessWidget {
   final VoidCallback? onViewLongTermGoalAction;
   final VoidCallback? onCreateLongTermGoal;
   final VoidCallback? onReminderAction;
+  final VoidCallback? onGreetingQuoteTap;
   final ValueChanged<int>? onNavTap;
 
   /// Sample progress data matching TrangChu.png (67%, 4/6 completed).
@@ -243,6 +247,7 @@ class HomeScreen extends StatelessWidget {
                 onAvatarTap: onAvatarTap,
                 hasUnreadNotifications: hasUnreadNotifications,
                 avatarInitials: avatarInitials,
+                avatarImage: avatarImage,
               ),
 
             // 2. Scrollable Body
@@ -373,14 +378,35 @@ class HomeScreen extends StatelessWidget {
                     // Quote on right
                     Expanded(
                       flex: isNarrow ? 4 : 4,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 16.0),
-                        child: Text(
-                          greetingQuote,
-                          textAlign: TextAlign.right,
-                          style: ADayTypography.quote.copyWith(
-                            fontSize: isNarrow ? 11.0 : 12.5,
-                            color: ADayColors.brandNavy.withValues(alpha: 0.72),
+                      child: InkWell(
+                        onTap: onGreetingQuoteTap,
+                        borderRadius: BorderRadius.circular(8),
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                greetingQuote,
+                                textAlign: TextAlign.right,
+                                style: ADayTypography.quote.copyWith(
+                                  fontSize: isNarrow ? 11.0 : 12.5,
+                                  color: ADayColors.brandNavy.withValues(
+                                    alpha: 0.72,
+                                  ),
+                                ),
+                              ),
+                              if (onGreetingQuoteTap != null)
+                                const Padding(
+                                  padding: EdgeInsets.only(top: 3),
+                                  child: Icon(
+                                    Icons.edit_outlined,
+                                    size: 14,
+                                    color: ADayColors.actionBlue,
+                                  ),
+                                ),
+                            ],
                           ),
                         ),
                       ),

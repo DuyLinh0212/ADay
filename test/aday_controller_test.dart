@@ -72,6 +72,28 @@ void main() {
     );
   });
 
+  test('creates an independent task on the selected day', () async {
+    final controller = ADayController(
+      repository: _MemoryRepository(),
+      clock: () => now,
+    );
+    await controller.initialize();
+
+    await controller.createQuickTask(
+      title: 'Gọi cho mẹ',
+      note: 'Sau giờ làm',
+      category: 'Gia đình',
+      scheduledDate: DateTime(2026, 9, 9, 18),
+    );
+
+    final goal = controller.goals.single;
+    final task = goal.tasks.single;
+    expect(goal.title, 'Gọi cho mẹ');
+    expect(goal.category, 'Gia đình');
+    expect(task.note, 'Sau giờ làm');
+    expect(task.scheduledDate, DateTime(2026, 9, 9));
+  });
+
   test(
     'carries an unfinished task to tomorrow and records provenance',
     () async {

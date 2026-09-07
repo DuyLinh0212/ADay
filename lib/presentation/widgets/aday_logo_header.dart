@@ -273,6 +273,7 @@ class ADayHeaderBar extends StatelessWidget {
     this.onAvatarTap,
     this.hasUnreadNotifications = true,
     this.avatarUrl,
+    this.avatarImage,
     this.avatarInitials = 'M',
   });
 
@@ -282,6 +283,7 @@ class ADayHeaderBar extends StatelessWidget {
   final VoidCallback? onAvatarTap;
   final bool hasUnreadNotifications;
   final String? avatarUrl;
+  final ImageProvider? avatarImage;
   final String avatarInitials;
 
   @override
@@ -312,27 +314,6 @@ class ADayHeaderBar extends StatelessWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Search button (min 44x44 target)
-                Semantics(
-                  label: 'Tìm kiếm nhiệm vụ hoặc mục tiêu',
-                  button: true,
-                  child: SizedBox(
-                    width: ADaySpacing.minTouchTarget,
-                    height: ADaySpacing.minTouchTarget,
-                    child: IconButton(
-                      onPressed: onSearchTap,
-                      splashRadius: 22.0,
-                      icon: const Icon(
-                        Icons.search_rounded,
-                        color: ADayColors.brandNavy,
-                        size: 24.0,
-                      ),
-                      tooltip: 'Tìm kiếm',
-                    ),
-                  ),
-                ),
-                const SizedBox(width: ADaySpacing.xs),
-
                 // Notification Bell with Badge
                 Semantics(
                   label: hasUnreadNotifications
@@ -403,16 +384,25 @@ class ADayHeaderBar extends StatelessWidget {
                             ),
                           ],
                         ),
-                        child: Center(
-                          child: Text(
-                            avatarInitials,
-                            style: ADayTypography.label.copyWith(
-                              color: const Color(0xFFC04F15),
-                              fontWeight: FontWeight.w700,
-                              fontSize: 14.0,
-                            ),
-                          ),
-                        ),
+                        child: avatarImage == null
+                            ? Center(
+                                child: Text(
+                                  avatarInitials,
+                                  style: ADayTypography.label.copyWith(
+                                    color: const Color(0xFFC04F15),
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 14.0,
+                                  ),
+                                ),
+                              )
+                            : ClipOval(
+                                child: Image(
+                                  image: avatarImage!,
+                                  width: 36.0,
+                                  height: 36.0,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                       ),
                     ),
                   ),

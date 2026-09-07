@@ -16,12 +16,12 @@ import 'aday_typography.dart';
 /// - Typography: Be Vietnam Pro with system fallbacks
 abstract final class ADayTheme {
   /// Builds the authoritative light theme for ADay.
-  static ThemeData light() {
+  static ThemeData light({Color? accentColor}) {
     final textTheme = ADayTypography.toTextTheme();
 
     final colorScheme = ColorScheme(
       brightness: Brightness.light,
-      primary: ADayColors.actionBlue,
+      primary: accentColor ?? ADayColors.actionBlue,
       onPrimary: ADayColors.surface,
       primaryContainer: ADayColors.coolSurface,
       onPrimaryContainer: ADayColors.brandNavy,

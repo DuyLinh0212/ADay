@@ -11,9 +11,10 @@ import '../../widgets/section_surface.dart';
 import '../../widgets/task_goal_row.dart';
 import '../statistics/statistics_view_data.dart';
 import '../statistics/widgets/calendar_month_view.dart';
+import 'widgets/calendar_timeline_view.dart';
 
 /// The dedicated Calendar and Daily Schedule presentation screen for ADay (Tab 1).
-class CalendarScreen extends StatelessWidget {
+class CalendarScreen extends StatefulWidget {
   const CalendarScreen({
     super.key,
     required this.calendarData,
@@ -63,6 +64,38 @@ class CalendarScreen extends StatelessWidget {
   final ValueChanged<int>? onNavTap;
 
   @override
+  State<CalendarScreen> createState() => _CalendarScreenState();
+}
+
+enum _CalendarMode { month, timeline }
+
+class _CalendarScreenState extends State<CalendarScreen> {
+  _CalendarMode _mode = _CalendarMode.month;
+
+  CalendarMonthData get calendarData => widget.calendarData;
+  DateTime get selectedDay => widget.selectedDay;
+  List<TaskViewItem> get tasks => widget.tasks;
+  bool get showHeader => widget.showHeader;
+  bool get showBottomNav => widget.showBottomNav;
+  int get bottomNavIndex => widget.bottomNavIndex;
+  bool get hasUnreadNotifications => widget.hasUnreadNotifications;
+  String get avatarInitials => widget.avatarInitials;
+  VoidCallback? get onLogoTap => widget.onLogoTap;
+  VoidCallback? get onSearchTap => widget.onSearchTap;
+  VoidCallback? get onNotificationTap => widget.onNotificationTap;
+  VoidCallback? get onAvatarTap => widget.onAvatarTap;
+  ValueChanged<CalendarDayData>? get onDayTap => widget.onDayTap;
+  VoidCallback? get onPrevMonth => widget.onPrevMonth;
+  VoidCallback? get onNextMonth => widget.onNextMonth;
+  VoidCallback? get onTodayTap => widget.onTodayTap;
+  VoidCallback? get onTodaySummaryTap => widget.onTodaySummaryTap;
+  void Function(TaskViewItem task, bool isCompleted)? get onToggleTask =>
+      widget.onToggleTask;
+  ValueChanged<TaskViewItem>? get onTaskTap => widget.onTaskTap;
+  VoidCallback? get onAddTask => widget.onAddTask;
+  ValueChanged<int>? get onNavTap => widget.onNavTap;
+
+  @override
   Widget build(BuildContext context) {
     final completedCount = tasks.where((t) => t.isCompleted).length;
     final formattedDate = '${selectedDay.day}/${selectedDay.month}';
@@ -100,97 +133,113 @@ class CalendarScreen extends StatelessWidget {
 
                     const SizedBox(height: ADaySpacing.md),
 
-                    // Month Calendar View
-                    CalendarMonthView(
-                      data: calendarData,
-                      onDayTap: onDayTap,
-                      onPrevMonth: onPrevMonth,
-                      onNextMonth: onNextMonth,
-                      onTodayTap: onTodayTap,
-                      onTodaySummaryTap: onTodaySummaryTap,
+                    _CalendarModeSwitch(
+                      value: _mode,
+                      onChanged: (value) => setState(() => _mode = value),
                     ),
 
                     const SizedBox(height: ADaySpacing.md),
 
+                    if (_mode == _CalendarMode.month)
+                      CalendarMonthView(
+                        data: calendarData,
+                        onDayTap: onDayTap,
+                        onPrevMonth: onPrevMonth,
+                        onNextMonth: onNextMonth,
+                        onTodayTap: onTodayTap,
+                        onTodaySummaryTap: onTodaySummaryTap,
+                      )
+                    else
+                      CalendarTimelineView(
+                        day: selectedDay,
+                        tasks: tasks,
+                        onToggleTask: onToggleTask,
+                        onTaskTap: onTaskTap,
+                      ),
+
+                    const SizedBox(height: ADaySpacing.md),
+
                     // Tasks for Selected Day
-                    SectionSurface(
-                      title: 'Kế hoạch ngày $formattedDate',
-                      icon: Icons.calendar_today_rounded,
-                      iconColor: ADayColors.actionBlue,
-                      iconBackgroundColor: ADayColors.actionBlueTint,
-                      actionLabel: 'Thêm',
-                      onActionTap: onAddTask,
-                      child: tasks.isEmpty
-                          ? Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: ADaySpacing.lg,
-                                horizontal: ADaySpacing.md,
-                              ),
-                              child: Column(
+                    if (_mode == _CalendarMode.month)
+                      SectionSurface(
+                        title: 'Kế hoạch ngày $formattedDate',
+                        icon: Icons.calendar_today_rounded,
+                        iconColor: ADayColors.actionBlue,
+                        iconBackgroundColor: ADayColors.actionBlueTint,
+                        actionLabel: 'Thêm',
+                        onActionTap: onAddTask,
+                        child: tasks.isEmpty
+                            ? Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: ADaySpacing.lg,
+                                  horizontal: ADaySpacing.md,
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.event_available_rounded,
+                                      size: 40.0,
+                                      color: ADayColors.mutedInk.withValues(
+                                        alpha: 0.5,
+                                      ),
+                                    ),
+                                    const SizedBox(height: ADaySpacing.sm),
+                                    Text(
+                                      'Chưa có kế hoạch cho ngày $formattedDate',
+                                      style: ADayTypography.body.copyWith(
+                                        color: ADayColors.mutedInk,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    const SizedBox(height: ADaySpacing.sm),
+                                    TextButton.icon(
+                                      onPressed: onAddTask,
+                                      icon: const Icon(Icons.add_rounded),
+                                      label: const Text(
+                                        'Thêm mục tiêu / nhiệm vụ',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(
-                                    Icons.event_available_rounded,
-                                    size: 40.0,
-                                    color: ADayColors.mutedInk.withValues(
-                                      alpha: 0.5,
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      bottom: ADaySpacing.sm,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          'Hoàn thành $completedCount/${tasks.length} nhiệm vụ',
+                                          style: ADayTypography.caption
+                                              .copyWith(
+                                                color: ADayColors.mutedInk,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  const SizedBox(height: ADaySpacing.sm),
-                                  Text(
-                                    'Chưa có kế hoạch cho ngày $formattedDate',
-                                    style: ADayTypography.body.copyWith(
-                                      color: ADayColors.mutedInk,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  const SizedBox(height: ADaySpacing.sm),
-                                  TextButton.icon(
-                                    onPressed: onAddTask,
-                                    icon: const Icon(Icons.add_rounded),
-                                    label: const Text(
-                                      'Thêm mục tiêu / nhiệm vụ',
-                                    ),
-                                  ),
+                                  ...List.generate(tasks.length, (index) {
+                                    final task = tasks[index];
+                                    final isLast = index == tasks.length - 1;
+                                    return TaskGoalRow(
+                                      item: task,
+                                      showDivider: !isLast,
+                                      onToggleCompleted: onToggleTask != null
+                                          ? (val) => onToggleTask!(task, val)
+                                          : null,
+                                      onTap: onTaskTap != null
+                                          ? () => onTaskTap!(task)
+                                          : null,
+                                    );
+                                  }),
                                 ],
                               ),
-                            )
-                          : Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    bottom: ADaySpacing.sm,
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        'Hoàn thành $completedCount/${tasks.length} nhiệm vụ',
-                                        style: ADayTypography.caption.copyWith(
-                                          color: ADayColors.mutedInk,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                ...List.generate(tasks.length, (index) {
-                                  final task = tasks[index];
-                                  final isLast = index == tasks.length - 1;
-                                  return TaskGoalRow(
-                                    item: task,
-                                    showDivider: !isLast,
-                                    onToggleCompleted: onToggleTask != null
-                                        ? (val) => onToggleTask!(task, val)
-                                        : null,
-                                    onTap: onTaskTap != null
-                                        ? () => onTaskTap!(task)
-                                        : null,
-                                  );
-                                }),
-                              ],
-                            ),
-                    ),
+                      ),
 
                     const SizedBox(height: ADaySpacing.lg),
                   ],
@@ -251,4 +300,90 @@ class CalendarScreen extends StatelessWidget {
       ],
     );
   }
+}
+
+class _CalendarModeSwitch extends StatelessWidget {
+  const _CalendarModeSwitch({required this.value, required this.onChanged});
+
+  final _CalendarMode value;
+  final ValueChanged<_CalendarMode> onChanged;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.all(4),
+    decoration: BoxDecoration(
+      color: ADayColors.coolSurface,
+      borderRadius: BorderRadius.circular(14),
+    ),
+    child: Row(
+      children: [
+        _ModeButton(
+          label: 'Tháng',
+          icon: Icons.calendar_month_rounded,
+          selected: value == _CalendarMode.month,
+          onTap: () => onChanged(_CalendarMode.month),
+        ),
+        _ModeButton(
+          label: 'Mốc thời gian',
+          icon: Icons.schedule_rounded,
+          selected: value == _CalendarMode.timeline,
+          onTap: () => onChanged(_CalendarMode.timeline),
+        ),
+      ],
+    ),
+  );
+}
+
+class _ModeButton extends StatelessWidget {
+  const _ModeButton({
+    required this.label,
+    required this.icon,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final IconData icon;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Expanded(
+    child: Material(
+      color: selected ? ADayColors.surface : Colors.transparent,
+      borderRadius: BorderRadius.circular(10),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 9),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 17,
+                color: selected
+                    ? Theme.of(context).colorScheme.primary
+                    : ADayColors.mutedInk,
+              ),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(
+                  label,
+                  overflow: TextOverflow.ellipsis,
+                  style: ADayTypography.caption.copyWith(
+                    color: selected
+                        ? ADayColors.brandNavy
+                        : ADayColors.mutedInk,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
 }

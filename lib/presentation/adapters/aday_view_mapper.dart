@@ -71,7 +71,12 @@ abstract final class ADayViewMapper {
 
   static List<TaskViewItem> homeTasks(ADayController controller, DateTime day) {
     final rows = <TaskViewItem>[];
-    for (final goal in controller.goalsForDay(day)) {
+    // Long-term goals have their own dedicated area. Only daily work belongs
+    // in the daily agenda and calendar timeline.
+    for (final goal
+        in controller
+            .goalsForDay(day)
+            .where((goal) => goal.kind == domain.GoalKind.daily)) {
       final tasks = goal.tasks
           .where((task) => _sameDay(task.scheduledDate, day))
           .toList(growable: false);
@@ -90,7 +95,12 @@ abstract final class ADayViewMapper {
         );
       }
     }
-    return rows;
+    // Notes-style completion: keep unfinished work visible first, and place
+    // completed items at the bottom without disturbing their relative order.
+    return [
+      ...rows.where((task) => !task.isCompleted),
+      ...rows.where((task) => task.isCompleted),
+    ];
   }
 
   static ProgressSummaryData homeProgress(
