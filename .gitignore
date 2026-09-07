@@ -70,3 +70,11 @@ app.*.map.json
 !web/icons/**
 !windows/runner/resources/app_icon.ico
 
+# Product template assets are source files and must remain versioned.
+!Template_theme/
+!Template_theme/**
+!Template_TienIch/
+!Template_TienIch/**
+!Logo_template/
+!Logo_template/**
+
