@@ -27,31 +27,31 @@ class ADayThemeChoice {
     ADayThemeChoice(
       id: 'theme_1',
       name: 'Mây dịu',
-      previewAsset: 'Template_theme/1224c664-0fa7-4bc1-becc-8e7582192fe0.png',
+      previewAsset: 'assets/templates/theme/1224c664-0fa7-4bc1-becc-8e7582192fe0.png',
       seed: Color(0xFF7D6CE0),
     ),
     ADayThemeChoice(
       id: 'theme_2',
       name: 'Nắng sớm',
-      previewAsset: 'Template_theme/5cd0c0f3-cd20-4ab9-86e5-8b75607c2ca6.png',
+      previewAsset: 'assets/templates/theme/5cd0c0f3-cd20-4ab9-86e5-8b75607c2ca6.png',
       seed: Color(0xFFE58A23),
     ),
     ADayThemeChoice(
       id: 'theme_3',
       name: 'Rừng xanh',
-      previewAsset: 'Template_theme/7c918954-8f69-4056-bd2a-9c91dc364e2c.png',
+      previewAsset: 'assets/templates/theme/7c918954-8f69-4056-bd2a-9c91dc364e2c.png',
       seed: Color(0xFF25866E),
     ),
     ADayThemeChoice(
       id: 'theme_4',
       name: 'Hoàng hôn',
-      previewAsset: 'Template_theme/7fa13b9e-eb4c-4b66-9920-72b403c38a4e.png',
+      previewAsset: 'assets/templates/theme/7fa13b9e-eb4c-4b66-9920-72b403c38a4e.png',
       seed: Color(0xFFE06C61),
     ),
     ADayThemeChoice(
       id: 'theme_5',
       name: 'Đêm sao',
-      previewAsset: 'Template_theme/e060c34f-67b8-4292-bf88-7cc09b1c4259.png',
+      previewAsset: 'assets/templates/theme/e060c34f-67b8-4292-bf88-7cc09b1c4259.png',
       seed: Color(0xFF4669AA),
     ),
   ];

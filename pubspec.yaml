@@ -68,8 +68,9 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
-    - Template_theme/
-    - Template_TienIch/
+    - assets/templates/theme/
+    - assets/templates/widgets/
+    - assets/templates/logos/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

@@ -39,9 +39,9 @@ flutter build apk --release
 
 ## Tài nguyên giao diện
 
-- `Template_theme/`: ảnh preview cho 5 template giao diện.
-- `Template_TienIch/`: ảnh preview cho tiện ích theo template.
-- `Logo_template/`: logo tương ứng từng template.
+- `assets/templates/theme/`: ảnh preview cho 5 template giao diện.
+- `assets/templates/widgets/`: ảnh preview cho tiện ích theo template.
+- `assets/templates/logos/`: logo tương ứng từng template.
 - `assets/`: tài nguyên dùng trực tiếp trong ứng dụng.
 
 Các thư mục template là mã nguồn của sản phẩm và được theo dõi bởi Git; không
@@ -53,13 +53,3 @@ xóa chúng khỏi commit hoặc thêm lại quy tắc ignore cho các file ản
 - [Định hướng sản phẩm](docs/PRODUCT.md)
 - [Cấu hình Google Drive](docs/GOOGLE_DRIVE_SETUP.md)
 - [Ký APK Android cho cập nhật](docs/ANDROID_SIGNING_SETUP.md)
-- [Tài nguyên thương hiệu](docs/BRAND_ASSETS.md)
-- [Tùy biến màn hình khởi động iOS](docs/IOS_LAUNCH_SCREEN.md)
-- [Deploy trang OAuth lên Vercel](docs/OAUTH_SITE_VERCEL.md)
-
-## Bảo mật
-
-Không commit keystore, `key.properties`, OAuth secret, access token hoặc dữ liệu
-người dùng. Thông tin ký APK chỉ được lưu trong GitHub Actions Secrets; xem tài
-liệu Android signing để biết tên biến cần cấu hình, không ghi giá trị bí mật vào
-README hay source code.
