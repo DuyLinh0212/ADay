@@ -15,9 +15,13 @@ không xuất hiện trong giao diện Drive như một tệp công khai.
 1. Mở Google Cloud Console và tạo/chọn một project dành cho ADay.
 2. Enable **Google Drive API**.
 3. Cấu hình **OAuth consent screen** với tên ứng dụng và email hỗ trợ.
-4. Nếu ứng dụng đang ở chế độ Testing, thêm các tài khoản Google sẽ dùng thử
-   vào danh sách **Test users**.
-5. Tạo **OAuth client ID → Android** với:
+4. Khi phát triển, có thể để **Testing** và thêm tài khoản của đội phát triển
+   vào **Test users**. Đây chỉ là allowlist tạm thời của Google, không phải danh
+   sách email người dùng cuối.
+5. Khi phát hành cho người dùng, chuyển app sang **In production**. Khi đó mỗi
+   user tự chọn tài khoản Google của họ trong hộp thoại OAuth; không cần bạn
+   nhập trước email của họ vào Google Cloud.
+6. Tạo **OAuth client ID → Android** với:
    - Package name: `com.ngduylinh.aday`
    - SHA-1: SHA-1 của keystore release cố định dùng để build APK.
 
@@ -30,6 +34,10 @@ Vào **Hồ sơ → Sao lưu Google Drive → Sao lưu ngay**. Lần đầu, Goo
 thoại chọn tài khoản và cấp quyền. Những lần sau ADay dùng lại tài khoản đã cấp
 quyền; có thể đổi tài khoản bằng cách thu hồi quyền Google của ADay rồi sao lưu
 lại.
+
+ADay không thể kết nối Drive chỉ bằng cách người dùng nhập một địa chỉ email.
+Việc cấp quyền phải đi qua màn hình đăng nhập/consent của Google để user xác
+nhận đúng tài khoản và quyền truy cập.
 
 ## Bảo mật
 
