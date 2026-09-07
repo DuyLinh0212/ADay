@@ -1,0 +1,35 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sky_gradient" x1="256" y1="0" x2="256" y2="512" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#32B3F0"/>
+      <stop offset="1" stop-color="#0CB6AA"/>
+    </linearGradient>
+    <linearGradient id="hill_gradient" x1="256" y1="256" x2="256" y2="512" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1CB496"/>
+      <stop offset="1" stop-color="#0A988D"/>
+    </linearGradient>
+    <clipPath id="squircle_clip">
+      <rect width="512" height="512" rx="122"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#squircle_clip)">
+    <!-- Sky Background -->
+    <rect width="512" height="512" fill="url(#sky_gradient)"/>
+
+    <!-- Rising Sun & Rays -->
+    <circle cx="332" cy="184" r="92" fill="#FFB52E"/>
+    <path d="M375 75L390 40" stroke="#FFC043" stroke-width="28" stroke-linecap="round"/>
+    <path d="M425 125L455 100" stroke="#FFC043" stroke-width="28" stroke-linecap="round"/>
+    <path d="M305 65L300 30" stroke="#FFC043" stroke-width="28" stroke-linecap="round"/>
+
+    <!-- Rolling Hills -->
+    <path d="M0 307C153 256 307 317 512 296V512H0V307Z" fill="url(#hill_gradient)"/>
+
+    <!-- White Letter A -->
+    <path d="M140 399L256 122L372 399" stroke="white" stroke-width="82" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Embedded Checkmark -->
+    <path d="M210 281L245 317L322 240" stroke="#0EB8AC" stroke-width="51" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
