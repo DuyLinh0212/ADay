@@ -94,6 +94,25 @@ void main() {
     expect(task.scheduledDate, DateTime(2026, 9, 9));
   });
 
+  test('never stores recurring settings on a long-term goal', () async {
+    final controller = ADayController(
+      repository: _MemoryRepository(),
+      clock: () => now,
+    );
+    await controller.initialize();
+
+    final goal = await controller.createGoal(
+      GoalDraft(
+        title: 'Hoàn thành chứng chỉ',
+        kind: GoalKind.longTerm,
+        startDate: now,
+        repeatDaily: true,
+      ),
+    );
+
+    expect(goal.repeatDaily, isFalse);
+  });
+
   test(
     'carries an unfinished task to tomorrow and records provenance',
     () async {

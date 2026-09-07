@@ -610,7 +610,9 @@ class _ADayShellState extends State<ADayShell> {
                   reminderEnabled: updated.hasReminder,
                   reminderMinute: updated.reminderMinute,
                   clearReminderMinute: !updated.hasReminder,
-                  repeatDaily: updated.isRepeating,
+                  repeatDaily:
+                      updated.goalType == CreateGoalType.daily &&
+                      updated.isRepeating,
                   tasks: tasks,
                 ),
               );

@@ -20,7 +20,7 @@ class Goal {
     this.deadline,
     this.reminderEnabled = false,
     this.reminderMinute,
-    this.repeatDaily = false,
+    bool repeatDaily = false,
     this.status = GoalStatus.active,
     this.tasks = const [],
     this.note = '',
@@ -28,7 +28,7 @@ class Goal {
     this.postponedUntil,
     this.statusReason,
     this.recurrenceSourceId,
-  });
+  }) : repeatDaily = kind == GoalKind.daily && repeatDaily;
 
   final String id;
   final String title;

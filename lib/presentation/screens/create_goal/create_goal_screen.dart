@@ -85,7 +85,8 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
     _endDate = initial?.endDate;
     _hasReminder = initial?.hasReminder ?? true;
     _reminderMinute = initial?.reminderMinute ?? (8 * 60); // 08:00
-    _isRepeating = initial?.isRepeating ?? true;
+    _isRepeating =
+        _goalType == CreateGoalType.daily && (initial?.isRepeating ?? true);
 
     _tasks = List.from(initial?.tasks ?? const <CreateGoalTaskItem>[]);
   }
@@ -187,7 +188,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
       endDate: _endDate,
       hasReminder: _hasReminder,
       reminderMinute: _hasReminder ? _reminderMinute : null,
-      isRepeating: _isRepeating,
+      isRepeating: _goalType == CreateGoalType.daily && _isRepeating,
       tasks: List.unmodifiable(_tasks),
     );
 
@@ -712,8 +713,10 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
 
                       const SizedBox(height: ADaySpacing.md),
 
-                      // --- 7. Repeat Section ---
-                      _buildRepeatSection(),
+                      // Daily goals may recur. Long-term goals are one
+                      // continuous objective and never expose this control.
+                      if (_goalType == CreateGoalType.daily)
+                        _buildRepeatSection(),
 
                       const SizedBox(height: ADaySpacing.lg),
                     ],
@@ -865,6 +868,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                             onTap: () {
                               setState(() {
                                 _goalType = CreateGoalType.longTerm;
+                                _isRepeating = false;
                               });
                             },
                             borderRadius: BorderRadius.circular(10.0),

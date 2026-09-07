@@ -56,7 +56,8 @@ abstract final class ADayViewMapper {
       deadline: value.endDate,
       reminderEnabled: value.hasReminder,
       reminderMinute: value.reminderMinute,
-      repeatDaily: value.isRepeating,
+      repeatDaily:
+          value.goalType == form.CreateGoalType.daily && value.isRepeating,
       tasks: value.tasks
           .map(
             (task) => TaskDraft(
