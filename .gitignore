@@ -48,6 +48,11 @@ app.*.map.json
 /android/app/*.keystore
 /android/.kotlin/
 
+# OAuth information site build output
+/oauth-site/node_modules/
+/oauth-site/dist/
+/oauth-site/.vercel/
+
 # Local tooling & context
 .agent-context/
 .impeccable/

@@ -55,6 +55,7 @@ xóa chúng khỏi commit hoặc thêm lại quy tắc ignore cho các file ản
 - [Ký APK Android cho cập nhật](docs/ANDROID_SIGNING_SETUP.md)
 - [Tài nguyên thương hiệu](docs/BRAND_ASSETS.md)
 - [Tùy biến màn hình khởi động iOS](docs/IOS_LAUNCH_SCREEN.md)
+- [Deploy trang OAuth lên Vercel](docs/OAUTH_SITE_VERCEL.md)
 
 ## Bảo mật
 
