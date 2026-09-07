@@ -44,7 +44,9 @@ jobs:
         if: steps.analyze.outcome == 'failure'
         run: |
           while IFS= read -r line; do
-            echo "::error::$line"
+            if [[ "$line" == *"error - "* || "$line" == *"warning - "* || "$line" == *"info - "* ]]; then
+              echo "::error::$line"
+            fi
           done < analyze.log
           exit 1
 
