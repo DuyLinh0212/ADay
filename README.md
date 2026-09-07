@@ -53,6 +53,8 @@ xóa chúng khỏi commit hoặc thêm lại quy tắc ignore cho các file ản
 - [Định hướng sản phẩm](docs/PRODUCT.md)
 - [Cấu hình Google Drive](docs/GOOGLE_DRIVE_SETUP.md)
 - [Ký APK Android cho cập nhật](docs/ANDROID_SIGNING_SETUP.md)
+- [Tài nguyên thương hiệu](docs/BRAND_ASSETS.md)
+- [Tùy biến màn hình khởi động iOS](docs/IOS_LAUNCH_SCREEN.md)
 
 ## Bảo mật
 
