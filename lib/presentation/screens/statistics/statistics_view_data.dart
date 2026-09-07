@@ -353,13 +353,54 @@ class EncouragingInsightData {
       Object.hash(title, message, icon, iconColor, highlightText);
 }
 
+/// Presentation data for category progress bar.
+@immutable
+class CategoryProgressItem {
+  const CategoryProgressItem({
+    required this.name,
+    required this.percentage,
+    required this.color,
+    required this.icon,
+    this.total = 0,
+    this.completed = 0,
+  });
+
+  final String name;
+  final int percentage;
+  final Color color;
+  final IconData icon;
+  final int total;
+  final int completed;
+}
+
+/// Presentation data for the 5 overview metric cards matching Image 2.
+@immutable
+class OverviewMetricItem {
+  const OverviewMetricItem({
+    required this.title,
+    required this.value,
+    required this.deltaText,
+    required this.isPositiveDelta,
+    required this.icon,
+    required this.iconColor,
+    required this.iconBgColor,
+  });
+
+  final String title;
+  final String value;
+  final String deltaText;
+  final bool isPositiveDelta;
+  final IconData icon;
+  final Color iconColor;
+  final Color iconBgColor;
+}
+
 /// Master presentation model for StatisticsScreen.
 @immutable
 class StatisticsViewData {
   const StatisticsViewData({
-    this.screenTitle = 'Lịch & Thống kê',
-    this.screenSubtitle =
-        'Theo dõi hành trình, kiến tạo phiên bản tốt hơn mỗi ngày.',
+    this.screenTitle = 'Thống kê',
+    this.screenSubtitle = 'Nhìn lại hành trình để cải thiện mỗi ngày.',
     this.selectedPeriod = StatisticsPeriod.month,
     required this.calendar,
     required this.completionMetric,
@@ -370,6 +411,15 @@ class StatisticsViewData {
     required this.breakdownItems,
     required this.insight,
     this.trendSummaryActionLabel = 'Xem chi tiết',
+    this.overviewTitle = 'Tổng quan tháng 6, 2025',
+    this.overviewMetrics = const [],
+    this.categoryItems = const [],
+    this.statusBreakdownItems = const [],
+    this.encouragementTitle = 'Bạn đang làm rất tốt!',
+    this.encouragementMessage =
+        'Tỉ lệ hoàn thành tăng 12% so với tháng trước. Hãy tiếp tục duy trì và chinh phục những mục tiêu tiếp theo nhé!',
+    this.encouragementQuote =
+        '“Tiến bộ mỗi ngày luôn tạo nên những điều tuyệt vời!”',
   });
 
   final String screenTitle;
@@ -384,6 +434,14 @@ class StatisticsViewData {
   final List<CompletionBreakdownItem> breakdownItems;
   final EncouragingInsightData insight;
   final String trendSummaryActionLabel;
+
+  final String overviewTitle;
+  final List<OverviewMetricItem> overviewMetrics;
+  final List<CategoryProgressItem> categoryItems;
+  final List<CompletionBreakdownItem> statusBreakdownItems;
+  final String encouragementTitle;
+  final String encouragementMessage;
+  final String encouragementQuote;
 
   /// Default sample data matching Lich.png exactly.
   factory StatisticsViewData.sample() {
@@ -422,41 +480,143 @@ class StatisticsViewData {
         isNote: true,
       ),
       trendPoints: const [
-        TrendDataPoint(label: 'T2', percentage: 0.65, valueLabel: '65%'),
-        TrendDataPoint(
-          label: 'T3',
-          percentage: 0.90,
-          valueLabel: '90%',
-          isHighlighted: true,
-        ),
-        TrendDataPoint(label: 'T4', percentage: 0.60, valueLabel: '60%'),
-        TrendDataPoint(label: 'T5', percentage: 0.65, valueLabel: '65%'),
-        TrendDataPoint(label: 'T6', percentage: 0.60, valueLabel: '60%'),
-        TrendDataPoint(label: 'T7', percentage: 0.65, valueLabel: '65%'),
-        TrendDataPoint(label: 'CN', percentage: 0.60, valueLabel: '60%'),
+        TrendDataPoint(label: 'T2', percentage: 0.62, valueLabel: '62%'),
+        TrendDataPoint(label: 'T3', percentage: 0.78, valueLabel: '78%'),
+        TrendDataPoint(label: 'T4', percentage: 0.65, valueLabel: '65%'),
+        TrendDataPoint(label: 'T5', percentage: 0.80, valueLabel: '80%'),
+        TrendDataPoint(label: 'T6', percentage: 0.72, valueLabel: '72%'),
+        TrendDataPoint(label: 'T7', percentage: 0.68, valueLabel: '68%'),
+        TrendDataPoint(label: 'CN', percentage: 0.81, valueLabel: '81%'),
       ],
       breakdownItems: const [
         CompletionBreakdownItem(
           label: 'Đã hoàn thành',
-          percentage: 67,
+          percentage: 78,
           color: Color(0xFF20C99A),
         ),
         CompletionBreakdownItem(
           label: 'Còn lại',
-          percentage: 25,
+          percentage: 12,
           color: Color(0xFF38B8F8),
         ),
         CompletionBreakdownItem(
-          label: 'Đã dời / Đã hủy',
-          percentage: 8,
-          color: Color(0xFF90A4AE),
+          label: 'Tạm hoãn',
+          percentage: 7,
+          color: Color(0xFFFFB52E),
+        ),
+        CompletionBreakdownItem(
+          label: 'Đã hủy',
+          percentage: 3,
+          color: Color(0xFFF0525E),
+        ),
+      ],
+      statusBreakdownItems: const [
+        CompletionBreakdownItem(
+          label: 'Đã hoàn thành',
+          percentage: 78,
+          color: Color(0xFF20C99A),
+        ),
+        CompletionBreakdownItem(
+          label: 'Còn lại',
+          percentage: 12,
+          color: Color(0xFF38B8F8),
+        ),
+        CompletionBreakdownItem(
+          label: 'Tạm hoãn',
+          percentage: 7,
+          color: Color(0xFFFFB52E),
+        ),
+        CompletionBreakdownItem(
+          label: 'Đã hủy',
+          percentage: 3,
+          color: Color(0xFFF0525E),
+        ),
+      ],
+      categoryItems: const [
+        CategoryProgressItem(
+          name: 'Học tập',
+          percentage: 85,
+          color: Color(0xFF0EB8AC),
+          icon: Icons.menu_book_rounded,
+        ),
+        CategoryProgressItem(
+          name: 'Sức khỏe',
+          percentage: 72,
+          color: Color(0xFF168AF2),
+          icon: Icons.fitness_center_rounded,
+        ),
+        CategoryProgressItem(
+          name: 'Công việc',
+          percentage: 68,
+          color: Color(0xFF8E59FF),
+          icon: Icons.business_center_rounded,
+        ),
+        CategoryProgressItem(
+          name: 'Cá nhân',
+          percentage: 75,
+          color: Color(0xFFFFB52E),
+          icon: Icons.person_rounded,
+        ),
+      ],
+      overviewTitle: 'Tổng quan tháng 6, 2025',
+      overviewMetrics: const [
+        OverviewMetricItem(
+          title: 'Tỉ lệ hoàn thành',
+          value: '78%',
+          deltaText: '↑ 12% so với tháng trước',
+          isPositiveDelta: true,
+          icon: Icons.check_circle_rounded,
+          iconColor: Color(0xFF20C99A),
+          iconBgColor: Color(0xFFE8F8F3),
+        ),
+        OverviewMetricItem(
+          title: 'Đã hoàn thành',
+          value: '26',
+          deltaText: '↑ 8% so với tháng trước',
+          isPositiveDelta: true,
+          icon: Icons.description_rounded,
+          iconColor: Color(0xFF168AF2),
+          iconBgColor: Color(0xFFE7F3FE),
+        ),
+        OverviewMetricItem(
+          title: 'Tạm hoãn',
+          value: '5',
+          deltaText: '↓ 29% so với tháng trước',
+          isPositiveDelta: true,
+          icon: Icons.schedule_rounded,
+          iconColor: Color(0xFFFFB52E),
+          iconBgColor: Color(0xFFFFF7E8),
+        ),
+        OverviewMetricItem(
+          title: 'Đã hủy',
+          value: '2',
+          deltaText: '↓ 50% so với tháng trước',
+          isPositiveDelta: true,
+          icon: Icons.cancel_rounded,
+          iconColor: Color(0xFFF0525E),
+          iconBgColor: Color(0xFFFFECEE),
+        ),
+        OverviewMetricItem(
+          title: 'Ngày liên tiếp',
+          value: '14',
+          deltaText: '↑ 3 ngày so với tháng trước',
+          isPositiveDelta: true,
+          icon: Icons.local_fire_department_rounded,
+          iconColor: Color(0xFF8E59FF),
+          iconBgColor: Color(0xFFF3EDFF),
         ),
       ],
       insight: const EncouragingInsightData(
-        title: 'Làm tốt lắm!',
-        message: 'Bạn đã hoàn thành nhiều hơn 12% so với tháng trước.',
+        title: 'Bạn đang làm rất tốt!',
+        message:
+            'Tỉ lệ hoàn thành tăng 12% so với tháng trước. Hãy tiếp tục duy trì và chinh phục những mục tiêu tiếp theo nhé!',
         highlightText: '12%',
       ),
+      encouragementTitle: 'Bạn đang làm rất tốt!',
+      encouragementMessage:
+          'Tỉ lệ hoàn thành tăng 12% so với tháng trước. Hãy tiếp tục duy trì và chinh phục những mục tiêu tiếp theo nhé!',
+      encouragementQuote:
+          '“Tiến bộ mỗi ngày luôn tạo nên những điều tuyệt vời!”',
     );
   }
 

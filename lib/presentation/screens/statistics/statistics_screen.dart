@@ -5,81 +5,64 @@ import '../../../core/theme/aday_spacing.dart';
 import '../../../core/theme/aday_typography.dart';
 import '../../widgets/aday_bottom_nav.dart';
 import '../../widgets/aday_logo_header.dart';
+import '../../widgets/mountain_sun_visual.dart';
 import 'statistics_view_data.dart';
-import 'widgets/calendar_month_view.dart';
-import 'widgets/completion_breakdown_section.dart';
+import 'widgets/category_performance_card.dart';
 import 'widgets/completion_trend_chart.dart';
-import 'widgets/statistics_metric_cards.dart';
+import 'widgets/encouragement_banner_card.dart';
+import 'widgets/overview_metrics_card.dart';
+import 'widgets/status_breakdown_card.dart';
 
-/// The authoritative Statistics and Calendar presentation screen for ADay, matching Lich.png.
+/// The authoritative Statistics presentation screen for ADay, matching Image 2.
 ///
-/// Follows DESIGN.md and PRODUCT.md strictly:
-/// - Screen title: "Lịch & Thống kê" with calming, encouraging subtitle
-/// - Month calendar with accessible day states (completed, postponed, cancelled, today, planned)
-/// - Week / Month / Year period selector
-/// - 4 metric cards: Completed, Postponed, Cancelled, Streak
-/// - CustomPainter-driven trend chart (Xu hướng hoàn thành)
-/// - Segmented donut completion breakdown and encouraging insight card
-/// - All stats come from immutable presentation input types defined in this folder
-/// - Accepts all data and callbacks through public constructor parameters
-/// - Resilient to narrow screens and textScaleFactor up to 1.5
+/// Features:
+/// - Top header bar with logo, search, notifications, avatar
+/// - Screen title "Thống kê" and subtitle "Nhìn lại hành trình để cải thiện mỗi ngày."
+///   with scenic mountain & sunrise visual background
+/// - Segmented period toggle: Tuần | Tháng | Năm
+/// - Overview card ("Tổng quan tháng 6, 2025") with 5 metric cards and deltas
+/// - Completion trend chart with percentage labels above each bar
+/// - Two side-by-side cards: "Phân bố trạng thái" (Donut) & "Hiệu quả theo danh mục" (Progress bars)
+/// - Encouragement card ("Bạn đang làm rất tốt!") with trophy, message, mountain flag artwork and quote
+/// - Bottom navigation bar with active index 2 ("Thống kê")
 class StatisticsScreen extends StatelessWidget {
   const StatisticsScreen({
     super.key,
     this.data,
     this.showHeader = true,
     this.showBottomNav = true,
-    this.bottomNavIndex = 1,
-    this.hasUnreadNotifications = true,
+    this.bottomNavIndex = 2,
+    this.hasUnreadNotifications = false,
     this.avatarInitials = 'M',
     this.onLogoTap,
     this.onSearchTap,
     this.onNotificationTap,
     this.onAvatarTap,
-    this.onDayTap,
-    this.onPrevMonth,
-    this.onNextMonth,
-    this.onTodayTap,
-    this.onTodaySummaryTap,
     this.onPeriodChanged,
+    this.onViewOverviewDetails,
     this.onViewTrendDetails,
     this.onBreakdownTap,
+    this.onCategoryDetailsTap,
     this.onInsightTap,
     this.onNavTap,
   });
 
-  /// Master immutable presentation view data.
-  /// If null, a sample matching Lich.png is used.
   final StatisticsViewData? data;
-
-  /// Whether to display the top header bar.
   final bool showHeader;
-
-  /// Whether to display the bottom navigation bar.
   final bool showBottomNav;
-
-  /// Active bottom navigation tab index (default: 1 for "Lịch").
   final int bottomNavIndex;
-
-  /// Whether notification bell shows an unread badge.
   final bool hasUnreadNotifications;
-
-  /// User avatar initials.
   final String avatarInitials;
 
-  // --- Callbacks ---
   final VoidCallback? onLogoTap;
   final VoidCallback? onSearchTap;
   final VoidCallback? onNotificationTap;
   final VoidCallback? onAvatarTap;
-  final ValueChanged<CalendarDayData>? onDayTap;
-  final VoidCallback? onPrevMonth;
-  final VoidCallback? onNextMonth;
-  final VoidCallback? onTodayTap;
-  final VoidCallback? onTodaySummaryTap;
   final ValueChanged<StatisticsPeriod>? onPeriodChanged;
+  final VoidCallback? onViewOverviewDetails;
   final VoidCallback? onViewTrendDetails;
   final VoidCallback? onBreakdownTap;
+  final VoidCallback? onCategoryDetailsTap;
   final VoidCallback? onInsightTap;
   final ValueChanged<int>? onNavTap;
 
@@ -115,50 +98,44 @@ class StatisticsScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // A. Screen Title & Encouraging Subtitle
+                    // A. Screen Title with Mountain & Sunrise Illustration
                     _buildTitleSection(context, effectiveData),
 
                     const SizedBox(height: ADaySpacing.md),
 
-                    // B. Month Calendar Card with Accessible States
-                    CalendarMonthView(
-                      data: effectiveData.calendar,
-                      onDayTap: onDayTap,
-                      onPrevMonth: onPrevMonth,
-                      onNextMonth: onNextMonth,
-                      onTodayTap: onTodayTap,
-                      onTodaySummaryTap: onTodaySummaryTap,
+                    // B. Period Selector (Tuần | Tháng | Năm)
+                    _buildPeriodSelector(context, effectiveData.selectedPeriod),
+
+                    const SizedBox(height: ADaySpacing.md),
+
+                    // C. Overview 5 Metric Cards
+                    OverviewMetricsCard(
+                      title: effectiveData.overviewTitle,
+                      metrics: effectiveData.overviewMetrics,
+                      onActionTap: onViewOverviewDetails,
                     ),
 
-                    const SizedBox(height: ADaySpacing.lg),
+                    const SizedBox(height: ADaySpacing.md),
 
-                    // C. Period Selector & 4 Metric Cards
-                    StatisticsMetricCards(
-                      selectedPeriod: effectiveData.selectedPeriod,
-                      completionMetric: effectiveData.completionMetric,
-                      postponedMetric: effectiveData.postponedMetric,
-                      cancelledMetric: effectiveData.cancelledMetric,
-                      streakMetric: effectiveData.streakMetric,
-                      onPeriodChanged: onPeriodChanged,
-                    ),
-
-                    const SizedBox(height: ADaySpacing.lg),
-
-                    // D. Completion Trend Chart via CustomPainter
+                    // D. Completion Trend Bar Chart
                     CompletionTrendChart(
                       dataPoints: effectiveData.trendPoints,
-                      actionLabel: effectiveData.trendSummaryActionLabel,
                       onActionTap: onViewTrendDetails,
                     ),
 
-                    const SizedBox(height: ADaySpacing.lg),
+                    const SizedBox(height: ADaySpacing.md),
 
-                    // E. Breakdown Donut Chart & Encouraging Insight
-                    CompletionBreakdownSection(
-                      breakdownItems: effectiveData.breakdownItems,
-                      insight: effectiveData.insight,
-                      onBreakdownTap: onBreakdownTap,
-                      onInsightTap: onInsightTap,
+                    // E. Side-by-side: Status Breakdown & Category Performance
+                    _buildDualCardsSection(context, effectiveData),
+
+                    const SizedBox(height: ADaySpacing.md),
+
+                    // F. Encouragement Banner Card
+                    EncouragementBannerCard(
+                      title: effectiveData.encouragementTitle,
+                      message: effectiveData.encouragementMessage,
+                      quote: effectiveData.encouragementQuote,
+                      onTap: onInsightTap,
                     ),
 
                     const SizedBox(height: ADaySpacing.lg),
@@ -178,30 +155,156 @@ class StatisticsScreen extends StatelessWidget {
     );
   }
 
-  /// Screen headline and subtitle matching Lich.png.
+  /// Screen headline with scenic mountain/sunrise background illustration.
   Widget _buildTitleSection(BuildContext context, StatisticsViewData viewData) {
-    return Semantics(
-      header: true,
-      label: '${viewData.screenTitle}. ${viewData.screenSubtitle}',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            viewData.screenTitle,
-            style: ADayTypography.headline.copyWith(fontSize: 26.0),
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        // Mountain sunrise illustration in top right
+        Positioned(
+          top: -15.0,
+          right: -10.0,
+          width: 140.0,
+          height: 80.0,
+          child: const MountainSunVisual(
+            height: 80.0,
+            showFlag: false,
+            showSunRays: true,
+            sunPosition: Offset(0.75, 0.35),
           ),
-          const SizedBox(height: 3.0),
-          Text(
-            viewData.screenSubtitle,
-            style: ADayTypography.subhead.copyWith(
-              fontSize: 14.5,
-              height: 1.4,
-              color: ADayColors.mutedInk,
-            ),
+        ),
+
+        // Text content
+        Semantics(
+          header: true,
+          label: '${viewData.screenTitle}. ${viewData.screenSubtitle}',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                viewData.screenTitle,
+                style: ADayTypography.headline.copyWith(
+                  fontSize: 26.0,
+                  fontWeight: FontWeight.w800,
+                  color: ADayColors.brandNavy,
+                ),
+              ),
+              const SizedBox(height: 3.0),
+              Text(
+                viewData.screenSubtitle,
+                style: ADayTypography.subhead.copyWith(
+                  fontSize: 14.0,
+                  height: 1.4,
+                  color: ADayColors.mutedInk,
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
+      ],
+    );
+  }
+
+  /// Full-width pill-shaped period selector matching Image 2.
+  Widget _buildPeriodSelector(
+    BuildContext context,
+    StatisticsPeriod currentPeriod,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(4.0),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEBF3FA),
+        borderRadius: BorderRadius.circular(14.0),
       ),
+      child: Row(
+        children: StatisticsPeriod.values.map((period) {
+          final isSelected = period == currentPeriod;
+          return Expanded(
+            child: Semantics(
+              button: true,
+              selected: isSelected,
+              label: 'Xem theo ${period.label}',
+              child: Material(
+                color: isSelected ? ADayColors.actionBlue : Colors.transparent,
+                borderRadius: BorderRadius.circular(10.0),
+                child: InkWell(
+                  onTap: onPeriodChanged != null
+                      ? () => onPeriodChanged!(period)
+                      : null,
+                  borderRadius: BorderRadius.circular(10.0),
+                  child: Container(
+                    height: 40.0,
+                    alignment: Alignment.center,
+                    child: Text(
+                      period.label,
+                      style: TextStyle(
+                        fontFamily: ADayTypography.fontFamily,
+                        fontSize: 14.0,
+                        fontWeight:
+                            isSelected ? FontWeight.w700 : FontWeight.w600,
+                        color: isSelected
+                            ? Colors.white
+                            : ADayColors.brandNavy.withValues(alpha: 0.8),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  /// Side-by-side or stacked layout for Status Breakdown & Category Performance.
+  Widget _buildDualCardsSection(
+    BuildContext context,
+    StatisticsViewData viewData,
+  ) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isNarrow = constraints.maxWidth < 360;
+
+        if (isNarrow) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              StatusBreakdownCard(
+                items: viewData.statusBreakdownItems,
+                onActionTap: onBreakdownTap,
+              ),
+              const SizedBox(height: ADaySpacing.md),
+              CategoryPerformanceCard(
+                categories: viewData.categoryItems,
+                onActionTap: onCategoryDetailsTap,
+              ),
+            ],
+          );
+        }
+
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 50,
+              child: StatusBreakdownCard(
+                items: viewData.statusBreakdownItems,
+                onActionTap: onBreakdownTap,
+              ),
+            ),
+            const SizedBox(width: ADaySpacing.sm),
+            Expanded(
+              flex: 50,
+              child: CategoryPerformanceCard(
+                categories: viewData.categoryItems,
+                onActionTap: onCategoryDetailsTap,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

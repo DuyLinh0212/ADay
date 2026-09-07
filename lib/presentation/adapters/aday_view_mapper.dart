@@ -1,6 +1,7 @@
+import 'package:flutter/material.dart';
+
 import '../../application/aday_controller.dart';
 import '../../application/goal_draft.dart';
-import '../../core/theme/aday_colors.dart';
 import '../../domain/models/goal.dart' as domain;
 import '../../domain/models/task_item.dart';
 import '../../domain/services/statistics_service.dart' as domain_stats;
@@ -239,6 +240,156 @@ abstract final class ADayViewMapper {
     final cancelled = (result.cancellationRate * 100).round();
     final remaining = (100 - completion - postponed - cancelled).clamp(0, 100);
 
+    final periodCompareLabel = switch (period) {
+      view_stats.StatisticsPeriod.week => 'so với tuần trước',
+      view_stats.StatisticsPeriod.month => 'so với tháng trước',
+      view_stats.StatisticsPeriod.year => 'so với năm trước',
+    };
+
+    final overviewTitle = switch (period) {
+      view_stats.StatisticsPeriod.week => 'Tổng quan tuần này',
+      view_stats.StatisticsPeriod.month =>
+        'Tổng quan tháng ${selectedDay.month}, ${selectedDay.year}',
+      view_stats.StatisticsPeriod.year => 'Tổng quan năm ${selectedDay.year}',
+    };
+
+    String formatDeltaPercent(int delta) {
+      if (delta > 0) return '↑ $delta% $periodCompareLabel';
+      if (delta < 0) return '↓ ${delta.abs()}% $periodCompareLabel';
+      return '0% $periodCompareLabel';
+    }
+
+    String formatDeltaDays(int days) {
+      if (days > 0) return '↑ $days ngày $periodCompareLabel';
+      if (days < 0) return '↓ ${days.abs()} ngày $periodCompareLabel';
+      return '0 ngày $periodCompareLabel';
+    }
+
+    final overviewMetrics = [
+      view_stats.OverviewMetricItem(
+        title: 'Tỉ lệ hoàn thành',
+        value: '$completion%',
+        deltaText: formatDeltaPercent(result.completionRateDeltaPercent),
+        isPositiveDelta: result.completionRateDeltaPercent >= 0,
+        icon: Icons.check_circle_rounded,
+        iconColor: const Color(0xFF20C99A),
+        iconBgColor: const Color(0xFFEAF8F4),
+      ),
+      view_stats.OverviewMetricItem(
+        title: 'Đã hoàn thành',
+        value: '${result.completed}',
+        deltaText: formatDeltaPercent(result.completedDeltaPercent),
+        isPositiveDelta: result.completedDeltaPercent >= 0,
+        icon: Icons.description_rounded,
+        iconColor: const Color(0xFF168AF2),
+        iconBgColor: const Color(0xFFEBF4FE),
+      ),
+      view_stats.OverviewMetricItem(
+        title: 'Tạm hoãn',
+        value: '${result.postponed}',
+        deltaText: formatDeltaPercent(result.postponedDeltaPercent),
+        isPositiveDelta: result.postponedDeltaPercent <= 0,
+        icon: Icons.schedule_rounded,
+        iconColor: const Color(0xFFFFB52E),
+        iconBgColor: const Color(0xFFFFF6E9),
+      ),
+      view_stats.OverviewMetricItem(
+        title: 'Đã hủy',
+        value: '${result.cancelled}',
+        deltaText: formatDeltaPercent(result.cancelledDeltaPercent),
+        isPositiveDelta: result.cancelledDeltaPercent <= 0,
+        icon: Icons.cancel_rounded,
+        iconColor: const Color(0xFFF0525E),
+        iconBgColor: const Color(0xFFFDEEEE),
+      ),
+      view_stats.OverviewMetricItem(
+        title: 'Ngày liên tiếp',
+        value: '${result.currentStreak}',
+        deltaText: formatDeltaDays(result.streakDeltaDays),
+        isPositiveDelta: result.streakDeltaDays >= 0,
+        icon: Icons.local_fire_department_rounded,
+        iconColor: const Color(0xFF8E59FF),
+        iconBgColor: const Color(0xFFF3EDFF),
+      ),
+    ];
+
+    final statusBreakdownItems = [
+      view_stats.CompletionBreakdownItem(
+        label: 'Đã hoàn thành',
+        percentage: completion,
+        color: const Color(0xFF20C99A),
+      ),
+      view_stats.CompletionBreakdownItem(
+        label: 'Còn lại',
+        percentage: remaining,
+        color: const Color(0xFF38B8F8),
+      ),
+      view_stats.CompletionBreakdownItem(
+        label: 'Tạm hoãn',
+        percentage: postponed,
+        color: const Color(0xFFFFB52E),
+      ),
+      view_stats.CompletionBreakdownItem(
+        label: 'Đã hủy',
+        percentage: cancelled,
+        color: const Color(0xFFF0525E),
+      ),
+    ];
+
+    (Color, IconData) categoryStyle(String cat) {
+      final lower = cat.toLowerCase();
+      if (lower.contains('học')) {
+        return (const Color(0xFF0EB8AC), Icons.menu_book_rounded);
+      }
+      if (lower.contains('khỏe')) {
+        return (const Color(0xFF168AF2), Icons.fitness_center_rounded);
+      }
+      if (lower.contains('việc')) {
+        return (const Color(0xFF8E59FF), Icons.business_center_rounded);
+      }
+      if (lower.contains('nhân')) {
+        return (const Color(0xFFFFB52E), Icons.person_rounded);
+      }
+      return (const Color(0xFF38B8F8), Icons.folder_rounded);
+    }
+
+    final categoryItems = result.categories.map((cat) {
+      final style = categoryStyle(cat.name);
+      return view_stats.CategoryProgressItem(
+        name: cat.name,
+        percentage: cat.completionRatePercent,
+        color: style.$1,
+        icon: style.$2,
+        total: cat.total,
+        completed: cat.completed,
+      );
+    }).toList(growable: false);
+
+    final String encouragementTitle;
+    final String encouragementMessage;
+    const String encouragementQuote =
+        '“Tiến bộ mỗi ngày luôn tạo nên những điều tuyệt vời!”';
+
+    if (result.total == 0) {
+      encouragementTitle = 'Bạn đang làm rất tốt!';
+      encouragementMessage =
+          'Hãy tạo mục tiêu và hoàn thành các nhiệm vụ mỗi ngày để cùng chinh phục ước mơ nhé!';
+    } else if (completion >= 70) {
+      encouragementTitle = 'Bạn đang làm rất tốt!';
+      final delta = result.completionRateDeltaPercent;
+      final deltaStr = delta >= 0 ? 'tăng $delta%' : 'giảm ${delta.abs()}%';
+      encouragementMessage =
+          'Tỉ lệ hoàn thành $deltaStr $periodCompareLabel. Hãy tiếp tục duy trì và chinh phục những mục tiêu tiếp theo nhé!';
+    } else if (completion >= 40) {
+      encouragementTitle = 'Khởi đầu đầy hứa hẹn!';
+      encouragementMessage =
+          'Bạn đã hoàn thành ${result.completed} trên ${result.total} mục tiêu trong kỳ này. Cố lên nhé!';
+    } else {
+      encouragementTitle = 'Từng bước một nhé!';
+      encouragementMessage =
+          'Mỗi hành động nhỏ đều đưa bạn đến gần hơn với mục tiêu lớn. Hãy bắt đầu ngay hôm nay!';
+    }
+
     return view_stats.StatisticsViewData(
       selectedPeriod: period,
       calendar: _calendar(controller, month, selectedDay),
@@ -273,30 +424,19 @@ abstract final class ADayViewMapper {
         isNote: true,
       ),
       trendPoints: _trendPoints(result.trend, period, selectedDay),
-      breakdownItems: [
-        view_stats.CompletionBreakdownItem(
-          label: 'Đã hoàn thành',
-          percentage: completion,
-          color: ADayColors.successMint,
-        ),
-        view_stats.CompletionBreakdownItem(
-          label: 'Còn lại',
-          percentage: remaining,
-          color: ADayColors.skyCyan,
-        ),
-        view_stats.CompletionBreakdownItem(
-          label: 'Đã dời / Đã hủy',
-          percentage: postponed + cancelled,
-          color: ADayColors.mutedInk,
-        ),
-      ],
+      breakdownItems: statusBreakdownItems,
       insight: view_stats.EncouragingInsightData(
-        title: result.total == 0 ? 'Sẵn sàng bắt đầu!' : 'Bạn đang tiến bộ!',
-        message: result.total == 0
-            ? 'Hãy tạo mục tiêu đầu tiên để ADay bắt đầu thống kê hành trình của bạn.'
-            : 'Bạn đã hoàn thành ${result.completed} trên ${result.total} mục tiêu trong kỳ này.',
+        title: encouragementTitle,
+        message: encouragementMessage,
         highlightText: result.total == 0 ? '0%' : '$completion%',
       ),
+      overviewTitle: overviewTitle,
+      overviewMetrics: overviewMetrics,
+      categoryItems: categoryItems,
+      statusBreakdownItems: statusBreakdownItems,
+      encouragementTitle: encouragementTitle,
+      encouragementMessage: encouragementMessage,
+      encouragementQuote: encouragementQuote,
     );
   }
 
@@ -383,22 +523,26 @@ abstract final class ADayViewMapper {
     DateTime anchor,
   ) {
     if (period == view_stats.StatisticsPeriod.month) {
-      final points = <view_stats.TrendDataPoint>[];
-      for (var start = 0; start < source.length; start += 7) {
-        final group = source.skip(start).take(7).toList(growable: false);
-        final rate = group.isEmpty
-            ? 0.0
-            : group.fold<double>(0, (sum, item) => sum + item.completionRate) /
-                  group.length;
-        points.add(
-          view_stats.TrendDataPoint(
-            label: 'T${points.length + 1}',
-            percentage: rate,
-            valueLabel: '${(rate * 100).round()}%',
-          ),
-        );
+      const weekdays = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+      final weekdayGroups = List.generate(7, (_) => <double>[]);
+      for (final point in source) {
+        final dayIndex = point.date.weekday - 1;
+        if (dayIndex >= 0 && dayIndex < 7) {
+          weekdayGroups[dayIndex].add(point.completionRate);
+        }
       }
-      return points;
+      return List.generate(7, (i) {
+        final rates = weekdayGroups[i];
+        final avgRate = rates.isEmpty
+            ? 0.0
+            : rates.fold<double>(0.0, (s, r) => s + r) / rates.length;
+        return view_stats.TrendDataPoint(
+          label: weekdays[i],
+          percentage: avgRate,
+          valueLabel: '${(avgRate * 100).round()}%',
+          isHighlighted: anchor.weekday - 1 == i,
+        );
+      });
     }
     return source
         .map((point) {

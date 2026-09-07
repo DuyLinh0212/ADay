@@ -10,6 +10,21 @@ class TrendPoint {
   final double completionRate;
 }
 
+class CategoryPerformance {
+  const CategoryPerformance({
+    required this.name,
+    required this.total,
+    required this.completed,
+  });
+
+  final String name;
+  final int total;
+  final int completed;
+
+  double get completionRate => total == 0 ? 0 : completed / total;
+  int get completionRatePercent => (completionRate * 100).round();
+}
+
 class ProgressStatistics {
   const ProgressStatistics({
     required this.total,
@@ -19,6 +34,12 @@ class ProgressStatistics {
     required this.overdue,
     required this.currentStreak,
     required this.trend,
+    this.categories = const [],
+    this.previousTotal = 0,
+    this.previousCompleted = 0,
+    this.previousPostponed = 0,
+    this.previousCancelled = 0,
+    this.previousStreak = 0,
   });
 
   final int total;
@@ -28,10 +49,41 @@ class ProgressStatistics {
   final int overdue;
   final int currentStreak;
   final List<TrendPoint> trend;
+  final List<CategoryPerformance> categories;
+
+  final int previousTotal;
+  final int previousCompleted;
+  final int previousPostponed;
+  final int previousCancelled;
+  final int previousStreak;
 
   double get completionRate => total == 0 ? 0 : completed / total;
   double get postponementRate => total == 0 ? 0 : postponed / total;
   double get cancellationRate => total == 0 ? 0 : cancelled / total;
+  double get remainingRate {
+    final rem = 1.0 - completionRate - postponementRate - cancellationRate;
+    return rem < 0 ? 0 : rem;
+  }
+
+  double get previousCompletionRate =>
+      previousTotal == 0 ? 0 : previousCompleted / previousTotal;
+
+  int get completionRateDeltaPercent =>
+      ((completionRate - previousCompletionRate) * 100).round();
+
+  int get completedDeltaPercent => previousCompleted == 0
+      ? (completed > 0 ? 100 : 0)
+      : (((completed - previousCompleted) / previousCompleted) * 100).round();
+
+  int get postponedDeltaPercent => previousPostponed == 0
+      ? (postponed > 0 ? 100 : 0)
+      : (((postponed - previousPostponed) / previousPostponed) * 100).round();
+
+  int get cancelledDeltaPercent => previousCancelled == 0
+      ? (cancelled > 0 ? 100 : 0)
+      : (((cancelled - previousCancelled) / previousCancelled) * 100).round();
+
+  int get streakDeltaDays => currentStreak - previousStreak;
 }
 
 class StatisticsService {
@@ -68,6 +120,50 @@ class StatisticsService {
           goal.status == GoalStatus.active;
     }).length;
 
+    // Previous period stats for delta comparison
+    final prevRange = _previousRangeFor(period, anchor);
+    final inPrevRange = goals
+        .where((goal) {
+          final date = _dateOnly(goal.startDate);
+          return !date.isBefore(prevRange.$1) && date.isBefore(prevRange.$2);
+        })
+        .toList(growable: false);
+    final prevCompleted = inPrevRange
+        .where((goal) => goal.status == GoalStatus.completed)
+        .length;
+    final prevPostponed = inPrevRange
+        .where((goal) => goal.status == GoalStatus.postponed)
+        .length;
+    final prevCancelled = inPrevRange
+        .where((goal) => goal.status == GoalStatus.cancelled)
+        .length;
+
+    final prevAnchor = switch (period) {
+      StatisticsPeriod.week => anchor.subtract(const Duration(days: 7)),
+      StatisticsPeriod.month => DateTime(anchor.year, anchor.month - 1, anchor.day),
+      StatisticsPeriod.year => DateTime(anchor.year - 1, anchor.month, anchor.day),
+    };
+    final prevStreak = _completionStreak(events, _dateOnly(prevAnchor));
+
+    // Categories calculation
+    final categoriesMap = <String, (int total, int completed)>{};
+    for (final cat in const ['Học tập', 'Sức khỏe', 'Công việc', 'Cá nhân']) {
+      categoriesMap[cat] = (0, 0);
+    }
+    for (final goal in inRange) {
+      final cat = goal.category.trim().isEmpty ? 'Khác' : goal.category.trim();
+      final current = categoriesMap[cat] ?? (0, 0);
+      final isDone = goal.status == GoalStatus.completed;
+      categoriesMap[cat] = (current.$1 + 1, current.$2 + (isDone ? 1 : 0));
+    }
+    final categoryList = categoriesMap.entries
+        .map((e) => CategoryPerformance(
+              name: e.key,
+              total: e.value.$1,
+              completed: e.value.$2,
+            ))
+        .toList(growable: false);
+
     return ProgressStatistics(
       total: inRange.length,
       completed: completed,
@@ -76,7 +172,29 @@ class StatisticsService {
       overdue: overdue,
       currentStreak: _completionStreak(events, today),
       trend: _trend(inRange, range.$1, range.$2, period),
+      categories: categoryList,
+      previousTotal: inPrevRange.length,
+      previousCompleted: prevCompleted,
+      previousPostponed: prevPostponed,
+      previousCancelled: prevCancelled,
+      previousStreak: prevStreak,
     );
+  }
+
+  (DateTime, DateTime) _previousRangeFor(StatisticsPeriod period, DateTime anchor) {
+    final day = _dateOnly(anchor);
+    switch (period) {
+      case StatisticsPeriod.week:
+        final start = day
+            .subtract(Duration(days: day.weekday - DateTime.monday))
+            .subtract(const Duration(days: 7));
+        return (start, start.add(const Duration(days: 7)));
+      case StatisticsPeriod.month:
+        final prevMonth = DateTime(day.year, day.month - 1);
+        return (prevMonth, DateTime(day.year, day.month));
+      case StatisticsPeriod.year:
+        return (DateTime(day.year - 1), DateTime(day.year));
+    }
   }
 
   (DateTime, DateTime) _rangeFor(StatisticsPeriod period, DateTime anchor) {

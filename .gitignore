@@ -58,6 +58,7 @@ app.*.map.json
 *.ico
 
 # Keep essential platform launcher icons required to build app
+!assets/logo.png
 !android/app/src/main/res/**/ic_launcher.png
 !ios/Runner/Assets.xcassets/**
 !macos/Runner/Assets.xcassets/**

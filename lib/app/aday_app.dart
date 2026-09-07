@@ -10,6 +10,7 @@ import '../domain/models/goal.dart' as domain;
 import '../domain/models/task_item.dart';
 import '../presentation/adapters/aday_view_mapper.dart';
 import '../presentation/models/task_view_item.dart';
+import '../presentation/screens/calendar/calendar_screen.dart';
 import '../presentation/screens/create_goal/create_goal.dart';
 import '../presentation/screens/goal_detail/goal_detail.dart';
 import '../presentation/screens/home/home.dart';
@@ -97,7 +98,8 @@ class _ADayShellState extends State<ADayShell> {
       }
       return switch (_tabIndex) {
         0 => _buildHome(),
-        1 || 2 => _buildStatistics(),
+        1 => _buildCalendar(),
+        2 => _buildStatistics(),
         _ => _buildProfile(),
       };
     },
@@ -133,6 +135,51 @@ class _ADayShellState extends State<ADayShell> {
     );
   }
 
+  Widget _buildCalendar() {
+    final statsViewData = ADayViewMapper.statistics(
+      controller: controller,
+      month: _calendarMonth,
+      selectedDay: _selectedDay,
+      period: _statisticsPeriod,
+    );
+    final selectedDayTasks = ADayViewMapper.homeTasks(controller, _selectedDay);
+
+    return CalendarScreen(
+      calendarData: statsViewData.calendar,
+      selectedDay: _selectedDay,
+      tasks: selectedDayTasks,
+      bottomNavIndex: _tabIndex,
+      hasUnreadNotifications: _shouldReviewToday(),
+      avatarInitials: _initials(controller.settings.displayName),
+      onLogoTap: () => _selectTab(0),
+      onNotificationTap: _openTomorrowPlan,
+      onAvatarTap: () => setState(() => _tabIndex = 3),
+      onPrevMonth: () => setState(() {
+        _calendarMonth =
+            DateTime(_calendarMonth.year, _calendarMonth.month - 1);
+      }),
+      onNextMonth: () => setState(() {
+        _calendarMonth =
+            DateTime(_calendarMonth.year, _calendarMonth.month + 1);
+      }),
+      onTodayTap: () => setState(() {
+        final now = DateTime.now();
+        _selectedDay = DateTime(now.year, now.month, now.day);
+        _calendarMonth = DateTime(now.year, now.month);
+      }),
+      onDayTap: (day) => setState(() => _selectedDay = day.date),
+      onTodaySummaryTap: () {
+        if (selectedDayTasks.isNotEmpty) {
+          _openGoal(selectedDayTasks.first.goalId);
+        }
+      },
+      onToggleTask: _toggleHomeTask,
+      onTaskTap: (task) => _openGoal(task.goalId),
+      onAddTask: () => _openCreateGoal(startDate: _selectedDay),
+      onNavTap: _selectTab,
+    );
+  }
+
   Widget _buildStatistics() => StatisticsScreen(
     data: ADayViewMapper.statistics(
       controller: controller,
@@ -143,25 +190,10 @@ class _ADayShellState extends State<ADayShell> {
     bottomNavIndex: _tabIndex,
     hasUnreadNotifications: _shouldReviewToday(),
     avatarInitials: _initials(controller.settings.displayName),
-    onPrevMonth: () => setState(() {
-      _calendarMonth = DateTime(_calendarMonth.year, _calendarMonth.month - 1);
-    }),
-    onNextMonth: () => setState(() {
-      _calendarMonth = DateTime(_calendarMonth.year, _calendarMonth.month + 1);
-    }),
-    onTodayTap: () => setState(() {
-      final now = DateTime.now();
-      _selectedDay = DateTime(now.year, now.month, now.day);
-      _calendarMonth = DateTime(now.year, now.month);
-    }),
-    onDayTap: (day) => setState(() => _selectedDay = day.date),
-    onPeriodChanged: (period) => setState(() => _statisticsPeriod = period),
-    onTodaySummaryTap: () {
-      final tasks = ADayViewMapper.homeTasks(controller, _selectedDay);
-      if (tasks.isNotEmpty) _openGoal(tasks.first.goalId);
-    },
+    onLogoTap: () => _selectTab(0),
     onNotificationTap: _openTomorrowPlan,
     onAvatarTap: () => setState(() => _tabIndex = 3),
+    onPeriodChanged: (period) => setState(() => _statisticsPeriod = period),
     onNavTap: _selectTab,
   );
 
@@ -272,10 +304,6 @@ class _ADayShellState extends State<ADayShell> {
 
   void _selectTab(int index) => setState(() {
     _tabIndex = index;
-    if (index == 1) _statisticsPeriod = StatisticsPeriod.month;
-    if (index == 2 && _statisticsPeriod == StatisticsPeriod.month) {
-      _statisticsPeriod = StatisticsPeriod.week;
-    }
   });
 
   Future<void> _toggleHomeTask(TaskViewItem item, bool completed) async {

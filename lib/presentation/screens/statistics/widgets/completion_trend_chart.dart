@@ -71,7 +71,7 @@ class CompletionTrendChart extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Icon(
-              Icons.trending_up_rounded,
+              Icons.bar_chart_rounded,
               color: ADayColors.actionBlue,
               size: 24.0,
             ),
@@ -79,8 +79,9 @@ class CompletionTrendChart extends StatelessWidget {
             Text(
               title,
               style: ADayTypography.title.copyWith(
-                fontSize: 18.0,
-                letterSpacing: -0.2,
+                fontSize: 16.5,
+                fontWeight: FontWeight.w700,
+                color: ADayColors.brandNavy,
               ),
             ),
           ],
@@ -153,7 +154,7 @@ class _TrendChartPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     const yAxisLabelWidth = 36.0;
     const labelBottomHeight = 24.0;
-    const topPadding = 10.0;
+    const topPadding = 20.0;
 
     final chartArea = Rect.fromLTWH(
       yAxisLabelWidth,
@@ -215,6 +216,32 @@ class _TrendChartPainter extends CustomPainter {
         center: Offset(centerX, chartArea.top + chartArea.height / 2),
         width: barWidth,
         height: chartArea.height,
+      );
+
+      // Top Percentage Label (e.g. 62%, 78%)
+      final pctText =
+          point.valueLabel ?? '${(point.percentage * 100).round()}%';
+      final pctPainter = TextPainter(
+        text: TextSpan(
+          text: pctText,
+          style: TextStyle(
+            fontFamily: ADayTypography.fontFamily,
+            fontSize: 10.0,
+            fontWeight: FontWeight.w700,
+            color: point.isHighlighted
+                ? ADayColors.actionBlue
+                : ADayColors.brandNavy,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+
+      pctPainter.paint(
+        canvas,
+        Offset(
+          centerX - pctPainter.width / 2,
+          chartArea.top - pctPainter.height - 4.0,
+        ),
       );
 
       // A. Background track capsule
