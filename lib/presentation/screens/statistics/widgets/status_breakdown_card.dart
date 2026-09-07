@@ -24,8 +24,9 @@ class StatusBreakdownCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final completedItem = items.isNotEmpty ? items.first : null;
-    final centerPercentage =
-        completedItem != null ? '${completedItem.percentage}%' : '0%';
+    final centerPercentage = completedItem != null
+        ? '${completedItem.percentage}%'
+        : '0%';
 
     return Container(
       decoration: BoxDecoration(

@@ -155,12 +155,16 @@ class _ADayShellState extends State<ADayShell> {
       onNotificationTap: _openTomorrowPlan,
       onAvatarTap: () => setState(() => _tabIndex = 3),
       onPrevMonth: () => setState(() {
-        _calendarMonth =
-            DateTime(_calendarMonth.year, _calendarMonth.month - 1);
+        _calendarMonth = DateTime(
+          _calendarMonth.year,
+          _calendarMonth.month - 1,
+        );
       }),
       onNextMonth: () => setState(() {
-        _calendarMonth =
-            DateTime(_calendarMonth.year, _calendarMonth.month + 1);
+        _calendarMonth = DateTime(
+          _calendarMonth.year,
+          _calendarMonth.month + 1,
+        );
       }),
       onTodayTap: () => setState(() {
         final now = DateTime.now();

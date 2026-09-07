@@ -241,8 +241,9 @@ class StatisticsScreen extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: ADayTypography.fontFamily,
                         fontSize: 14.0,
-                        fontWeight:
-                            isSelected ? FontWeight.w700 : FontWeight.w600,
+                        fontWeight: isSelected
+                            ? FontWeight.w700
+                            : FontWeight.w600,
                         color: isSelected
                             ? Colors.white
                             : ADayColors.brandNavy.withValues(alpha: 0.8),

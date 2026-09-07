@@ -148,7 +148,9 @@ class CalendarScreen extends StatelessWidget {
                                   TextButton.icon(
                                     onPressed: onAddTask,
                                     icon: const Icon(Icons.add_rounded),
-                                    label: const Text('Thêm mục tiêu / nhiệm vụ'),
+                                    label: const Text(
+                                      'Thêm mục tiêu / nhiệm vụ',
+                                    ),
                                   ),
                                 ],
                               ),

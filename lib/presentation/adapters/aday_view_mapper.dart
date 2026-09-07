@@ -353,17 +353,19 @@ abstract final class ADayViewMapper {
       return (const Color(0xFF38B8F8), Icons.folder_rounded);
     }
 
-    final categoryItems = result.categories.map((cat) {
-      final style = categoryStyle(cat.name);
-      return view_stats.CategoryProgressItem(
-        name: cat.name,
-        percentage: cat.completionRatePercent,
-        color: style.$1,
-        icon: style.$2,
-        total: cat.total,
-        completed: cat.completed,
-      );
-    }).toList(growable: false);
+    final categoryItems = result.categories
+        .map((cat) {
+          final style = categoryStyle(cat.name);
+          return view_stats.CategoryProgressItem(
+            name: cat.name,
+            percentage: cat.completionRatePercent,
+            color: style.$1,
+            icon: style.$2,
+            total: cat.total,
+            completed: cat.completed,
+          );
+        })
+        .toList(growable: false);
 
     final String encouragementTitle;
     final String encouragementMessage;

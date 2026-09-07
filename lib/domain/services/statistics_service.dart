@@ -140,8 +140,16 @@ class StatisticsService {
 
     final prevAnchor = switch (period) {
       StatisticsPeriod.week => anchor.subtract(const Duration(days: 7)),
-      StatisticsPeriod.month => DateTime(anchor.year, anchor.month - 1, anchor.day),
-      StatisticsPeriod.year => DateTime(anchor.year - 1, anchor.month, anchor.day),
+      StatisticsPeriod.month => DateTime(
+        anchor.year,
+        anchor.month - 1,
+        anchor.day,
+      ),
+      StatisticsPeriod.year => DateTime(
+        anchor.year - 1,
+        anchor.month,
+        anchor.day,
+      ),
     };
     final prevStreak = _completionStreak(events, _dateOnly(prevAnchor));
 
@@ -157,11 +165,13 @@ class StatisticsService {
       categoriesMap[cat] = (current.$1 + 1, current.$2 + (isDone ? 1 : 0));
     }
     final categoryList = categoriesMap.entries
-        .map((e) => CategoryPerformance(
-              name: e.key,
-              total: e.value.$1,
-              completed: e.value.$2,
-            ))
+        .map(
+          (e) => CategoryPerformance(
+            name: e.key,
+            total: e.value.$1,
+            completed: e.value.$2,
+          ),
+        )
         .toList(growable: false);
 
     return ProgressStatistics(
@@ -181,7 +191,10 @@ class StatisticsService {
     );
   }
 
-  (DateTime, DateTime) _previousRangeFor(StatisticsPeriod period, DateTime anchor) {
+  (DateTime, DateTime) _previousRangeFor(
+    StatisticsPeriod period,
+    DateTime anchor,
+  ) {
     final day = _dateOnly(anchor);
     switch (period) {
       case StatisticsPeriod.week:

@@ -52,7 +52,11 @@ void main() {
 
   test('calculates deltas compared to previous period', () {
     const service = StatisticsService();
-    final anchor = DateTime(2026, 9, 16); // Week of Sept 14-20, previous is Sept 7-13
+    final anchor = DateTime(
+      2026,
+      9,
+      16,
+    ); // Week of Sept 14-20, previous is Sept 7-13
 
     final stats = service.calculate(
       goals: [
