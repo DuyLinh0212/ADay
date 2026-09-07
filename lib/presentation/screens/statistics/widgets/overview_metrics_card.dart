@@ -47,7 +47,7 @@ class OverviewMetricsCard extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.bar_chart_rounded,
                     color: ADayColors.actionBlue,
                     size: 24.0,
@@ -77,7 +77,7 @@ class OverviewMetricsCard extends StatelessWidget {
                       children: [
                         Text(
                           actionLabel,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: ADayTypography.fontFamily,
                             fontSize: 12.5,
                             fontWeight: FontWeight.w600,
@@ -85,7 +85,7 @@ class OverviewMetricsCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 2.0),
-                        const Icon(
+                        Icon(
                           Icons.chevron_right_rounded,
                           size: 16.0,
                           color: ADayColors.actionBlue,
@@ -158,7 +158,7 @@ class _MiniMetricCard extends StatelessWidget {
           // Value
           Text(
             item.value,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: ADayTypography.fontFamily,
               fontSize: 22.0,
               fontWeight: FontWeight.w800,
@@ -174,7 +174,7 @@ class _MiniMetricCard extends StatelessWidget {
             height: 28.0,
             child: Text(
               item.title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: ADayTypography.fontFamily,
                 fontSize: 11.5,
                 fontWeight: FontWeight.w600,
@@ -202,7 +202,7 @@ class _MiniMetricCard extends StatelessWidget {
           if (deltaSub.isNotEmpty)
             Text(
               deltaSub,
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: ADayTypography.fontFamily,
                 fontSize: 9.5,
                 fontWeight: FontWeight.w500,

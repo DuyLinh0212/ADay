@@ -39,7 +39,7 @@ class TaskListScreen extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.task_alt_rounded,
                     size: 48,
                     color: ADayColors.mutedInk,

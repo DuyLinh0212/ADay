@@ -36,7 +36,7 @@ class SqliteADayRepository implements ADayRepository {
     final directory = await getDatabasesPath();
     final database = await openDatabase(
       '$directory/$databaseName',
-      version: 5,
+      version: 6,
       onConfigure: (db) => db.execute('PRAGMA foreign_keys = ON'),
       onCreate: (db, _) async {
         await createSchema(db);
@@ -75,6 +75,11 @@ class SqliteADayRepository implements ADayRepository {
         if (oldVersion < 5) {
           await db.execute(
             'ALTER TABLE app_settings ADD COLUMN avatar_path TEXT',
+          );
+        }
+        if (oldVersion < 6) {
+          await db.execute(
+            "ALTER TABLE app_settings ADD COLUMN email TEXT NOT NULL DEFAULT 'minh.aday@gmail.com'",
           );
         }
       },
@@ -146,6 +151,7 @@ class SqliteADayRepository implements ADayRepository {
       CREATE TABLE IF NOT EXISTS app_settings (
         singleton_id INTEGER PRIMARY KEY CHECK(singleton_id = 1),
         display_name TEXT NOT NULL,
+        email TEXT NOT NULL DEFAULT 'minh.aday@gmail.com',
         daily_review_enabled INTEGER NOT NULL,
         daily_review_minute INTEGER NOT NULL,
         notifications_allowed INTEGER NOT NULL
@@ -353,6 +359,7 @@ class SqliteADayRepository implements ADayRepository {
   static Map<String, Object?> settingsValues(AppSettings settings) => {
     'singleton_id': 1,
     'display_name': settings.displayName,
+    'email': settings.email,
     'daily_review_enabled': settings.dailyReviewEnabled ? 1 : 0,
     'daily_review_minute': settings.dailyReviewMinute,
     'notifications_allowed': settings.notificationsAllowed ? 1 : 0,
@@ -428,6 +435,7 @@ class SqliteADayRepository implements ADayRepository {
 
   static AppSettings settingsFromRow(Map<String, Object?> row) => AppSettings(
     displayName: row['display_name']! as String,
+    email: row['email'] as String? ?? 'minh.aday@gmail.com',
     dailyReviewEnabled: parseBool(row['daily_review_enabled']),
     dailyReviewMinute: row['daily_review_minute']! as int,
     notificationsAllowed: parseBool(row['notifications_allowed']),

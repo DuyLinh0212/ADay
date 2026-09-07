@@ -1,6 +1,7 @@
 class AppSettings {
   const AppSettings({
     this.displayName = 'Minh',
+    this.email = 'minh.aday@gmail.com',
     this.dailyReviewEnabled = true,
     this.dailyReviewMinute = 21 * 60 + 45,
     this.notificationsAllowed = false,
@@ -12,6 +13,7 @@ class AppSettings {
   });
 
   final String displayName;
+  final String email;
   final bool dailyReviewEnabled;
   final int dailyReviewMinute;
   final bool notificationsAllowed;
@@ -31,6 +33,7 @@ class AppSettings {
 
   AppSettings copyWith({
     String? displayName,
+    String? email,
     bool? dailyReviewEnabled,
     int? dailyReviewMinute,
     bool? notificationsAllowed,
@@ -45,6 +48,7 @@ class AppSettings {
   }) {
     return AppSettings(
       displayName: displayName ?? this.displayName,
+      email: email ?? this.email,
       dailyReviewEnabled: dailyReviewEnabled ?? this.dailyReviewEnabled,
       dailyReviewMinute: dailyReviewMinute ?? this.dailyReviewMinute,
       notificationsAllowed: notificationsAllowed ?? this.notificationsAllowed,
@@ -62,6 +66,7 @@ class AppSettings {
 
   Map<String, Object?> toJson() => {
     'displayName': displayName,
+    'email': email,
     'dailyReviewEnabled': dailyReviewEnabled,
     'dailyReviewMinute': dailyReviewMinute,
     'notificationsAllowed': notificationsAllowed,
@@ -75,6 +80,7 @@ class AppSettings {
   factory AppSettings.fromJson(Map<String, Object?> json) {
     return AppSettings(
       displayName: json['displayName'] as String? ?? 'Minh',
+      email: json['email'] as String? ?? 'minh.aday@gmail.com',
       dailyReviewEnabled: json['dailyReviewEnabled'] as bool? ?? true,
       dailyReviewMinute: json['dailyReviewMinute'] as int? ?? 21 * 60 + 45,
       notificationsAllowed: json['notificationsAllowed'] as bool? ?? false,

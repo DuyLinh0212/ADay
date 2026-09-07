@@ -71,7 +71,7 @@ class ProgressRing extends StatelessWidget {
     this.size = 84.0,
     this.strokeWidth = 8.5,
     this.trackColor = const Color(0x38FFFFFF),
-    this.progressColor = ADayColors.surface,
+    this.progressColor,
     this.centerTextStyle,
     this.showPercentageText = true,
   });
@@ -89,7 +89,7 @@ class ProgressRing extends StatelessWidget {
   final Color trackColor;
 
   /// Active sweep progress color.
-  final Color progressColor;
+  final Color? progressColor;
 
   /// Custom text style for the center percentage label.
   final TextStyle? centerTextStyle;
@@ -99,6 +99,7 @@ class ProgressRing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final effectiveProgressColor = progressColor ?? ADayColors.surface;
     final percentInt = (progress.clamp(0.0, 1.0) * 100).round();
     final disableMotion = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
 
@@ -123,7 +124,7 @@ class ProgressRing extends StatelessWidget {
                   painter: ProgressRingPainter(
                     progress: animatedValue,
                     trackColor: trackColor,
-                    progressColor: progressColor,
+                    progressColor: effectiveProgressColor,
                     strokeWidth: strokeWidth,
                   ),
                 ),

@@ -19,17 +19,19 @@ class ADayBottomNav extends StatelessWidget {
     super.key,
     required this.currentIndex,
     required this.onTap,
+    this.onCreateGoalTap,
     this.items = NavigationItemData.defaultItems,
   });
 
   final int currentIndex;
   final ValueChanged<int> onTap;
+  final VoidCallback? onCreateGoalTap;
   final List<NavigationItemData> items;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: ADayColors.surface,
         boxShadow: ADayColors.ambientLow,
         border: Border(
@@ -42,20 +44,50 @@ class ADayBottomNav extends StatelessWidget {
           height: ADaySpacing.bottomNavHeight,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: List.generate(items.length, (index) {
-              final item = items[index];
-              final isSelected = index == currentIndex;
-
-              return Expanded(
-                child: _BottomNavItem(
-                  data: item,
-                  isSelected: isSelected,
-                  index: index,
-                  totalItems: items.length,
-                  onTap: () => onTap(index),
+            children: [
+              if (items.isNotEmpty)
+                Expanded(
+                  child: _BottomNavItem(
+                    data: items[0],
+                    isSelected: currentIndex == 0,
+                    index: 0,
+                    totalItems: items.length,
+                    onTap: () => onTap(0),
+                  ),
                 ),
-              );
-            }),
+              if (items.length > 1)
+                Expanded(
+                  child: _BottomNavItem(
+                    data: items[1],
+                    isSelected: currentIndex == 1,
+                    index: 1,
+                    totalItems: items.length,
+                    onTap: () => onTap(1),
+                  ),
+                ),
+              // TikTok-style elevated center Create Goal button
+              _TikTokCreateButton(onTap: onCreateGoalTap),
+              if (items.length > 2)
+                Expanded(
+                  child: _BottomNavItem(
+                    data: items[2],
+                    isSelected: currentIndex == 2,
+                    index: 2,
+                    totalItems: items.length,
+                    onTap: () => onTap(2),
+                  ),
+                ),
+              if (items.length > 3)
+                Expanded(
+                  child: _BottomNavItem(
+                    data: items[3],
+                    isSelected: currentIndex == 3,
+                    index: 3,
+                    totalItems: items.length,
+                    onTap: () => onTap(3),
+                  ),
+                ),
+            ],
           ),
         ),
       ),
@@ -140,3 +172,110 @@ class _BottomNavItem extends StatelessWidget {
     );
   }
 }
+
+class _TikTokCreateButton extends StatefulWidget {
+  const _TikTokCreateButton({this.onTap});
+  final VoidCallback? onTap;
+
+  @override
+  State<_TikTokCreateButton> createState() => _TikTokCreateButtonState();
+}
+
+class _TikTokCreateButtonState extends State<_TikTokCreateButton> {
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final actionColor = ADayColors.actionBlue;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Semantics(
+      button: true,
+      label: 'Tạo mục tiêu mới',
+      child: GestureDetector(
+        onTapDown: (_) => setState(() => _pressed = true),
+        onTapUp: (_) => setState(() => _pressed = false),
+        onTapCancel: () => setState(() => _pressed = false),
+        onTap: widget.onTap,
+        behavior: HitTestBehavior.opaque,
+        child: Container(
+          width: 64.0,
+          height: ADaySpacing.bottomNavHeight,
+          alignment: Alignment.center,
+          child: AnimatedScale(
+            scale: _pressed ? 0.90 : 1.0,
+            duration: const Duration(milliseconds: 120),
+            curve: Curves.easeOutCubic,
+            child: Transform.translate(
+              offset: const Offset(0, -6),
+              child: SizedBox(
+                width: 48.0,
+                height: 34.0,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    // Left cyan/teal accent strip (TikTok signature layer style)
+                    Positioned(
+                      left: -2,
+                      top: 1,
+                      bottom: 1,
+                      width: 16,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: ADayColors.skyCyan,
+                          borderRadius: BorderRadius.circular(9.0),
+                        ),
+                      ),
+                    ),
+                    // Right coral/rose accent strip (TikTok signature layer style)
+                    Positioned(
+                      right: -2,
+                      top: 1,
+                      bottom: 1,
+                      width: 16,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: ADayColors.cancelCoral,
+                          borderRadius: BorderRadius.circular(9.0),
+                        ),
+                      ),
+                    ),
+                    // Center prominent main container
+                    Container(
+                      width: 48.0,
+                      height: 34.0,
+                      decoration: BoxDecoration(
+                        gradient: ADayColors.heroGradient,
+                        borderRadius: BorderRadius.circular(10.0),
+                        border: Border.all(
+                          color: isDark ? const Color(0xFF131E33) : Colors.white,
+                          width: 1.8,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: actionColor.withValues(alpha: isDark ? 0.5 : 0.28),
+                            offset: const Offset(0, 3),
+                            blurRadius: 6,
+                            spreadRadius: 0,
+                          ),
+                        ],
+                      ),
+                      child: const Center(
+                        child: Icon(
+                          Icons.add_rounded,
+                          color: Colors.white,
+                          size: 24.0,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+

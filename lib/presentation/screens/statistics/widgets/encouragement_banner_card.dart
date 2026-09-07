@@ -98,7 +98,7 @@ class EncouragementBannerCard extends StatelessWidget {
                       // Message with green highlight
                       Text.rich(
                         TextSpan(
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: ADayTypography.fontFamily,
                             fontSize: 12.0,
                             height: 1.35,
@@ -144,7 +144,7 @@ class EncouragementBannerCard extends StatelessWidget {
                       child: Text(
                         quote,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: ADayTypography.fontFamily,
                           fontSize: 10.5,
                           fontStyle: FontStyle.italic,

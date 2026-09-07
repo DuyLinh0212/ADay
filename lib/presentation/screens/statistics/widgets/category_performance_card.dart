@@ -47,7 +47,7 @@ class CategoryPerformanceCard extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.layers_rounded,
                     color: ADayColors.actionBlue,
                     size: 22.0,
@@ -77,7 +77,7 @@ class CategoryPerformanceCard extends StatelessWidget {
                       children: [
                         Text(
                           actionLabel,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: ADayTypography.fontFamily,
                             fontSize: 12.0,
                             fontWeight: FontWeight.w600,
@@ -85,7 +85,7 @@ class CategoryPerformanceCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 2.0),
-                        const Icon(
+                        Icon(
                           Icons.chevron_right_rounded,
                           size: 15.0,
                           color: ADayColors.actionBlue,
@@ -117,7 +117,7 @@ class CategoryPerformanceCard extends StatelessWidget {
                       width: 58.0,
                       child: Text(
                         cat.name,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: ADayTypography.fontFamily,
                           fontSize: 11.5,
                           fontWeight: FontWeight.w600,
@@ -163,7 +163,7 @@ class CategoryPerformanceCard extends StatelessWidget {
                       child: Text(
                         '${cat.percentage}%',
                         textAlign: TextAlign.right,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: ADayTypography.fontFamily,
                           fontSize: 12.0,
                           fontWeight: FontWeight.w700,

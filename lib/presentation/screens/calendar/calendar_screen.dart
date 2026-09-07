@@ -37,6 +37,7 @@ class CalendarScreen extends StatefulWidget {
     this.onToggleTask,
     this.onTaskTap,
     this.onAddTask,
+    this.onCreateGoalTap,
     this.onNavTap,
   });
 
@@ -61,6 +62,7 @@ class CalendarScreen extends StatefulWidget {
   final void Function(TaskViewItem task, bool isCompleted)? onToggleTask;
   final ValueChanged<TaskViewItem>? onTaskTap;
   final VoidCallback? onAddTask;
+  final VoidCallback? onCreateGoalTap;
   final ValueChanged<int>? onNavTap;
 
   @override
@@ -93,6 +95,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       widget.onToggleTask;
   ValueChanged<TaskViewItem>? get onTaskTap => widget.onTaskTap;
   VoidCallback? get onAddTask => widget.onAddTask;
+  VoidCallback? get onCreateGoalTap => widget.onCreateGoalTap;
   ValueChanged<int>? get onNavTap => widget.onNavTap;
 
   @override
@@ -253,6 +256,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           ? ADayBottomNav(
               currentIndex: bottomNavIndex,
               onTap: onNavTap ?? (_) {},
+              onCreateGoalTap: onCreateGoalTap,
             )
           : null,
     );

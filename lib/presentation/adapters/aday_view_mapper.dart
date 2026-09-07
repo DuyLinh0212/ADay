@@ -258,17 +258,17 @@ abstract final class ADayViewMapper {
 
     return ProfileViewData(
       displayName: controller.settings.displayName,
-      email: 'minh.aday@gmail.com',
+      email: controller.settings.email,
       memberSince: 'Thành viên từ 06/2025',
-      activeGoalsCount: activeCount > 0 ? activeCount : 3,
-      completedThisMonthCount: completedThisMonth > 0 ? completedThisMonth : 4,
-      completionRate: completionRate > 0 ? completionRate : 67,
+      activeGoalsCount: activeCount,
+      completedThisMonthCount: completedThisMonth,
+      completionRate: completionRate,
       reminderBefore22Enabled:
           controller.settings.dailyReviewEnabled &&
           controller.settings.notificationsAllowed,
       dailyNotificationEnabled: controller.settings.notificationsAllowed,
       language: 'Tiếng Việt',
-      themeMode: 'Sáng',
+      themeMode: controller.settings.themeId == 'theme_3' ? 'Tối' : 'Sáng',
     );
   }
 

@@ -15,77 +15,84 @@ import 'aday_typography.dart';
 /// - Shadows: Flat by default; Ambient Low only for floating panels
 /// - Typography: Be Vietnam Pro with system fallbacks
 abstract final class ADayTheme {
-  /// Builds the authoritative light theme for ADay.
-  static ThemeData light({Color? accentColor}) {
-    final textTheme = ADayTypography.toTextTheme();
+  /// Builds the complete authoritative theme for the given themeId.
+  static ThemeData forThemeId(String themeId) {
+    ADayColors.applyTheme(themeId);
+    final palette = ADayColors.current;
+    final isDark = palette.isDark;
+
+    final textTheme = ADayTypography.toTextTheme().apply(
+      bodyColor: palette.brandNavy,
+      displayColor: palette.brandNavy,
+    );
 
     final colorScheme = ColorScheme(
-      brightness: Brightness.light,
-      primary: accentColor ?? ADayColors.actionBlue,
-      onPrimary: ADayColors.surface,
-      primaryContainer: ADayColors.coolSurface,
-      onPrimaryContainer: ADayColors.brandNavy,
-      secondary: ADayColors.progressTeal,
-      onSecondary: ADayColors.surface,
-      secondaryContainer: ADayColors.progressTealTint,
-      onSecondaryContainer: ADayColors.brandNavy,
-      tertiary: ADayColors.sunriseGold,
-      onTertiary: ADayColors.brandNavy,
-      tertiaryContainer: ADayColors.sunriseGoldTint,
-      onTertiaryContainer: ADayColors.brandNavy,
-      error: ADayColors.cancelCoral,
-      onError: ADayColors.surface,
-      errorContainer: ADayColors.cancelCoralTint,
-      onErrorContainer: ADayColors.cancelCoral,
-      surface: ADayColors.surface,
-      onSurface: ADayColors.brandNavy,
-      surfaceContainerLowest: ADayColors.canvas,
-      surfaceContainerLow: ADayColors.coolSurface,
-      surfaceContainer: ADayColors.surface,
-      outline: ADayColors.dividerMist,
-      outlineVariant: ADayColors.dividerMist,
+      brightness: isDark ? Brightness.dark : Brightness.light,
+      primary: palette.actionBlue,
+      onPrimary: isDark ? const Color(0xFF0B1220) : palette.surface,
+      primaryContainer: palette.coolSurface,
+      onPrimaryContainer: palette.brandNavy,
+      secondary: palette.progressTeal,
+      onSecondary: isDark ? const Color(0xFF0B1220) : palette.surface,
+      secondaryContainer: palette.progressTealTint,
+      onSecondaryContainer: palette.brandNavy,
+      tertiary: palette.sunriseGold,
+      onTertiary: palette.brandNavy,
+      tertiaryContainer: palette.sunriseGoldTint,
+      onTertiaryContainer: palette.brandNavy,
+      error: palette.cancelCoral,
+      onError: isDark ? const Color(0xFF0B1220) : palette.surface,
+      errorContainer: palette.cancelCoralTint,
+      onErrorContainer: palette.cancelCoral,
+      surface: palette.surface,
+      onSurface: palette.brandNavy,
+      surfaceContainerLowest: palette.canvas,
+      surfaceContainerLow: palette.coolSurface,
+      surfaceContainer: palette.surface,
+      outline: palette.dividerMist,
+      outlineVariant: palette.dividerMist,
     );
 
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.light,
+      brightness: isDark ? Brightness.dark : Brightness.light,
       colorScheme: colorScheme,
-      scaffoldBackgroundColor: ADayColors.canvas,
+      scaffoldBackgroundColor: palette.canvas,
       fontFamily: ADayTypography.fontFamily,
       fontFamilyFallback: ADayTypography.fontFallbacks,
       textTheme: textTheme,
 
       // --- AppBar Theme ---
-      appBarTheme: const AppBarTheme(
-        backgroundColor: ADayColors.canvas,
-        foregroundColor: ADayColors.brandNavy,
+      appBarTheme: AppBarTheme(
+        backgroundColor: palette.canvas,
+        foregroundColor: palette.brandNavy,
         elevation: 0.0,
         scrolledUnderElevation: 0.0,
         centerTitle: false,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.dark,
-          statusBarBrightness: Brightness.light,
+          statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+          statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
         ),
-        titleTextStyle: ADayTypography.title,
+        titleTextStyle: ADayTypography.title.copyWith(color: palette.brandNavy),
       ),
 
       // --- Card & Surface Theme ---
       cardTheme: CardThemeData(
-        color: ADayColors.surface,
+        color: palette.surface,
         elevation: 0.0,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: ADaySpacing.surfaceRadius,
-          side: const BorderSide(color: ADayColors.dividerMist, width: 1.0),
+          side: BorderSide(color: palette.dividerMist, width: 1.0),
         ),
       ),
 
       // --- Button Themes ---
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: ADayColors.actionBlue,
-          foregroundColor: ADayColors.surface,
+          backgroundColor: palette.actionBlue,
+          foregroundColor: isDark ? const Color(0xFF0B1220) : palette.surface,
           elevation: 0.0,
           minimumSize: const Size(
             ADaySpacing.minTouchTarget,
@@ -96,7 +103,7 @@ abstract final class ADayTheme {
           ),
           padding: ADaySpacing.paddingButtonPrimary,
           textStyle: ADayTypography.label.copyWith(
-            color: ADayColors.surface,
+            color: isDark ? const Color(0xFF0B1220) : palette.surface,
             fontSize: 16.0,
           ),
         ),
@@ -104,7 +111,7 @@ abstract final class ADayTheme {
 
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: ADayColors.actionBlue,
+          foregroundColor: palette.actionBlue,
           minimumSize: const Size(
             ADaySpacing.minTouchTarget,
             ADaySpacing.buttonHeight,
@@ -112,10 +119,10 @@ abstract final class ADayTheme {
           shape: const RoundedRectangleBorder(
             borderRadius: ADaySpacing.controlRadius,
           ),
-          side: const BorderSide(color: ADayColors.actionBlue, width: 1.5),
+          side: BorderSide(color: palette.actionBlue, width: 1.5),
           padding: ADaySpacing.paddingButtonPrimary,
           textStyle: ADayTypography.label.copyWith(
-            color: ADayColors.actionBlue,
+            color: palette.actionBlue,
             fontSize: 16.0,
           ),
         ),
@@ -123,7 +130,7 @@ abstract final class ADayTheme {
 
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: ADayColors.actionBlue,
+          foregroundColor: palette.actionBlue,
           minimumSize: const Size(
             ADaySpacing.minTouchTarget,
             ADaySpacing.buttonHeightSmall,
@@ -132,7 +139,7 @@ abstract final class ADayTheme {
             borderRadius: ADaySpacing.controlRadius,
           ),
           textStyle: ADayTypography.label.copyWith(
-            color: ADayColors.actionBlue,
+            color: palette.actionBlue,
           ),
         ),
       ),
@@ -140,34 +147,34 @@ abstract final class ADayTheme {
       // --- Input Decoration Theme ---
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: ADayColors.canvas,
+        fillColor: palette.coolSurface,
         contentPadding: ADaySpacing.paddingInput,
-        hintStyle: ADayTypography.subhead,
-        labelStyle: ADayTypography.label,
+        hintStyle: ADayTypography.subhead.copyWith(color: palette.mutedInk),
+        labelStyle: ADayTypography.label.copyWith(color: palette.brandNavy),
         errorStyle: ADayTypography.caption.copyWith(
-          color: ADayColors.cancelCoral,
+          color: palette.cancelCoral,
         ),
-        enabledBorder: const OutlineInputBorder(
+        enabledBorder: OutlineInputBorder(
           borderRadius: ADaySpacing.controlRadius,
-          borderSide: BorderSide(color: ADayColors.dividerMist, width: 1.0),
+          borderSide: BorderSide(color: palette.dividerMist, width: 1.0),
         ),
-        focusedBorder: const OutlineInputBorder(
+        focusedBorder: OutlineInputBorder(
           borderRadius: ADaySpacing.controlRadius,
-          borderSide: BorderSide(color: ADayColors.actionBlue, width: 1.5),
+          borderSide: BorderSide(color: palette.actionBlue, width: 1.5),
         ),
-        errorBorder: const OutlineInputBorder(
+        errorBorder: OutlineInputBorder(
           borderRadius: ADaySpacing.controlRadius,
-          borderSide: BorderSide(color: ADayColors.cancelCoral, width: 1.5),
+          borderSide: BorderSide(color: palette.cancelCoral, width: 1.5),
         ),
-        focusedErrorBorder: const OutlineInputBorder(
+        focusedErrorBorder: OutlineInputBorder(
           borderRadius: ADaySpacing.controlRadius,
-          borderSide: BorderSide(color: ADayColors.cancelCoral, width: 2.0),
+          borderSide: BorderSide(color: palette.cancelCoral, width: 2.0),
         ),
       ),
 
       // --- Divider Theme ---
-      dividerTheme: const DividerThemeData(
-        color: ADayColors.dividerMist,
+      dividerTheme: DividerThemeData(
+        color: palette.dividerMist,
         thickness: 1.0,
         space: 1.0,
       ),
@@ -177,38 +184,40 @@ abstract final class ADayTheme {
         shape: const RoundedRectangleBorder(
           borderRadius: ADaySpacing.checkboxRadius,
         ),
-        side: const BorderSide(color: ADayColors.dividerMist, width: 1.5),
+        side: BorderSide(color: palette.dividerMist, width: 1.5),
         fillColor: WidgetStateProperty.resolveWith<Color>((states) {
           if (states.contains(WidgetState.selected)) {
-            return ADayColors.progressTeal;
+            return palette.progressTeal;
           }
           return Colors.transparent;
         }),
-        checkColor: const WidgetStatePropertyAll<Color>(ADayColors.surface),
+        checkColor: WidgetStatePropertyAll<Color>(
+          isDark ? const Color(0xFF0B1220) : palette.surface,
+        ),
       ),
 
       // --- Chip Theme ---
       chipTheme: ChipThemeData(
-        backgroundColor: ADayColors.coolSurface,
-        disabledColor: ADayColors.coolSurface.withValues(alpha: 0.5),
-        selectedColor: ADayColors.actionBlueTint,
+        backgroundColor: palette.coolSurface,
+        disabledColor: palette.coolSurface.withValues(alpha: 0.5),
+        selectedColor: palette.actionBlueTint,
         padding: ADaySpacing.paddingChip,
         shape: const RoundedRectangleBorder(
           borderRadius: ADaySpacing.pillRadius,
           side: BorderSide(color: Colors.transparent),
         ),
         labelStyle: ADayTypography.caption.copyWith(
-          color: ADayColors.brandNavy,
+          color: palette.brandNavy,
           fontWeight: FontWeight.w600,
         ),
-        iconTheme: const IconThemeData(color: ADayColors.mutedInk, size: 16.0),
+        iconTheme: IconThemeData(color: palette.mutedInk, size: 16.0),
       ),
 
       // --- Bottom Navigation Theme ---
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: ADayColors.surface,
-        selectedItemColor: ADayColors.actionBlue,
-        unselectedItemColor: ADayColors.mutedInk,
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: palette.surface,
+        selectedItemColor: palette.actionBlue,
+        unselectedItemColor: palette.mutedInk,
         selectedLabelStyle: TextStyle(
           fontFamily: ADayTypography.fontFamily,
           fontSize: 12.0,
@@ -224,9 +233,15 @@ abstract final class ADayTheme {
       ),
 
       // --- Extensions ---
-      extensions: const [ADayColorsExtension(), ADayTypographyExtension()],
+      extensions: [
+        ADayColorsExtension.fromPalette(palette),
+        const ADayTypographyExtension(),
+      ],
     );
   }
+
+  /// Backward compatible helper
+  static ThemeData light({Color? accentColor}) => forThemeId('default');
 
   /// Convenience helper to access [ADayColorsExtension] from context.
   static ADayColorsExtension colorsOf(BuildContext context) {

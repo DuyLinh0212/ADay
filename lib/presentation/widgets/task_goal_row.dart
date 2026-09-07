@@ -93,7 +93,7 @@ class TaskGoalRow extends StatelessWidget {
                                 ),
                               ),
                               child: isCompleted
-                                  ? const Icon(
+                                  ? Icon(
                                       Icons.check_rounded,
                                       size: 16.0,
                                       color: ADayColors.surface,
@@ -176,7 +176,7 @@ class TaskGoalRow extends StatelessWidget {
                 ),
               ),
               if (showDivider)
-                const Divider(
+                Divider(
                   indent: ADaySpacing.md,
                   endIndent: ADaySpacing.md,
                   height: 1.0,

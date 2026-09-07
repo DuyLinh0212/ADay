@@ -44,6 +44,7 @@ class StatisticsScreen extends StatelessWidget {
     this.onBreakdownTap,
     this.onCategoryDetailsTap,
     this.onInsightTap,
+    this.onCreateGoalTap,
     this.onNavTap,
   });
 
@@ -64,6 +65,7 @@ class StatisticsScreen extends StatelessWidget {
   final VoidCallback? onBreakdownTap;
   final VoidCallback? onCategoryDetailsTap;
   final VoidCallback? onInsightTap;
+  final VoidCallback? onCreateGoalTap;
   final ValueChanged<int>? onNavTap;
 
   @override
@@ -150,6 +152,7 @@ class StatisticsScreen extends StatelessWidget {
           ? ADayBottomNav(
               currentIndex: bottomNavIndex,
               onTap: onNavTap ?? (_) {},
+              onCreateGoalTap: onCreateGoalTap,
             )
           : null,
     );

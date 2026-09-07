@@ -1,144 +1,520 @@
 import 'package:flutter/material.dart';
 
-/// Design tokens for the ADay color palette as specified in DESIGN.md.
-///
-/// Creative North Star: "Bình minh có kế hoạch" (Sunrise with a plan).
-/// The palette travels from morning sky to earth teal, with sunrise gold
-/// and cancel coral reserved for status indicators requiring attention.
-abstract final class ADayColors {
+/// Complete color palette for a specific ADay theme matching the 5 templates.
+class ADayThemePalette {
+  const ADayThemePalette({
+    required this.id,
+    required this.name,
+    required this.isDark,
+    required this.brandNavy,
+    required this.actionBlue,
+    required this.skyCyan,
+    required this.progressTeal,
+    required this.successMint,
+    required this.sunriseGold,
+    required this.cancelCoral,
+    required this.canvas,
+    required this.surface,
+    required this.coolSurface,
+    required this.mutedInk,
+    required this.dividerMist,
+    required this.actionBlueTint,
+    required this.progressTealTint,
+    required this.sunriseGoldTint,
+    required this.cancelCoralTint,
+    required this.brandNavyTint,
+    required this.heroGradient,
+    required this.morningSkyGradient,
+    required this.reminderGradient,
+    required this.appIconGradient,
+    required this.ambientLow,
+    required this.focusHalo,
+  });
+
+  final String id;
+  final String name;
+  final bool isDark;
+  final Color brandNavy;
+  final Color actionBlue;
+  final Color skyCyan;
+  final Color progressTeal;
+  final Color successMint;
+  final Color sunriseGold;
+  final Color cancelCoral;
+  final Color canvas;
+  final Color surface;
+  final Color coolSurface;
+  final Color mutedInk;
+  final Color dividerMist;
+  final Color actionBlueTint;
+  final Color progressTealTint;
+  final Color sunriseGoldTint;
+  final Color cancelCoralTint;
+  final Color brandNavyTint;
+  final LinearGradient heroGradient;
+  final LinearGradient morningSkyGradient;
+  final LinearGradient reminderGradient;
+  final LinearGradient appIconGradient;
+  final List<BoxShadow> ambientLow;
+  final List<BoxShadow> focusHalo;
+
+  /// Default: Bình minh ADay (Sunrise Blue)
+  static const defaultPalette = ADayThemePalette(
+    id: 'default',
+    name: 'Bình minh ADay',
+    isDark: false,
+    brandNavy: Color(0xFF0A3768),
+    actionBlue: Color(0xFF168AF2),
+    skyCyan: Color(0xFF27BCEB),
+    progressTeal: Color(0xFF0EB8AC),
+    successMint: Color(0xFF20C99A),
+    sunriseGold: Color(0xFFFFB52E),
+    cancelCoral: Color(0xFFF0525E),
+    canvas: Color(0xFFF7FCFF),
+    surface: Color(0xFFFFFFFF),
+    coolSurface: Color(0xFFEEF7FD),
+    mutedInk: Color(0xFF6683A5),
+    dividerMist: Color(0xFFDCE9F3),
+    actionBlueTint: Color(0x1F168AF2),
+    progressTealTint: Color(0x1F0EB8AC),
+    sunriseGoldTint: Color(0x2EFFB52E),
+    cancelCoralTint: Color(0x1FF0525E),
+    brandNavyTint: Color(0x140A3768),
+    heroGradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFF168AF2), Color(0xFF22B4E6), Color(0xFF0EB8AC)],
+    ),
+    morningSkyGradient: LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [Color(0xFFE8F6FD), Color(0xFFD6F0FA)],
+    ),
+    reminderGradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFFFFF9EE), Color(0xFFFFF2D6)],
+    ),
+    appIconGradient: LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [Color(0xFF38B8F8), Color(0xFF0EB8AC)],
+    ),
+    ambientLow: [
+      BoxShadow(
+        color: Color(0x1A1C5B84),
+        offset: Offset(0, 4),
+        blurRadius: 8,
+        spreadRadius: 0,
+      ),
+    ],
+    focusHalo: [
+      BoxShadow(
+        color: Color(0x3D168AF2),
+        offset: Offset.zero,
+        blurRadius: 0,
+        spreadRadius: 3,
+      ),
+    ],
+  );
+
+  /// Theme 1: Lavender Dream (1224c664...png)
+  static const lavenderDream = ADayThemePalette(
+    id: 'theme_1',
+    name: 'Lavender Dream',
+    isDark: false,
+    brandNavy: Color(0xFF241442),
+    actionBlue: Color(0xFF7C3AED),
+    skyCyan: Color(0xFF885CF6),
+    progressTeal: Color(0xFFA855F7),
+    successMint: Color(0xFF22C55E),
+    sunriseGold: Color(0xFFF59E0B),
+    cancelCoral: Color(0xFFEF4444),
+    canvas: Color(0xFFF9F6FF),
+    surface: Color(0xFFFFFFFF),
+    coolSurface: Color(0xFFEDE7FF),
+    mutedInk: Color(0xFF6D5F8A),
+    dividerMist: Color(0xFFE5DBFF),
+    actionBlueTint: Color(0x247C3AED),
+    progressTealTint: Color(0x24A855F7),
+    sunriseGoldTint: Color(0x28F59E0B),
+    cancelCoralTint: Color(0x24EF4444),
+    brandNavyTint: Color(0x14241442),
+    heroGradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFF885CF6), Color(0xFF7C3AED), Color(0xFF5B21B6)],
+    ),
+    morningSkyGradient: LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [Color(0xFFF5EEFF), Color(0xFFEDE7FF)],
+    ),
+    reminderGradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFFFAF5FF), Color(0xFFEDE7FF)],
+    ),
+    appIconGradient: LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [Color(0xFFD084FE), Color(0xFF7C3AED)],
+    ),
+    ambientLow: [
+      BoxShadow(
+        color: Color(0x1F4C1D95),
+        offset: Offset(0, 4),
+        blurRadius: 8,
+        spreadRadius: 0,
+      ),
+    ],
+    focusHalo: [
+      BoxShadow(
+        color: Color(0x3D7C3AED),
+        offset: Offset.zero,
+        blurRadius: 0,
+        spreadRadius: 3,
+      ),
+    ],
+  );
+
+  /// Theme 2: Sunset Peach (5cd0c0f3...png)
+  static const sunsetPeach = ADayThemePalette(
+    id: 'theme_2',
+    name: 'Sunset Peach',
+    isDark: false,
+    brandNavy: Color(0xFF3D1C06),
+    actionBlue: Color(0xFFF97316),
+    skyCyan: Color(0xFFFB923C),
+    progressTeal: Color(0xFFEA580C),
+    successMint: Color(0xFF10B981),
+    sunriseGold: Color(0xFFF59E0B),
+    cancelCoral: Color(0xFFEF4444),
+    canvas: Color(0xFFFFF8F4),
+    surface: Color(0xFFFFFFFF),
+    coolSurface: Color(0xFFFFEDE2),
+    mutedInk: Color(0xFF8C644E),
+    dividerMist: Color(0xFFFED7AA),
+    actionBlueTint: Color(0x26F97316),
+    progressTealTint: Color(0x26EA580C),
+    sunriseGoldTint: Color(0x26F59E0B),
+    cancelCoralTint: Color(0x26EF4444),
+    brandNavyTint: Color(0x143D1C06),
+    heroGradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFFFB923C), Color(0xFFF97316), Color(0xFFEA580C)],
+    ),
+    morningSkyGradient: LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [Color(0xFFFFF7ED), Color(0xFFFFEDD5)],
+    ),
+    reminderGradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFFFFFBEB), Color(0xFFFEF3C7)],
+    ),
+    appIconGradient: LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [Color(0xFFFDBA74), Color(0xFFEA580C)],
+    ),
+    ambientLow: [
+      BoxShadow(
+        color: Color(0x1F9A3412),
+        offset: Offset(0, 4),
+        blurRadius: 8,
+        spreadRadius: 0,
+      ),
+    ],
+    focusHalo: [
+      BoxShadow(
+        color: Color(0x3DF97316),
+        offset: Offset.zero,
+        blurRadius: 0,
+        spreadRadius: 3,
+      ),
+    ],
+  );
+
+  /// Theme 3: Midnight Indigo (7c918954...png) - Dark Mode!
+  static const midnightIndigo = ADayThemePalette(
+    id: 'theme_3',
+    name: 'Midnight Indigo',
+    isDark: true,
+    brandNavy: Color(0xFFF1F5F9),
+    actionBlue: Color(0xFF38BDF8),
+    skyCyan: Color(0xFF06B6D4),
+    progressTeal: Color(0xFF22D3EE),
+    successMint: Color(0xFF34D399),
+    sunriseGold: Color(0xFFFBBF24),
+    cancelCoral: Color(0xFFF87171),
+    canvas: Color(0xFF0B1220),
+    surface: Color(0xFF131E33),
+    coolSurface: Color(0xFF1E293B),
+    mutedInk: Color(0xFF94A3B8),
+    dividerMist: Color(0xFF27354A),
+    actionBlueTint: Color(0x3838BDF8),
+    progressTealTint: Color(0x3822D3EE),
+    sunriseGoldTint: Color(0x38FBBF24),
+    cancelCoralTint: Color(0x38F87171),
+    brandNavyTint: Color(0x29F1F5F9),
+    heroGradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFF1E3A8A), Color(0xFF1D4ED8), Color(0xFF06B6D4)],
+    ),
+    morningSkyGradient: LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [Color(0xFF131E33), Color(0xFF0B1220)],
+    ),
+    reminderGradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFF1E293B), Color(0xFF131E33)],
+    ),
+    appIconGradient: LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [Color(0xFF818CF8), Color(0xFF06B6D4)],
+    ),
+    ambientLow: [
+      BoxShadow(
+        color: Color(0x40000000),
+        offset: Offset(0, 4),
+        blurRadius: 10,
+        spreadRadius: 0,
+      ),
+    ],
+    focusHalo: [
+      BoxShadow(
+        color: Color(0x5238BDF8),
+        offset: Offset.zero,
+        blurRadius: 0,
+        spreadRadius: 3,
+      ),
+    ],
+  );
+
+  /// Theme 4: Rose Blush (7fa13b9e...png)
+  static const roseBlush = ADayThemePalette(
+    id: 'theme_4',
+    name: 'Rose Blush',
+    isDark: false,
+    brandNavy: Color(0xFF460D27),
+    actionBlue: Color(0xFFE11D48),
+    skyCyan: Color(0xFFFB7185),
+    progressTeal: Color(0xFFF43F5E),
+    successMint: Color(0xFF10B981),
+    sunriseGold: Color(0xFFF59E0B),
+    cancelCoral: Color(0xFFE11D48),
+    canvas: Color(0xFFFFF5F7),
+    surface: Color(0xFFFFFFFF),
+    coolSurface: Color(0xFFFDE7EA),
+    mutedInk: Color(0xFF885B6D),
+    dividerMist: Color(0xFFFCE7F3),
+    actionBlueTint: Color(0x26E11D48),
+    progressTealTint: Color(0x26F43F5E),
+    sunriseGoldTint: Color(0x26F59E0B),
+    cancelCoralTint: Color(0x26E11D48),
+    brandNavyTint: Color(0x14460D27),
+    heroGradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFFF472B6), Color(0xFFE11D48), Color(0xFF9D174D)],
+    ),
+    morningSkyGradient: LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [Color(0xFFFFF1F2), Color(0xFFFDE7EA)],
+    ),
+    reminderGradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFFFFF1F2), Color(0xFFFCE7F3)],
+    ),
+    appIconGradient: LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [Color(0xFFF884C2), Color(0xFF881E4D)],
+    ),
+    ambientLow: [
+      BoxShadow(
+        color: Color(0x1F881E4D),
+        offset: Offset(0, 4),
+        blurRadius: 8,
+        spreadRadius: 0,
+      ),
+    ],
+    focusHalo: [
+      BoxShadow(
+        color: Color(0x3DE11D48),
+        offset: Offset.zero,
+        blurRadius: 0,
+        spreadRadius: 3,
+      ),
+    ],
+  );
+
+  /// Theme 5: Forest Sage (e060c34f...png)
+  static const forestSage = ADayThemePalette(
+    id: 'theme_5',
+    name: 'Forest Sage',
+    isDark: false,
+    brandNavy: Color(0xFF123524),
+    actionBlue: Color(0xFF2E7D57),
+    skyCyan: Color(0xFF7FB069),
+    progressTeal: Color(0xFF185E3F),
+    successMint: Color(0xFF10B981),
+    sunriseGold: Color(0xFFF59E0B),
+    cancelCoral: Color(0xFFEF4444),
+    canvas: Color(0xFFF6FAF7),
+    surface: Color(0xFFFFFFFF),
+    coolSurface: Color(0xFFD8EAD7),
+    mutedInk: Color(0xFF4A6B59),
+    dividerMist: Color(0xFFC7E2C6),
+    actionBlueTint: Color(0x262E7D57),
+    progressTealTint: Color(0x26185E3F),
+    sunriseGoldTint: Color(0x26F59E0B),
+    cancelCoralTint: Color(0x26EF4444),
+    brandNavyTint: Color(0x14123524),
+    heroGradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFF2E7D57), Color(0xFF185E3F), Color(0xFF144D33)],
+    ),
+    morningSkyGradient: LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [Color(0xFFF1F8F3), Color(0xFFD8EAD7)],
+    ),
+    reminderGradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFFF8F7EE), Color(0xFFE8F2E8)],
+    ),
+    appIconGradient: LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [Color(0xFF7FB069), Color(0xFF185E3F)],
+    ),
+    ambientLow: [
+      BoxShadow(
+        color: Color(0x1F185E3F),
+        offset: Offset(0, 4),
+        blurRadius: 8,
+        spreadRadius: 0,
+      ),
+    ],
+    focusHalo: [
+      BoxShadow(
+        color: Color(0x3D2E7D57),
+        offset: Offset.zero,
+        blurRadius: 0,
+        spreadRadius: 3,
+      ),
+    ],
+  );
+
+  static ADayThemePalette forId(String id) => switch (id) {
+    'theme_1' => lavenderDream,
+    'theme_2' => sunsetPeach,
+    'theme_3' => midnightIndigo,
+    'theme_4' => roseBlush,
+    'theme_5' => forestSage,
+    _ => defaultPalette,
+  };
+}
+
+/// Dynamic design tokens for ADay. Automatically updates when active theme changes.
+abstract class ADayColors {
+  static ADayThemePalette _current = ADayThemePalette.defaultPalette;
+  static ADayThemePalette get current => _current;
+
+  static void applyTheme(String themeId) {
+    _current = ADayThemePalette.forId(themeId);
+  }
+
   // --- Primary Brand Colors ---
-
-  /// Brand Navy: Main titles, high-contrast text, neutral icons.
-  static const Color brandNavy = Color(0xFF0A3768);
-
-  /// Action Blue: Primary actions, active navigation tabs, interactive links, focus halo.
-  static const Color actionBlue = Color(0xFF168AF2);
+  static Color get brandNavy => _current.brandNavy;
+  static Color get actionBlue => _current.actionBlue;
 
   // --- Secondary Accents ---
-
-  /// Sky Cyan: Morning sky accents, hero card gradients, supporting charts.
-  static const Color skyCyan = Color(0xFF27BCEB);
-
-  /// Progress Teal: Circular progress sweeps, completion badges, positive trends.
-  static const Color progressTeal = Color(0xFF0EB8AC);
-
-  /// Success Mint: Secondary success accents and subtle highlights.
-  static const Color successMint = Color(0xFF20C99A);
+  static Color get skyCyan => _current.skyCyan;
+  static Color get progressTeal => _current.progressTeal;
+  static Color get successMint => _current.successMint;
 
   // --- Tertiary Status Colors ---
-
-  /// Sunrise Gold: Evening reminders, postponed items, preparation prompts.
-  static const Color sunriseGold = Color(0xFFFFB52E);
-
-  /// Cancel Coral: Cancelled goals, overdue markers, critical errors.
-  /// Never used purely for decoration.
-  static const Color cancelCoral = Color(0xFFF0525E);
+  static Color get sunriseGold => _current.sunriseGold;
+  static Color get cancelCoral => _current.cancelCoral;
 
   // --- Neutrals & Surfaces ---
-
-  /// Morning Canvas: The crisp, cool-light app background.
-  static const Color canvas = Color(0xFFF7FCFF);
-
-  /// Clear Surface: Primary content cards, modals, sheets.
-  static const Color surface = Color(0xFFFFFFFF);
-
-  /// Cool Surface: Secondary control groups, inactive buttons, subtle containers.
-  static const Color coolSurface = Color(0xFFEEF7FD);
-
-  /// Muted Ink: Secondary descriptions, timestamps, metadata (>= 4.5:1 contrast).
-  static const Color mutedInk = Color(0xFF6683A5);
-
-  /// Divider Mist: 1px hairline dividers and subtle borders.
-  static const Color dividerMist = Color(0xFFDCE9F3);
+  static Color get canvas => _current.canvas;
+  static Color get surface => _current.surface;
+  static Color get coolSurface => _current.coolSurface;
+  static Color get mutedInk => _current.mutedInk;
+  static Color get dividerMist => _current.dividerMist;
 
   // --- Tints & Translucent Backgrounds ---
-
-  /// Soft Action Blue tint for selected chips and active badges.
-  static const Color actionBlueTint = Color(0x1F168AF2);
-
-  /// Soft Progress Teal tint for completed task items.
-  static const Color progressTealTint = Color(0x1F0EB8AC);
-
-  /// Soft Sunrise Gold tint for reminder banners and postponed chips.
-  static const Color sunriseGoldTint = Color(0x2EFFB52E);
-
-  /// Soft Cancel Coral tint for cancelled chips and error warnings.
-  static const Color cancelCoralTint = Color(0x1FF0525E);
-
-  /// Soft Brand Navy tint for category icons and subtle containers.
-  static const Color brandNavyTint = Color(0x140A3768);
+  static Color get actionBlueTint => _current.actionBlueTint;
+  static Color get progressTealTint => _current.progressTealTint;
+  static Color get sunriseGoldTint => _current.sunriseGoldTint;
+  static Color get cancelCoralTint => _current.cancelCoralTint;
+  static Color get brandNavyTint => _current.brandNavyTint;
 
   // --- Gradients ---
-
-  /// Signature Hero Card Gradient: Action Blue -> Sky Cyan -> Progress Teal.
-  static const LinearGradient heroGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [Color(0xFF168AF2), Color(0xFF22B4E6), Color(0xFF0EB8AC)],
-  );
-
-  /// Morning Sky Gradient for illustrations and empty states.
-  static const LinearGradient morningSkyGradient = LinearGradient(
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-    colors: [Color(0xFFE8F6FD), Color(0xFFD6F0FA)],
-  );
-
-  /// Sunrise banner gentle background gradient.
-  static const LinearGradient reminderGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [Color(0xFFFFF9EE), Color(0xFFFFF2D6)],
-  );
-
-  /// Logo app icon background gradient.
-  static const LinearGradient appIconGradient = LinearGradient(
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-    colors: [Color(0xFF38B8F8), Color(0xFF0EB8AC)],
-  );
+  static LinearGradient get heroGradient => _current.heroGradient;
+  static LinearGradient get morningSkyGradient => _current.morningSkyGradient;
+  static LinearGradient get reminderGradient => _current.reminderGradient;
+  static LinearGradient get appIconGradient => _current.appIconGradient;
 
   // --- Elevation & Shadows ---
+  static List<BoxShadow> get ambientLow => _current.ambientLow;
+  static List<BoxShadow> get focusHalo => _current.focusHalo;
 
-  /// Ambient Low: Soft ambient shadow for floating bottom navigation and panels.
-  /// 0 4px 8px rgba(28, 91, 132, 0.10)
-  static const List<BoxShadow> ambientLow = [
-    BoxShadow(
-      color: Color(0x1A1C5B84),
-      offset: Offset(0, 4),
-      blurRadius: 8,
-      spreadRadius: 0,
-    ),
-  ];
-
-  /// Focus Halo: Accessibility focus ring for keyboard navigation or switch control.
-  /// 0 0 0 3px rgba(22, 138, 242, 0.24)
-  static const List<BoxShadow> focusHalo = [
-    BoxShadow(
-      color: Color(0x3D168AF2),
-      offset: Offset.zero,
-      blurRadius: 0,
-      spreadRadius: 3,
-    ),
-  ];
+  // Compile-time fallbacks for const contexts
+  static const Color defaultBrandNavy = Color(0xFF0A3768);
+  static const Color defaultActionBlue = Color(0xFF168AF2);
+  static const Color defaultCanvas = Color(0xFFF7FCFF);
+  static const Color defaultSurface = Color(0xFFFFFFFF);
+  static const Color defaultDividerMist = Color(0xFFDCE9F3);
 }
 
 /// Theme extension for ADay custom colors to support Theme.of(context).extension.
 class ADayColorsExtension extends ThemeExtension<ADayColorsExtension> {
   const ADayColorsExtension({
-    this.brandNavy = ADayColors.brandNavy,
-    this.actionBlue = ADayColors.actionBlue,
-    this.skyCyan = ADayColors.skyCyan,
-    this.progressTeal = ADayColors.progressTeal,
-    this.successMint = ADayColors.successMint,
-    this.sunriseGold = ADayColors.sunriseGold,
-    this.cancelCoral = ADayColors.cancelCoral,
-    this.canvas = ADayColors.canvas,
-    this.surface = ADayColors.surface,
-    this.coolSurface = ADayColors.coolSurface,
-    this.mutedInk = ADayColors.mutedInk,
-    this.dividerMist = ADayColors.dividerMist,
+    this.brandNavy = ADayColors.defaultBrandNavy,
+    this.actionBlue = ADayColors.defaultActionBlue,
+    this.skyCyan = const Color(0xFF27BCEB),
+    this.progressTeal = const Color(0xFF0EB8AC),
+    this.successMint = const Color(0xFF20C99A),
+    this.sunriseGold = const Color(0xFFFFB52E),
+    this.cancelCoral = const Color(0xFFF0525E),
+    this.canvas = ADayColors.defaultCanvas,
+    this.surface = ADayColors.defaultSurface,
+    this.coolSurface = const Color(0xFFEEF7FD),
+    this.mutedInk = const Color(0xFF6683A5),
+    this.dividerMist = ADayColors.defaultDividerMist,
   });
+
+  factory ADayColorsExtension.fromPalette(ADayThemePalette palette) {
+    return ADayColorsExtension(
+      brandNavy: palette.brandNavy,
+      actionBlue: palette.actionBlue,
+      skyCyan: palette.skyCyan,
+      progressTeal: palette.progressTeal,
+      successMint: palette.successMint,
+      sunriseGold: palette.sunriseGold,
+      cancelCoral: palette.cancelCoral,
+      canvas: palette.canvas,
+      surface: palette.surface,
+      coolSurface: palette.coolSurface,
+      mutedInk: palette.mutedInk,
+      dividerMist: palette.dividerMist,
+    );
+  }
 
   final Color brandNavy;
   final Color actionBlue;

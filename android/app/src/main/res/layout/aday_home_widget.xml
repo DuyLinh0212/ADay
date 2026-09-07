@@ -1,5 +1,270 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/widget_root" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="16dp" android:background="#168AF2">
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="ADay · Hôm nay" android:textColor="#FFFFFFFF" android:textSize="18sp" android:textStyle="bold" />
-    <TextView android:id="@+id/widget_remaining" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:textColor="#FFFFFFFF" android:textSize="16sp" />
-    <TextView android:id="@+id/widget_completed" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:textColor="#DFFFFFFF" android:textSize="14sp" />
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="@drawable/aday_widget_bg_default">
+
+    <!-- Top Header: Logo + App Name + Quote -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/widget_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ADay"
+                android:textColor="#0A3768"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/widget_subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Plan Today • A Better Tomorrow"
+                android:textColor="#6683A5"
+                android:textSize="9sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/widget_quote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="“Kiên trì hôm nay,\nthành công ngày mai!”"
+            android:textColor="#0A3768"
+            android:textSize="9sp"
+            android:textStyle="italic|bold"
+            android:gravity="end" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="6dp"
+        android:background="#1F6683A5" />
+
+    <!-- 2 Columns Body: Progress Card (Left) & Today Tasks (Right) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <!-- Left Column: Progress Card -->
+        <LinearLayout
+            android:id="@+id/widget_left_card"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="42"
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:background="@drawable/aday_widget_card_light">
+
+            <TextView
+                android:id="@+id/widget_progress_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Đã hoàn thành"
+                android:textColor="#6683A5"
+                android:textSize="9sp" />
+
+            <TextView
+                android:id="@+id/widget_percent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="67%"
+                android:textColor="#0A3768"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/widget_completed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="4 / 6 nhiệm vụ"
+                android:textColor="#168AF2"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <ProgressBar
+                android:id="@+id/widget_progress_bar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:layout_marginTop="4dp"
+                android:max="100"
+                android:progress="67" />
+
+            <TextView
+                android:id="@+id/widget_remaining"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="2 việc còn lại"
+                android:textColor="#6683A5"
+                android:textSize="9sp" />
+
+            <TextView
+                android:id="@+id/widget_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Hôm nay"
+                android:textColor="#0A3768"
+                android:textSize="9sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Right Column: Today Tasks -->
+        <LinearLayout
+            android:id="@+id/widget_right_card"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="58"
+            android:layout_marginStart="8dp"
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:background="@drawable/aday_widget_card_light">
+
+            <TextView
+                android:id="@+id/widget_tasks_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nhiệm vụ hôm nay"
+                android:textColor="#0A3768"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <!-- Task 1 -->
+            <LinearLayout
+                android:id="@+id/widget_task1_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <View
+                    android:id="@+id/widget_task1_check"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:background="@drawable/aday_widget_check_done" />
+
+                <TextView
+                    android:id="@+id/widget_task1_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="5dp"
+                    android:text="Đọc sách 30 phút"
+                    android:textColor="#0A3768"
+                    android:textSize="10sp"
+                    android:singleLine="true"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/widget_task1_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cả ngày"
+                    android:textColor="#6683A5"
+                    android:textSize="8sp" />
+            </LinearLayout>
+
+            <!-- Task 2 -->
+            <LinearLayout
+                android:id="@+id/widget_task2_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <View
+                    android:id="@+id/widget_task2_check"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:background="@drawable/aday_widget_check_done" />
+
+                <TextView
+                    android:id="@+id/widget_task2_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="5dp"
+                    android:text="Tập thể dục"
+                    android:textColor="#0A3768"
+                    android:textSize="10sp"
+                    android:singleLine="true"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/widget_task2_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cả ngày"
+                    android:textColor="#6683A5"
+                    android:textSize="8sp" />
+            </LinearLayout>
+
+            <!-- Task 3 -->
+            <LinearLayout
+                android:id="@+id/widget_task3_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <View
+                    android:id="@+id/widget_task3_check"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:background="@drawable/aday_widget_check_todo" />
+
+                <TextView
+                    android:id="@+id/widget_task3_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="5dp"
+                    android:text="Học Flutter 1 giờ"
+                    android:textColor="#0A3768"
+                    android:textSize="10sp"
+                    android:singleLine="true"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/widget_task3_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="20:00"
+                    android:textColor="#6683A5"
+                    android:textSize="8sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/widget_footer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="✨ Mỗi ngày tốt hơn một chút!"
+                android:textColor="#6683A5"
+                android:textSize="8sp" />
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>
+

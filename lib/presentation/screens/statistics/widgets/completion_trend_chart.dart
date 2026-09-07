@@ -70,7 +70,7 @@ class CompletionTrendChart extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
+            Icon(
               Icons.bar_chart_rounded,
               color: ADayColors.actionBlue,
               size: 24.0,
@@ -108,7 +108,7 @@ class CompletionTrendChart extends StatelessWidget {
                     children: [
                       Text(
                         actionLabel,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: ADayTypography.fontFamily,
                           fontSize: 13.0,
                           fontWeight: FontWeight.w600,
@@ -116,7 +116,7 @@ class CompletionTrendChart extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 2.0),
-                      const Icon(
+                      Icon(
                         Icons.chevron_right_rounded,
                         size: 16.0,
                         color: ADayColors.actionBlue,
@@ -183,7 +183,7 @@ class _TrendChartPainter extends CustomPainter {
       final textPainter = TextPainter(
         text: TextSpan(
           text: _yLabels[i],
-          style: const TextStyle(
+          style: TextStyle(
             fontFamily: ADayTypography.fontFamily,
             fontSize: 10.5,
             fontWeight: FontWeight.w500,

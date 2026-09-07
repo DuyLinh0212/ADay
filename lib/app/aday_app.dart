@@ -34,13 +34,14 @@ class ADayApp extends StatelessWidget {
   final SettingsService settingsService;
 
   @override
-  Widget build(BuildContext context) => MaterialApp(
-    title: 'ADay',
-    debugShowCheckedModeBanner: false,
-    theme: ADayTheme.light(
-      accentColor: ADayThemeChoice.byId(controller.settings.themeId).seed,
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: controller,
+    builder: (context, _) => MaterialApp(
+      title: 'ADay',
+      debugShowCheckedModeBanner: false,
+      theme: ADayTheme.forThemeId(controller.settings.themeId),
+      home: ADayShell(controller: controller, settingsService: settingsService),
     ),
-    home: ADayShell(controller: controller, settingsService: settingsService),
   );
 }
 
@@ -132,8 +133,9 @@ class _ADayShellState extends State<ADayShell> {
       bottomNavIndex: _tabIndex,
       onToggleTask: _toggleHomeTask,
       onTaskTap: (task) => _openGoal(task.goalId),
-      onAddTodayTask: () => _openCreateTask(today),
+      onAddTodayTask: () => _openCreateGoal(startDate: today),
       onViewAllTodayTasks: () => _openTaskList(today),
+      onCreateGoalTap: () => _openCreateGoal(startDate: today),
       onCreateLongTermGoal: () =>
           _openCreateGoal(startDate: today, goalType: CreateGoalType.longTerm),
       onViewLongTermGoalAction: () =>
@@ -191,7 +193,8 @@ class _ADayShellState extends State<ADayShell> {
       },
       onToggleTask: _toggleHomeTask,
       onTaskTap: (task) => _openGoal(task.goalId),
-      onAddTask: () => _openCreateTask(_selectedDay),
+      onAddTask: () => _openCreateGoal(startDate: _selectedDay),
+      onCreateGoalTap: () => _openCreateGoal(startDate: DateTime.now()),
       onNavTap: _selectTab,
     );
   }
@@ -210,6 +213,7 @@ class _ADayShellState extends State<ADayShell> {
     onNotificationTap: _openTomorrowPlan,
     onAvatarTap: () => setState(() => _tabIndex = 3),
     onPeriodChanged: (period) => setState(() => _statisticsPeriod = period),
+    onCreateGoalTap: () => _openCreateGoal(startDate: DateTime.now()),
     onNavTap: _selectTab,
   );
 
@@ -226,8 +230,7 @@ class _ADayShellState extends State<ADayShell> {
       onAvatarTap: () => _selectTab(3),
       onEditAvatar: _editAvatar,
       onEditDisplayName: _editDisplayName,
-      onEditEmail: () =>
-          _showMessage('Email tài khoản của bạn: ${profileData.email}'),
+      onEditEmail: _editEmail,
       onSecurityTap: () =>
           _showMessage('Bảo mật tài khoản đang ở mức an toàn cao.'),
       onToggleReminderBefore22: _toggleDailyReminder,
@@ -256,6 +259,7 @@ class _ADayShellState extends State<ADayShell> {
       onTermsTap: () =>
           _showMessage('Điều khoản & Chính sách quyền riêng tư ADay.'),
       onLogoutTap: _confirmLogout,
+      onCreateGoalTap: () => _openCreateGoal(startDate: DateTime.now()),
       onNavTap: _selectTab,
     );
   }
@@ -350,17 +354,33 @@ class _ADayShellState extends State<ADayShell> {
     ),
   );
 
-  Future<void> _openWidgetSetup() => Navigator.of(context).push<void>(
-    MaterialPageRoute(
-      builder: (_) => WidgetSetupScreen(
-        themeId: controller.settings.themeId,
-        onAddWidget: () async {
-          await _syncHomeWidget();
-          return HomeWidgetBridge.requestPin();
-        },
+  Future<void> _openWidgetSetup() {
+    final now = DateTime.now();
+    final tasks = ADayViewMapper.homeTasks(controller, now);
+    final progress = ADayViewMapper.homeProgress(controller, now);
+    return Navigator.of(context).push<void>(
+      MaterialPageRoute(
+        builder: (_) => WidgetSetupScreen(
+          themeId: controller.settings.themeId,
+          todayTasks: tasks,
+          completedCount: progress.completedCount,
+          totalCount: progress.totalCount,
+          completionPercent: progress.percentageInt,
+          onApplyTheme: (newThemeId) async {
+            await controller.updateSettings(
+              controller.settings.copyWith(themeId: newThemeId),
+            );
+            await HomeWidgetBridge.setLauncherIcon(newThemeId);
+            await _syncHomeWidget();
+          },
+          onAddWidget: () async {
+            await _syncHomeWidget();
+            return HomeWidgetBridge.requestPin();
+          },
+        ),
       ),
-    ),
-  );
+    );
+  }
 
   Future<void> _openDriveBackup() => Navigator.of(context).push<void>(
     MaterialPageRoute(
@@ -386,11 +406,34 @@ class _ADayShellState extends State<ADayShell> {
   }
 
   Future<void> _syncHomeWidget() {
-    final tasks = ADayViewMapper.homeTasks(controller, DateTime.now());
+    final now = DateTime.now();
+    final tasks = ADayViewMapper.homeTasks(controller, now);
+    final completed = tasks.where((task) => task.isCompleted).length;
+    final remaining = tasks.where((task) => !task.isCompleted).length;
+    final total = completed + remaining;
+    final percent = total > 0 ? (completed * 100) ~/ total : 0;
+    final dateLabel =
+        'Hôm nay, ${now.day.toString().padLeft(2, '0')}/${now.month.toString().padLeft(2, '0')}';
+
+    final t1 = tasks.isNotEmpty ? tasks[0] : null;
+    final t2 = tasks.length > 1 ? tasks[1] : null;
+    final t3 = tasks.length > 2 ? tasks[2] : null;
+
     return HomeWidgetBridge.update(
       themeId: controller.settings.themeId,
-      taskCount: tasks.where((task) => !task.isCompleted).length,
-      completedCount: tasks.where((task) => task.isCompleted).length,
+      taskCount: remaining,
+      completedCount: completed,
+      percent: percent,
+      dateLabel: dateLabel,
+      task1Title: t1?.title,
+      task1Done: t1?.isCompleted,
+      task1Time: t1?.isAllDay == true ? 'Cả ngày' : t1?.timeLabel,
+      task2Title: t2?.title,
+      task2Done: t2?.isCompleted,
+      task2Time: t2?.isAllDay == true ? 'Cả ngày' : t2?.timeLabel,
+      task3Title: t3?.title,
+      task3Done: t3?.isCompleted,
+      task3Time: t3?.isAllDay == true ? 'Cả ngày' : t3?.timeLabel,
     );
   }
 
@@ -406,7 +449,6 @@ class _ADayShellState extends State<ADayShell> {
             tasks: ADayViewMapper.homeTasks(controller, day),
             onToggleTask: _toggleHomeTask,
             onTaskTap: (task) => _openGoal(task.goalId),
-            onCreateTask: () => _openCreateTask(day),
           ),
         ),
       ),
@@ -431,6 +473,7 @@ class _ADayShellState extends State<ADayShell> {
     );
   }
 
+  // ignore: unused_element
   Future<void> _openCreateTask(DateTime scheduledDate) async {
     await Navigator.of(context).push<void>(
       MaterialPageRoute(
@@ -737,6 +780,47 @@ class _ADayShellState extends State<ADayShell> {
           controller.settings.copyWith(displayName: name),
         ),
       );
+    }
+  }
+
+  Future<void> _editEmail() async {
+    final editor = TextEditingController(text: controller.settings.email);
+    final email = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Email tài khoản'),
+        content: TextField(
+          controller: editor,
+          autofocus: true,
+          keyboardType: TextInputType.emailAddress,
+          decoration: const InputDecoration(
+            hintText: 'Nhập địa chỉ email',
+            labelText: 'Email',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Hủy'),
+          ),
+          FilledButton(
+            onPressed: () =>
+                Navigator.of(dialogContext).pop(editor.text.trim()),
+            child: const Text('Lưu'),
+          ),
+        ],
+      ),
+    );
+    editor.dispose();
+    if (email != null && email.isNotEmpty && email.contains('@')) {
+      await _guard(
+        () => controller.updateSettings(
+          controller.settings.copyWith(email: email),
+        ),
+      );
+      _showMessage('Đã cập nhật email thành công.');
+    } else if (email != null && email.isNotEmpty) {
+      _showMessage('Địa chỉ email không hợp lệ.');
     }
   }
 

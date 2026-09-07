@@ -297,7 +297,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                       ),
                     ),
                     trailing: isSelected
-                        ? const Icon(
+                        ? Icon(
                             Icons.check_rounded,
                             color: ADayColors.actionBlue,
                           )
@@ -352,7 +352,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                       ),
                     ),
                     trailing: isSelected
-                        ? const Icon(
+                        ? Icon(
                             Icons.check_rounded,
                             color: ADayColors.actionBlue,
                           )
@@ -428,19 +428,19 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                       contentPadding: ADaySpacing.paddingInput,
                       border: OutlineInputBorder(
                         borderRadius: ADaySpacing.controlRadius,
-                        borderSide: const BorderSide(
+                        borderSide: BorderSide(
                           color: ADayColors.dividerMist,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: ADaySpacing.controlRadius,
-                        borderSide: const BorderSide(
+                        borderSide: BorderSide(
                           color: ADayColors.dividerMist,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: ADaySpacing.controlRadius,
-                        borderSide: const BorderSide(
+                        borderSide: BorderSide(
                           color: ADayColors.actionBlue,
                           width: 1.5,
                         ),
@@ -500,7 +500,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                                       color: ADayColors.brandNavy,
                                     ),
                                   ),
-                                  const Icon(
+                                  Icon(
                                     Icons.access_time_rounded,
                                     size: 16.0,
                                     color: ADayColors.brandNavy,
@@ -544,7 +544,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                                       color: ADayColors.brandNavy,
                                     ),
                                   ),
-                                  const Icon(
+                                  Icon(
                                     Icons.access_time_rounded,
                                     size: 16.0,
                                     color: ADayColors.brandNavy,
@@ -601,7 +601,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
           label: 'Quay lại',
           button: true,
           child: IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.chevron_left_rounded,
               color: ADayColors.brandNavy,
               size: 28.0,
@@ -647,7 +647,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.help_outline_rounded,
                           size: 15.0,
                           color: ADayColors.actionBlue,
@@ -728,7 +728,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
             // --- Bottom Fixed Submit Button ---
             Container(
               padding: const EdgeInsets.all(ADaySpacing.md),
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: ADayColors.surface,
                 border: Border(
                   top: BorderSide(color: ADayColors.dividerMist, width: 1.0),
@@ -1002,15 +1002,15 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
               contentPadding: ADaySpacing.paddingInput,
               border: OutlineInputBorder(
                 borderRadius: ADaySpacing.controlRadius,
-                borderSide: const BorderSide(color: ADayColors.dividerMist),
+                borderSide: BorderSide(color: ADayColors.dividerMist),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: ADaySpacing.controlRadius,
-                borderSide: const BorderSide(color: ADayColors.dividerMist),
+                borderSide: BorderSide(color: ADayColors.dividerMist),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: ADaySpacing.controlRadius,
-                borderSide: const BorderSide(
+                borderSide: BorderSide(
                   color: ADayColors.actionBlue,
                   width: 1.5,
                 ),
@@ -1066,15 +1066,15 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
               contentPadding: ADaySpacing.paddingInput,
               border: OutlineInputBorder(
                 borderRadius: ADaySpacing.controlRadius,
-                borderSide: const BorderSide(color: ADayColors.dividerMist),
+                borderSide: BorderSide(color: ADayColors.dividerMist),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: ADaySpacing.controlRadius,
-                borderSide: const BorderSide(color: ADayColors.dividerMist),
+                borderSide: BorderSide(color: ADayColors.dividerMist),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: ADaySpacing.controlRadius,
-                borderSide: const BorderSide(
+                borderSide: BorderSide(
                   color: ADayColors.actionBlue,
                   width: 1.5,
                 ),
@@ -1131,7 +1131,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        const Icon(
+                        Icon(
                           Icons.keyboard_arrow_down_rounded,
                           size: 18.0,
                           color: ADayColors.mutedInk,
@@ -1188,7 +1188,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        const Icon(
+                        Icon(
                           Icons.keyboard_arrow_down_rounded,
                           size: 18.0,
                           color: ADayColors.mutedInk,
@@ -1237,7 +1237,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                         ),
                         child: Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.calendar_today_rounded,
                               size: 16.0,
                               color: ADayColors.actionBlue,
@@ -1255,7 +1255,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            const Icon(
+                            Icon(
                               Icons.keyboard_arrow_down_rounded,
                               size: 18.0,
                               color: ADayColors.mutedInk,
@@ -1305,7 +1305,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                         ),
                         child: Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.calendar_month_outlined,
                               size: 16.0,
                               color: ADayColors.mutedInk,
@@ -1337,14 +1337,14 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                                     _dateError = null;
                                   });
                                 },
-                                child: const Icon(
+                                child: Icon(
                                   Icons.close_rounded,
                                   size: 16.0,
                                   color: ADayColors.mutedInk,
                                 ),
                               )
                             else
-                              const Icon(
+                              Icon(
                                 Icons.keyboard_arrow_down_rounded,
                                 size: 18.0,
                                 color: ADayColors.mutedInk,
@@ -1435,7 +1435,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
             ),
           ),
           if (_hasReminder) ...[
-            const Divider(
+            Divider(
               height: 1.0,
               indent: ADaySpacing.md,
               endIndent: ADaySpacing.md,
@@ -1454,7 +1454,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.access_time_rounded,
                         size: 20.0,
                         color: ADayColors.actionBlue,
@@ -1478,7 +1478,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                         ),
                       ),
                       const SizedBox(width: 4.0),
-                      const Icon(
+                      Icon(
                         Icons.chevron_right_rounded,
                         size: 20.0,
                         color: ADayColors.mutedInk,
@@ -1548,7 +1548,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                   child: Row(
                     children: [
                       // Reorder icon handle
-                      const Icon(
+                      Icon(
                         Icons.drag_indicator_rounded,
                         size: 20.0,
                         color: ADayColors.mutedInk,
@@ -1586,10 +1586,11 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                       task.isAllDay
                           ? const StatusTimeChip.allDay()
                           : StatusTimeChip.time(timeRange: task.timeLabel),
+                      const SizedBox(width: ADaySpacing.xs),
 
                       // Remove button
                       IconButton(
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.delete_outline_rounded,
                           size: 18.0,
                           color: ADayColors.mutedInk,
@@ -1605,7 +1606,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                   ),
                 ),
                 if (index < _tasks.length - 1)
-                  const Divider(
+                  Divider(
                     height: 1.0,
                     indent: ADaySpacing.md,
                     endIndent: ADaySpacing.md,
@@ -1648,7 +1649,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
               color: ADayColors.coolSurface,
               borderRadius: BorderRadius.circular(10.0),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.sync_rounded,
               color: ADayColors.actionBlue,
               size: 22.0,

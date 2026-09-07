@@ -39,6 +39,7 @@ class ProfileScreen extends StatelessWidget {
     this.onTermsTap,
     this.onLogoutTap,
     this.onChangeReminderTime,
+    this.onCreateGoalTap,
     this.onNavTap,
   });
 
@@ -68,6 +69,7 @@ class ProfileScreen extends StatelessWidget {
   final VoidCallback? onHelpCenterTap;
   final VoidCallback? onTermsTap;
   final VoidCallback? onLogoutTap;
+  final VoidCallback? onCreateGoalTap;
   final ValueChanged<int>? onNavTap;
 
   @override
@@ -143,6 +145,7 @@ class ProfileScreen extends StatelessWidget {
           ? ADayBottomNav(
               currentIndex: bottomNavIndex,
               onTap: onNavTap ?? (_) {},
+              onCreateGoalTap: onCreateGoalTap,
             )
           : null,
     );
@@ -245,7 +248,7 @@ class ProfileScreen extends StatelessWidget {
                                         .last[0]
                                         .toUpperCase()
                                   : 'M',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontFamily: ADayTypography.fontFamily,
                                 fontSize: 24.0,
                                 fontWeight: FontWeight.w800,
@@ -306,7 +309,7 @@ class ProfileScreen extends StatelessWidget {
                     const SizedBox(height: 2.0),
                     Text(
                       data.memberSince,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: ADayTypography.fontFamily,
                         fontSize: 12.0,
                         color: ADayColors.mutedInk,
@@ -435,7 +438,7 @@ class ProfileScreen extends StatelessWidget {
             children: [
               Text(
                 value,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: ADayTypography.fontFamily,
                   fontSize: 16.0,
                   fontWeight: FontWeight.w800,
@@ -445,7 +448,7 @@ class ProfileScreen extends StatelessWidget {
               ),
               Text(
                 label,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: ADayTypography.fontFamily,
                   fontSize: 10.0,
                   fontWeight: FontWeight.w500,
@@ -692,7 +695,7 @@ class ProfileScreen extends StatelessWidget {
             Expanded(
               child: Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: ADayTypography.fontFamily,
                   fontSize: 14.0,
                   fontWeight: FontWeight.w500,
@@ -703,7 +706,7 @@ class ProfileScreen extends StatelessWidget {
             if (value != null) ...[
               Text(
                 value,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: ADayTypography.fontFamily,
                   fontSize: 13.5,
                   fontWeight: FontWeight.w500,
@@ -744,7 +747,7 @@ class ProfileScreen extends StatelessWidget {
             Expanded(
               child: Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: ADayTypography.fontFamily,
                   fontSize: 14.0,
                   fontWeight: FontWeight.w500,

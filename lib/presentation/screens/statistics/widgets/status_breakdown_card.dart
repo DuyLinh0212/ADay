@@ -53,7 +53,7 @@ class StatusBreakdownCard extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.pie_chart_rounded,
                     color: ADayColors.actionBlue,
                     size: 22.0,
@@ -83,7 +83,7 @@ class StatusBreakdownCard extends StatelessWidget {
                       children: [
                         Text(
                           actionLabel,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: ADayTypography.fontFamily,
                             fontSize: 12.0,
                             fontWeight: FontWeight.w600,
@@ -91,7 +91,7 @@ class StatusBreakdownCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 2.0),
-                        const Icon(
+                        Icon(
                           Icons.chevron_right_rounded,
                           size: 15.0,
                           color: ADayColors.actionBlue,
@@ -125,7 +125,7 @@ class StatusBreakdownCard extends StatelessWidget {
                       children: [
                         Text(
                           centerPercentage,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: ADayTypography.fontFamily,
                             fontSize: 16.5,
                             fontWeight: FontWeight.w800,
@@ -133,7 +133,7 @@ class StatusBreakdownCard extends StatelessWidget {
                             height: 1.1,
                           ),
                         ),
-                        const Text(
+                        Text(
                           'Hoàn thành',
                           style: TextStyle(
                             fontFamily: ADayTypography.fontFamily,
@@ -171,7 +171,7 @@ class StatusBreakdownCard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               item.label,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontFamily: ADayTypography.fontFamily,
                                 fontSize: 11.5,
                                 color: ADayColors.brandNavy,
@@ -183,7 +183,7 @@ class StatusBreakdownCard extends StatelessWidget {
                           ),
                           Text(
                             '${item.percentage}%',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontFamily: ADayTypography.fontFamily,
                               fontSize: 12.0,
                               fontWeight: FontWeight.w700,

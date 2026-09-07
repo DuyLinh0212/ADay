@@ -141,7 +141,7 @@ class CompletionBreakdownSection extends StatelessWidget {
                             children: [
                               Text(
                                 centerPercentage,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontFamily: ADayTypography.fontFamily,
                                   fontSize: 16.0,
                                   fontWeight: FontWeight.w800,
@@ -149,7 +149,7 @@ class CompletionBreakdownSection extends StatelessWidget {
                                   height: 1.1,
                                 ),
                               ),
-                              const Text(
+                              Text(
                                 'Hoàn thành',
                                 style: TextStyle(
                                   fontFamily: ADayTypography.fontFamily,
@@ -188,7 +188,7 @@ class CompletionBreakdownSection extends StatelessWidget {
                                 Expanded(
                                   child: Text(
                                     item.label,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontFamily: ADayTypography.fontFamily,
                                       fontSize: 11.5,
                                       color: ADayColors.brandNavy,
@@ -200,7 +200,7 @@ class CompletionBreakdownSection extends StatelessWidget {
                                 ),
                                 Text(
                                   '${item.percentage}%',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontFamily: ADayTypography.fontFamily,
                                     fontSize: 12.0,
                                     fontWeight: FontWeight.w700,

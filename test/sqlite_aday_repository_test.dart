@@ -156,6 +156,7 @@ void main() {
     test('round-trips AppSettings entity to row and back', () {
       const settings = AppSettings(
         displayName: 'Duy Linh',
+        email: 'duylinh@test.com',
         dailyReviewEnabled: true,
         dailyReviewMinute: 1300,
         notificationsAllowed: true,
@@ -164,12 +165,14 @@ void main() {
       final row = SqliteADayRepository.settingsValues(settings);
       expect(row['singleton_id'], 1);
       expect(row['display_name'], 'Duy Linh');
+      expect(row['email'], 'duylinh@test.com');
       expect(row['daily_review_enabled'], 1);
       expect(row['daily_review_minute'], 1300);
       expect(row['notifications_allowed'], 1);
 
       final restored = SqliteADayRepository.settingsFromRow(row);
       expect(restored.displayName, 'Duy Linh');
+      expect(restored.email, 'duylinh@test.com');
       expect(restored.dailyReviewEnabled, true);
       expect(restored.dailyReviewMinute, 1300);
       expect(restored.notificationsAllowed, true);

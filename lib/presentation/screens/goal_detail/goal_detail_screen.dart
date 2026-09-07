@@ -130,7 +130,7 @@ class _GoalDetailScreenState extends State<GoalDetailScreen> {
           label: 'Quay lại',
           button: true,
           child: IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.chevron_left_rounded,
               color: ADayColors.brandNavy,
               size: 28.0,
@@ -148,7 +148,7 @@ class _GoalDetailScreenState extends State<GoalDetailScreen> {
             label: 'Tùy chọn khác',
             button: true,
             child: IconButton(
-              icon: const Icon(
+              icon: Icon(
                 Icons.more_horiz_rounded,
                 color: ADayColors.brandNavy,
               ),
@@ -211,7 +211,7 @@ class _GoalDetailScreenState extends State<GoalDetailScreen> {
             // --- Fixed Bottom Action Button ---
             Container(
               padding: const EdgeInsets.all(ADaySpacing.md),
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: ADayColors.surface,
                 border: Border(
                   top: BorderSide(color: ADayColors.dividerMist, width: 1.0),
@@ -270,7 +270,7 @@ class _GoalDetailScreenState extends State<GoalDetailScreen> {
                         color: const Color(0xFFE8F3FD),
                         borderRadius: BorderRadius.circular(14.0),
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Icon(
                           Icons.auto_stories_rounded,
                           color: ADayColors.actionBlue,
@@ -322,7 +322,7 @@ class _GoalDetailScreenState extends State<GoalDetailScreen> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.edit_outlined,
                                 size: 14.0,
                                 color: ADayColors.actionBlue,
@@ -597,7 +597,7 @@ class _GoalDetailScreenState extends State<GoalDetailScreen> {
                                   ),
                                 ),
                                 child: task.isCompleted
-                                    ? const Icon(
+                                    ? Icon(
                                         Icons.check_rounded,
                                         size: 16.0,
                                         color: ADayColors.surface,
@@ -656,7 +656,7 @@ class _GoalDetailScreenState extends State<GoalDetailScreen> {
                   ),
                 ),
                 if (index < data.tasks.length - 1)
-                  const Divider(
+                  Divider(
                     height: 1.0,
                     indent: ADaySpacing.md,
                     endIndent: ADaySpacing.md,
@@ -693,7 +693,7 @@ class _GoalDetailScreenState extends State<GoalDetailScreen> {
                       color: const Color(0xFFE8F3FD),
                       borderRadius: BorderRadius.circular(8.0),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.description_rounded,
                       color: ADayColors.actionBlue,
                       size: 18.0,
@@ -725,7 +725,7 @@ class _GoalDetailScreenState extends State<GoalDetailScreen> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const Icon(
+                    Icon(
                       Icons.chevron_right_rounded,
                       size: 18.0,
                       color: ADayColors.actionBlue,
@@ -753,15 +753,15 @@ class _GoalDetailScreenState extends State<GoalDetailScreen> {
               contentPadding: ADaySpacing.paddingInput,
               border: OutlineInputBorder(
                 borderRadius: ADaySpacing.controlRadius,
-                borderSide: const BorderSide(color: ADayColors.dividerMist),
+                borderSide: BorderSide(color: ADayColors.dividerMist),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: ADaySpacing.controlRadius,
-                borderSide: const BorderSide(color: ADayColors.dividerMist),
+                borderSide: BorderSide(color: ADayColors.dividerMist),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: ADaySpacing.controlRadius,
-                borderSide: const BorderSide(
+                borderSide: BorderSide(
                   color: ADayColors.actionBlue,
                   width: 1.5,
                 ),
@@ -783,7 +783,7 @@ class _GoalDetailScreenState extends State<GoalDetailScreen> {
       ),
       child: Row(
         children: [
-          const Icon(
+          Icon(
             Icons.wb_sunny_rounded,
             color: ADayColors.sunriseGold,
             size: 26.0,

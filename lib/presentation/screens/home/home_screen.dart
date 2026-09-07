@@ -60,6 +60,7 @@ class HomeScreen extends StatelessWidget {
     this.onCreateLongTermGoal,
     this.onReminderAction,
     this.onGreetingQuoteTap,
+    this.onCreateGoalTap,
     this.onNavTap,
   });
 
@@ -124,6 +125,7 @@ class HomeScreen extends StatelessWidget {
   final VoidCallback? onCreateLongTermGoal;
   final VoidCallback? onReminderAction;
   final VoidCallback? onGreetingQuoteTap;
+  final VoidCallback? onCreateGoalTap;
   final ValueChanged<int>? onNavTap;
 
   /// Sample progress data matching TrangChu.png (67%, 4/6 completed).
@@ -305,6 +307,7 @@ class HomeScreen extends StatelessWidget {
           ? ADayBottomNav(
               currentIndex: bottomNavIndex,
               onTap: onNavTap ?? (_) {},
+              onCreateGoalTap: onCreateGoalTap,
             )
           : null,
     );
@@ -398,8 +401,8 @@ class HomeScreen extends StatelessWidget {
                                 ),
                               ),
                               if (onGreetingQuoteTap != null)
-                                const Padding(
-                                  padding: EdgeInsets.only(top: 3),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 3),
                                   child: Icon(
                                     Icons.edit_outlined,
                                     size: 14,

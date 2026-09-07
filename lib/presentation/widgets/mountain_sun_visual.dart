@@ -17,7 +17,7 @@ class MountainSunPainter extends CustomPainter {
     this.showFlag = false,
     this.showSunRays = true,
     this.sunPosition = const Offset(0.78, 0.32),
-    this.sunColor = ADayColors.sunriseGold,
+    this.sunColor,
     this.ridgePrimary = const Color(0xFF20C99A),
     this.ridgeSecondary = const Color(0xFF27BCEB),
   });
@@ -25,12 +25,13 @@ class MountainSunPainter extends CustomPainter {
   final bool showFlag;
   final bool showSunRays;
   final Offset sunPosition;
-  final Color sunColor;
+  final Color? sunColor;
   final Color ridgePrimary;
   final Color ridgeSecondary;
 
   @override
   void paint(Canvas canvas, Size size) {
+    final effectiveSunColor = sunColor ?? ADayColors.sunriseGold;
     final w = size.width;
     final h = size.height;
 
@@ -40,7 +41,7 @@ class MountainSunPainter extends CustomPainter {
 
     if (showSunRays) {
       final rayPaint = Paint()
-        ..color = sunColor.withValues(alpha: 0.45)
+        ..color = effectiveSunColor.withValues(alpha: 0.45)
         ..strokeWidth = math.max(2.0, w * 0.015)
         ..strokeCap = StrokeCap.round;
 
@@ -64,7 +65,8 @@ class MountainSunPainter extends CustomPainter {
     }
 
     // Sun disc with soft glow
-    final sunDiscPaint = Paint()..color = sunColor.withValues(alpha: 0.85);
+    final sunDiscPaint =
+        Paint()..color = effectiveSunColor.withValues(alpha: 0.85);
     canvas.drawCircle(sunCenter, sunRadius, sunDiscPaint);
 
     // 2. Far Mountain Ridge (Soft Cyan / Sky tint)
@@ -346,7 +348,7 @@ class MountainSunGoalCard extends StatelessWidget {
                             color: ADayColors.progressTealTint,
                             borderRadius: BorderRadius.circular(10.0),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.track_changes_rounded,
                             color: ADayColors.progressTeal,
                             size: 20.0,
@@ -366,8 +368,8 @@ class MountainSunGoalCard extends StatelessWidget {
                         child: InkWell(
                           onTap: onHeaderTap,
                           borderRadius: ADaySpacing.controlRadius,
-                          child: const Padding(
-                            padding: EdgeInsets.symmetric(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
                               horizontal: ADaySpacing.xs,
                               vertical: ADaySpacing.xs,
                             ),
@@ -382,7 +384,7 @@ class MountainSunGoalCard extends StatelessWidget {
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                SizedBox(width: 2.0),
+                                const SizedBox(width: 2.0),
                                 Icon(
                                   Icons.chevron_right_rounded,
                                   size: 18.0,

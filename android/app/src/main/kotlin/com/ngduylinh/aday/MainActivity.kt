@@ -18,11 +18,22 @@ class MainActivity : FlutterActivity() {
             when (call.method) {
                 "updateWidget" -> {
                     val prefs = getSharedPreferences(ADayWidgetReceiver.preferencesName, Context.MODE_PRIVATE)
-                    prefs.edit()
+                    val edit = prefs.edit()
                         .putString("themeId", call.argument<String>("themeId") ?: "default")
                         .putInt("taskCount", call.argument<Int>("taskCount") ?: 0)
                         .putInt("completedCount", call.argument<Int>("completedCount") ?: 0)
-                        .apply()
+                        .putInt("percent", call.argument<Int>("percent") ?: 0)
+                        .putString("dateLabel", call.argument<String>("dateLabel") ?: "Hôm nay")
+
+                    listOf(1, 2, 3).forEach { i ->
+                        call.argument<String>("task${i}Title")?.let { edit.putString("task${i}Title", it) }
+                            ?: edit.remove("task${i}Title")
+                        call.argument<Boolean>("task${i}Done")?.let { edit.putBoolean("task${i}Done", it) }
+                            ?: edit.remove("task${i}Done")
+                        call.argument<String>("task${i}Time")?.let { edit.putString("task${i}Time", it) }
+                            ?: edit.remove("task${i}Time")
+                    }
+                    edit.apply()
                     ADayWidgetReceiver.updateAll(this)
                     result.success(null)
                 }
@@ -50,9 +61,9 @@ class MainActivity : FlutterActivity() {
         val selected = when (themeId) {
             "theme_1" -> "LauncherPurple"
             "theme_2" -> "LauncherSunrise"
-            "theme_3" -> "LauncherGreen"
+            "theme_3" -> "LauncherNight"
             "theme_4" -> "LauncherPink"
-            "theme_5" -> "LauncherNight"
+            "theme_5" -> "LauncherGreen"
             else -> "LauncherDefault"
         }
         aliases.forEach { alias ->

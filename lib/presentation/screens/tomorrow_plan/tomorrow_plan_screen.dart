@@ -146,7 +146,7 @@ class TomorrowPlanScreen extends StatelessWidget {
           label: 'Quay lại',
           button: true,
           child: IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.chevron_left_rounded,
               color: ADayColors.brandNavy,
               size: 28.0,
@@ -164,7 +164,7 @@ class TomorrowPlanScreen extends StatelessWidget {
             label: 'Tùy chọn khác',
             button: true,
             child: IconButton(
-              icon: const Icon(
+              icon: Icon(
                 Icons.more_horiz_rounded,
                 color: ADayColors.brandNavy,
               ),
@@ -762,7 +762,7 @@ class TomorrowPlanScreen extends StatelessWidget {
                   ),
                 ),
                 if (index < data.unresolvedTasks.length - 1)
-                  const Divider(
+                  Divider(
                     height: 1.0,
                     indent: ADaySpacing.md,
                     endIndent: ADaySpacing.md,
@@ -800,7 +800,7 @@ class TomorrowPlanScreen extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
+                Icon(
                   Icons.add_rounded,
                   size: 15.0,
                   color: ADayColors.actionBlue,
@@ -883,7 +883,7 @@ class TomorrowPlanScreen extends StatelessWidget {
                                   ),
                                 ),
                                 child: task.isCompleted
-                                    ? const Icon(
+                                    ? Icon(
                                         Icons.check_rounded,
                                         size: 16.0,
                                         color: ADayColors.surface,
@@ -957,7 +957,7 @@ class TomorrowPlanScreen extends StatelessWidget {
                         label: 'Xóa nhiệm vụ ${task.title}',
                         button: true,
                         child: IconButton(
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.close_rounded,
                             size: 18.0,
                             color: ADayColors.mutedInk,
@@ -970,7 +970,7 @@ class TomorrowPlanScreen extends StatelessWidget {
                   ),
                 ),
                 if (index < data.tomorrowTasks.length - 1)
-                  const Divider(
+                  Divider(
                     height: 1.0,
                     indent: ADaySpacing.md,
                     endIndent: ADaySpacing.md,
@@ -1051,7 +1051,7 @@ class TomorrowPlanScreen extends StatelessWidget {
   Widget _buildBottomActionButtons() {
     return Container(
       padding: const EdgeInsets.all(ADaySpacing.md),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: ADayColors.surface,
         border: Border(
           top: BorderSide(color: ADayColors.dividerMist, width: 1.0),

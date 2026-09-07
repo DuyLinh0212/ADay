@@ -1,3 +1,5 @@
+// ignore_for_file: use_null_aware_elements
+
 import 'dart:io';
 
 import 'package:flutter/services.dart';
@@ -12,12 +14,34 @@ abstract final class HomeWidgetBridge {
     required String themeId,
     required int taskCount,
     required int completedCount,
+    int? percent,
+    String? dateLabel,
+    String? task1Title,
+    bool? task1Done,
+    String? task1Time,
+    String? task2Title,
+    bool? task2Done,
+    String? task2Time,
+    String? task3Title,
+    bool? task3Done,
+    String? task3Time,
   }) async {
     if (!Platform.isAndroid) return;
     await _channel.invokeMethod<void>('updateWidget', {
       'themeId': themeId,
       'taskCount': taskCount,
       'completedCount': completedCount,
+      if (percent != null) 'percent': percent,
+      if (dateLabel != null) 'dateLabel': dateLabel,
+      if (task1Title != null) 'task1Title': task1Title,
+      if (task1Done != null) 'task1Done': task1Done,
+      if (task1Time != null) 'task1Time': task1Time,
+      if (task2Title != null) 'task2Title': task2Title,
+      if (task2Done != null) 'task2Done': task2Done,
+      if (task2Time != null) 'task2Time': task2Time,
+      if (task3Title != null) 'task3Title': task3Title,
+      if (task3Done != null) 'task3Done': task3Done,
+      if (task3Time != null) 'task3Time': task3Time,
     });
   }
 

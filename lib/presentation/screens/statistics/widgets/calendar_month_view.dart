@@ -93,7 +93,7 @@ class CalendarMonthView extends StatelessWidget {
                         children: [
                           _buildCalendarGrid(context),
                           const SizedBox(height: ADaySpacing.md),
-                          const Divider(
+                          Divider(
                             color: ADayColors.dividerMist,
                             height: 1.0,
                           ),
@@ -144,7 +144,7 @@ class CalendarMonthView extends StatelessWidget {
                 child: IconButton(
                   onPressed: onPrevMonth,
                   padding: EdgeInsets.zero,
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.chevron_left_rounded,
                     color: ADayColors.actionBlue,
                     size: 26.0,
@@ -173,7 +173,7 @@ class CalendarMonthView extends StatelessWidget {
                 child: IconButton(
                   onPressed: onNextMonth,
                   padding: EdgeInsets.zero,
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.chevron_right_rounded,
                     color: ADayColors.actionBlue,
                     size: 26.0,
@@ -200,7 +200,7 @@ class CalendarMonthView extends StatelessWidget {
                   minHeight: 36.0,
                   minWidth: ADaySpacing.minTouchTarget,
                 ),
-                child: const Padding(
+                child: Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: 14.0,
                     vertical: 6.0,
@@ -336,7 +336,7 @@ class CalendarMonthView extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.calendar_today_rounded,
                         size: 15.0,
                         color: ADayColors.actionBlue,
@@ -345,7 +345,7 @@ class CalendarMonthView extends StatelessWidget {
                       Expanded(
                         child: Text(
                           data.todaySummaryLabel,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: ADayTypography.fontFamily,
                             fontSize: 12.0,
                             fontWeight: FontWeight.w700,
@@ -355,7 +355,7 @@ class CalendarMonthView extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      const Icon(
+                      Icon(
                         Icons.chevron_right_rounded,
                         size: 16.0,
                         color: ADayColors.actionBlue,
@@ -406,7 +406,7 @@ class CalendarMonthView extends StatelessWidget {
           Flexible(
             child: Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontFamily: ADayTypography.fontFamily,
                 fontSize: 11.5,
                 fontWeight: FontWeight.w500,

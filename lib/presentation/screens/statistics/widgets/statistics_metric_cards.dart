@@ -148,7 +148,7 @@ class StatisticsMetricCards extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
+            Icon(
               Icons.bar_chart_rounded,
               color: ADayColors.actionBlue,
               size: 26.0,
@@ -268,7 +268,7 @@ class _MetricCardItem extends StatelessWidget {
           // Value
           Text(
             item.value,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: ADayTypography.fontFamily,
               fontSize: 20.0,
               fontWeight: FontWeight.w800,
@@ -282,7 +282,7 @@ class _MetricCardItem extends StatelessWidget {
           // Title
           Text(
             item.title,
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: ADayTypography.fontFamily,
               fontSize: 12.0,
               fontWeight: FontWeight.w600,
@@ -321,7 +321,7 @@ class _MetricCardItem extends StatelessWidget {
                 ),
                 Text(
                   periodPhrase,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: ADayTypography.fontFamily,
                     fontSize: 9.5,
                     fontWeight: FontWeight.w500,

@@ -18,8 +18,8 @@ class SectionSurface extends StatelessWidget {
     required this.title,
     required this.child,
     this.icon,
-    this.iconColor = ADayColors.progressTeal,
-    this.iconBackgroundColor = ADayColors.progressTealTint,
+    this.iconColor,
+    this.iconBackgroundColor,
     this.actionLabel = 'Xem tất cả',
     this.onActionTap,
     this.headerTrailing,
@@ -30,8 +30,8 @@ class SectionSurface extends StatelessWidget {
   final String title;
   final Widget child;
   final IconData? icon;
-  final Color iconColor;
-  final Color iconBackgroundColor;
+  final Color? iconColor;
+  final Color? iconBackgroundColor;
   final String? actionLabel;
   final VoidCallback? onActionTap;
   final Widget? headerTrailing;
@@ -77,11 +77,16 @@ class SectionSurface extends StatelessWidget {
                               width: 34.0,
                               height: 34.0,
                               decoration: BoxDecoration(
-                                color: iconBackgroundColor,
+                                color: iconBackgroundColor ??
+                                    ADayColors.progressTealTint,
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
                               child: Center(
-                                child: Icon(icon, color: iconColor, size: 18.0),
+                                child: Icon(
+                                  icon,
+                                  color: iconColor ?? ADayColors.progressTeal,
+                                  size: 18.0,
+                                ),
                               ),
                             ),
                             const SizedBox(width: ADaySpacing.sm),
@@ -126,7 +131,7 @@ class SectionSurface extends StatelessWidget {
                                 children: [
                                   Text(
                                     actionLabel!,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontFamily: ADayTypography.fontFamily,
                                       fontSize: 13.0,
                                       fontWeight: FontWeight.w600,
@@ -134,7 +139,7 @@ class SectionSurface extends StatelessWidget {
                                     ),
                                   ),
                                   const SizedBox(width: 2.0),
-                                  const Icon(
+                                  Icon(
                                     Icons.chevron_right_rounded,
                                     size: 18.0,
                                     color: ADayColors.actionBlue,
@@ -151,7 +156,7 @@ class SectionSurface extends StatelessWidget {
             ),
 
             // Subtle divider below header
-            const Divider(
+            Divider(
               height: 1.0,
               thickness: 1.0,
               color: ADayColors.dividerMist,

@@ -329,7 +329,7 @@ class ADayHeaderBar extends StatelessWidget {
                         IconButton(
                           onPressed: onNotificationTap,
                           splashRadius: 22.0,
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.notifications_none_rounded,
                             color: ADayColors.brandNavy,
                             size: 24.0,
@@ -343,7 +343,7 @@ class ADayHeaderBar extends StatelessWidget {
                             child: Container(
                               width: 8.0,
                               height: 8.0,
-                              decoration: const BoxDecoration(
+                              decoration: BoxDecoration(
                                 color: ADayColors.cancelCoral,
                                 shape: BoxShape.circle,
                               ),

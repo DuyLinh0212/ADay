@@ -136,7 +136,7 @@ class _ReasonPickerSheetState extends State<ReasonPickerSheet> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.close_rounded,
                     color: ADayColors.mutedInk,
                   ),
@@ -301,11 +301,11 @@ class _ReasonPickerSheetState extends State<ReasonPickerSheet> {
                   contentPadding: ADaySpacing.paddingInput,
                   border: OutlineInputBorder(
                     borderRadius: ADaySpacing.controlRadius,
-                    borderSide: const BorderSide(color: ADayColors.dividerMist),
+                    borderSide: BorderSide(color: ADayColors.dividerMist),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: ADaySpacing.controlRadius,
-                    borderSide: const BorderSide(color: ADayColors.dividerMist),
+                    borderSide: BorderSide(color: ADayColors.dividerMist),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: ADaySpacing.controlRadius,
