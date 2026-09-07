@@ -34,21 +34,7 @@ jobs:
         run: dart format --output=none --set-exit-if-changed .
 
       - name: Analyze static code
-        id: analyze
-        continue-on-error: true
-        run: |
-          set -o pipefail
-          flutter analyze 2>&1 | tee analyze.log
-
-      - name: Publish analyzer diagnostics
-        if: steps.analyze.outcome == 'failure'
-        run: |
-          while IFS= read -r line; do
-            if [[ "$line" == *"error - "* || "$line" == *"warning - "* || "$line" == *"info - "* ]]; then
-              echo "::error::$line"
-            fi
-          done < analyze.log
-          exit 1
+        run: flutter analyze
 
       - name: Run unit tests
         run: flutter test
