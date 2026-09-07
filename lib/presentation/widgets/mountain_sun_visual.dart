@@ -65,8 +65,8 @@ class MountainSunPainter extends CustomPainter {
     }
 
     // Sun disc with soft glow
-    final sunDiscPaint =
-        Paint()..color = effectiveSunColor.withValues(alpha: 0.85);
+    final sunDiscPaint = Paint()
+      ..color = effectiveSunColor.withValues(alpha: 0.85);
     canvas.drawCircle(sunCenter, sunRadius, sunDiscPaint);
 
     // 2. Far Mountain Ridge (Soft Cyan / Sky tint)

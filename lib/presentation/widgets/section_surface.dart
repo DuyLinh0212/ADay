@@ -77,7 +77,8 @@ class SectionSurface extends StatelessWidget {
                               width: 34.0,
                               height: 34.0,
                               decoration: BoxDecoration(
-                                color: iconBackgroundColor ??
+                                color:
+                                    iconBackgroundColor ??
                                     ADayColors.progressTealTint,
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
@@ -156,11 +157,7 @@ class SectionSurface extends StatelessWidget {
             ),
 
             // Subtle divider below header
-            Divider(
-              height: 1.0,
-              thickness: 1.0,
-              color: ADayColors.dividerMist,
-            ),
+            Divider(height: 1.0, thickness: 1.0, color: ADayColors.dividerMist),
 
             // --- Body Content ---
             Padding(padding: contentPadding ?? EdgeInsets.zero, child: child),

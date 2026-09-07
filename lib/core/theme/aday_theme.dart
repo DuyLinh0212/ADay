@@ -138,9 +138,7 @@ abstract final class ADayTheme {
           shape: const RoundedRectangleBorder(
             borderRadius: ADaySpacing.controlRadius,
           ),
-          textStyle: ADayTypography.label.copyWith(
-            color: palette.actionBlue,
-          ),
+          textStyle: ADayTypography.label.copyWith(color: palette.actionBlue),
         ),
       ),
 
@@ -151,9 +149,7 @@ abstract final class ADayTheme {
         contentPadding: ADaySpacing.paddingInput,
         hintStyle: ADayTypography.subhead.copyWith(color: palette.mutedInk),
         labelStyle: ADayTypography.label.copyWith(color: palette.brandNavy),
-        errorStyle: ADayTypography.caption.copyWith(
-          color: palette.cancelCoral,
-        ),
+        errorStyle: ADayTypography.caption.copyWith(color: palette.cancelCoral),
         enabledBorder: OutlineInputBorder(
           borderRadius: ADaySpacing.controlRadius,
           borderSide: BorderSide(color: palette.dividerMist, width: 1.0),

@@ -81,8 +81,7 @@ class ADayThemeChoice {
   static ADayThemeChoice byId(String id) =>
       all.firstWhere((choice) => choice.id == id, orElse: () => all.first);
 
-  static String widgetTemplateForId(String id) =>
-      byId(id).widgetTemplateAsset;
+  static String widgetTemplateForId(String id) => byId(id).widgetTemplateAsset;
 }
 
 class ThemePickerScreen extends StatelessWidget {
@@ -351,8 +350,7 @@ class _WidgetSetupScreenState extends State<WidgetSetupScreen> {
   Widget build(BuildContext context) {
     final currentThemeChoice = ADayThemeChoice.byId(_selectedThemeId);
     final palette = ADayThemePalette.forId(_selectedThemeId);
-    final templateImage =
-        ADayThemeChoice.widgetTemplateForId(_selectedThemeId);
+    final templateImage = ADayThemeChoice.widgetTemplateForId(_selectedThemeId);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Tiện ích màn hình chính')),
@@ -368,7 +366,9 @@ class _WidgetSetupScreenState extends State<WidgetSetupScreen> {
             const SizedBox(height: 4),
             Text(
               'Tiện ích 2 cột hiển thị tiến độ, lịch nhỏ tháng này và nhiệm vụ hôm nay theo đúng 5 mẫu thiết kế.',
-              style: ADayTypography.caption.copyWith(color: ADayColors.mutedInk),
+              style: ADayTypography.caption.copyWith(
+                color: ADayColors.mutedInk,
+              ),
             ),
             const SizedBox(height: 16),
 
@@ -546,44 +546,42 @@ class ADayFaithfulWidgetPreview extends StatelessWidget {
     // Background gradient matching the theme templates
     final bgGradient = switch (themeId) {
       'theme_3' => const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF0B132B), Color(0xFF162544)],
-        ),
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xFF0B132B), Color(0xFF162544)],
+      ),
       'theme_2' => const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFFFF8F3), Color(0xFFFFECE0)],
-        ),
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xFFFFF8F3), Color(0xFFFFECE0)],
+      ),
       'theme_1' => const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFFAF7FF), Color(0xFFEFE8FD)],
-        ),
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xFFFAF7FF), Color(0xFFEFE8FD)],
+      ),
       'theme_4' => const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFFFF2F4), Color(0xFFFFE6EB)],
-        ),
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xFFFFF2F4), Color(0xFFFFE6EB)],
+      ),
       'theme_5' => const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFF3FAF5), Color(0xFFE4F4EB)],
-        ),
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xFFF3FAF5), Color(0xFFE4F4EB)],
+      ),
       _ => const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFFF4FAFF), Color(0xFFE5F2FD)],
-        ),
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xFFF4FAFF), Color(0xFFE5F2FD)],
+      ),
     };
 
     final cardBorderColor = isDark
         ? const Color(0x4D22D3EE)
         : palette.dividerMist;
 
-    final subCardBg = isDark
-        ? const Color(0xCC16203D)
-        : palette.surface;
+    final subCardBg = isDark ? const Color(0xCC16203D) : palette.surface;
 
     final subCardBorderColor = isDark
         ? const Color(0x3322D3EE)
@@ -688,10 +686,7 @@ class ADayFaithfulWidgetPreview extends StatelessWidget {
           ),
 
           const SizedBox(height: 10),
-          Divider(
-            height: 1,
-            color: palette.dividerMist.withOpacity(0.5),
-          ),
+          Divider(height: 1, color: palette.dividerMist.withOpacity(0.5)),
           const SizedBox(height: 10),
 
           // 2. Main 2-Column Body: Left (Progress + Mini Calendar) & Right (Today Tasks)
@@ -724,7 +719,10 @@ class ADayFaithfulWidgetPreview extends StatelessWidget {
                               alignment: Alignment.center,
                               children: [
                                 CircularProgressIndicator(
-                                  value: (completionPercent / 100).clamp(0.0, 1.0),
+                                  value: (completionPercent / 100).clamp(
+                                    0.0,
+                                    1.0,
+                                  ),
                                   strokeWidth: 4.5,
                                   backgroundColor: isDark
                                       ? const Color(0x3322D3EE)
@@ -913,11 +911,7 @@ class ADayFaithfulWidgetPreview extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Icon(
-              Icons.chevron_left_rounded,
-              size: 13,
-              color: palette.mutedInk,
-            ),
+            Icon(Icons.chevron_left_rounded, size: 13, color: palette.mutedInk),
             Text(
               'Tháng ${date.month}, ${date.year}',
               style: TextStyle(
@@ -1060,13 +1054,16 @@ class ADayFaithfulWidgetPreview extends StatelessWidget {
       ),
     ];
 
-    final items = <(String title, String sub, String icon, String time, bool done)>[];
+    final items =
+        <(String title, String sub, String icon, String time, bool done)>[];
 
     if (todayTasks != null && todayTasks!.isNotEmpty) {
       for (final t in todayTasks!.take(4)) {
         items.add((
           t.title,
-          (t.category != null && t.category!.isNotEmpty) ? t.category! : 'Nhiệm vụ',
+          (t.category != null && t.category!.isNotEmpty)
+              ? t.category!
+              : 'Nhiệm vụ',
           t.isCompleted ? '✅' : '📌',
           t.isAllDay ? 'Cả ngày' : (t.timeLabel ?? 'Hôm nay'),
           t.isCompleted,
@@ -1091,8 +1088,8 @@ class ADayFaithfulWidgetPreview extends StatelessWidget {
               decoration: BoxDecoration(
                 color: item.$5
                     ? (isDark
-                        ? const Color(0xFF10B981)
-                        : const Color(0xFF22C55E))
+                          ? const Color(0xFF10B981)
+                          : const Color(0xFF22C55E))
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(3.5),
                 border: item.$5
@@ -1104,11 +1101,7 @@ class ADayFaithfulWidgetPreview extends StatelessWidget {
               ),
               child: item.$5
                   ? const Center(
-                      child: Icon(
-                        Icons.check,
-                        size: 10,
-                        color: Colors.white,
-                      ),
+                      child: Icon(Icons.check, size: 10, color: Colors.white),
                     )
                   : null,
             ),
@@ -1136,10 +1129,7 @@ class ADayFaithfulWidgetPreview extends StatelessWidget {
                     item.$2,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 7.5,
-                      color: palette.mutedInk,
-                    ),
+                    style: TextStyle(fontSize: 7.5, color: palette.mutedInk),
                   ),
                 ],
               ),
@@ -1147,19 +1137,12 @@ class ADayFaithfulWidgetPreview extends StatelessWidget {
             const SizedBox(width: 4),
             // Time Pill Tag
             Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 4,
-                vertical: 1.5,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1.5),
               decoration: BoxDecoration(
-                color: isDark
-                    ? const Color(0x2422D3EE)
-                    : palette.coolSurface,
+                color: isDark ? const Color(0x2422D3EE) : palette.coolSurface,
                 borderRadius: BorderRadius.circular(5),
                 border: Border.all(
-                  color: isDark
-                      ? const Color(0x3322D3EE)
-                      : palette.dividerMist,
+                  color: isDark ? const Color(0x3322D3EE) : palette.dividerMist,
                   width: 0.8,
                 ),
               ),
@@ -1168,9 +1151,7 @@ class ADayFaithfulWidgetPreview extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 7.5,
                   fontWeight: FontWeight.w600,
-                  color: isDark
-                      ? const Color(0xFF94A3B8)
-                      : palette.mutedInk,
+                  color: isDark ? const Color(0xFF94A3B8) : palette.mutedInk,
                 ),
               ),
             ),

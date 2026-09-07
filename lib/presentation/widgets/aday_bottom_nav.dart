@@ -248,12 +248,16 @@ class _TikTokCreateButtonState extends State<_TikTokCreateButton> {
                         gradient: ADayColors.heroGradient,
                         borderRadius: BorderRadius.circular(10.0),
                         border: Border.all(
-                          color: isDark ? const Color(0xFF131E33) : Colors.white,
+                          color: isDark
+                              ? const Color(0xFF131E33)
+                              : Colors.white,
                           width: 1.8,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: actionColor.withValues(alpha: isDark ? 0.5 : 0.28),
+                            color: actionColor.withValues(
+                              alpha: isDark ? 0.5 : 0.28,
+                            ),
                             offset: const Offset(0, 3),
                             blurRadius: 6,
                             spreadRadius: 0,
@@ -278,4 +282,3 @@ class _TikTokCreateButtonState extends State<_TikTokCreateButton> {
     );
   }
 }
-

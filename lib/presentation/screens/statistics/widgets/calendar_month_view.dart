@@ -93,10 +93,7 @@ class CalendarMonthView extends StatelessWidget {
                         children: [
                           _buildCalendarGrid(context),
                           const SizedBox(height: ADaySpacing.md),
-                          Divider(
-                            color: ADayColors.dividerMist,
-                            height: 1.0,
-                          ),
+                          Divider(color: ADayColors.dividerMist, height: 1.0),
                           const SizedBox(height: ADaySpacing.md),
                           _buildSideLegend(context),
                         ],

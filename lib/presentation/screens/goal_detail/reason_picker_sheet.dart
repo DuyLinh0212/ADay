@@ -136,10 +136,7 @@ class _ReasonPickerSheetState extends State<ReasonPickerSheet> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(
-                    Icons.close_rounded,
-                    color: ADayColors.mutedInk,
-                  ),
+                  icon: Icon(Icons.close_rounded, color: ADayColors.mutedInk),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],

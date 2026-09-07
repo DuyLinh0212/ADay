@@ -148,10 +148,7 @@ class _GoalDetailScreenState extends State<GoalDetailScreen> {
             label: 'Tùy chọn khác',
             button: true,
             child: IconButton(
-              icon: Icon(
-                Icons.more_horiz_rounded,
-                color: ADayColors.brandNavy,
-              ),
+              icon: Icon(Icons.more_horiz_rounded, color: ADayColors.brandNavy),
               onPressed: widget.onMoreTap,
             ),
           ),

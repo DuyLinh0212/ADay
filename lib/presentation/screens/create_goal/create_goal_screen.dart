@@ -428,15 +428,11 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                       contentPadding: ADaySpacing.paddingInput,
                       border: OutlineInputBorder(
                         borderRadius: ADaySpacing.controlRadius,
-                        borderSide: BorderSide(
-                          color: ADayColors.dividerMist,
-                        ),
+                        borderSide: BorderSide(color: ADayColors.dividerMist),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: ADaySpacing.controlRadius,
-                        borderSide: BorderSide(
-                          color: ADayColors.dividerMist,
-                        ),
+                        borderSide: BorderSide(color: ADayColors.dividerMist),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: ADaySpacing.controlRadius,
