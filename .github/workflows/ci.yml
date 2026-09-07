@@ -34,17 +34,19 @@ jobs:
         run: dart format --output=none --set-exit-if-changed .
 
       - name: Analyze static code
+        id: analyze
+        continue-on-error: true
         run: |
           set -o pipefail
           flutter analyze 2>&1 | tee analyze.log
 
-      - name: Upload analyzer log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: analyzer-log
-          path: analyze.log
-          if-no-files-found: warn
+      - name: Publish analyzer diagnostics
+        if: steps.analyze.outcome == 'failure'
+        run: |
+          while IFS= read -r line; do
+            echo "::error::$line"
+          done < analyze.log
+          exit 1
 
       - name: Run unit tests
         run: flutter test
