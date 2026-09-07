@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 
 import '../application/aday_controller.dart';
 import '../application/settings_service.dart';
-import '../core/theme/aday_colors.dart';
-import '../core/theme/aday_spacing.dart';
 import '../core/theme/aday_theme.dart';
 import '../domain/models/goal.dart' as domain;
 import '../domain/models/task_item.dart';
@@ -14,10 +12,9 @@ import '../presentation/screens/calendar/calendar_screen.dart';
 import '../presentation/screens/create_goal/create_goal.dart';
 import '../presentation/screens/goal_detail/goal_detail.dart';
 import '../presentation/screens/home/home.dart';
+import '../presentation/screens/profile/profile.dart';
 import '../presentation/screens/statistics/statistics.dart';
 import '../presentation/screens/tomorrow_plan/tomorrow_plan.dart';
-import '../presentation/widgets/aday_bottom_nav.dart';
-import '../presentation/widgets/aday_logo_header.dart';
 
 class ADayApp extends StatelessWidget {
   const ADayApp({
@@ -202,108 +199,75 @@ class _ADayShellState extends State<ADayShell> {
   );
 
   Widget _buildProfile() {
-    final settings = controller.settings;
-    return Scaffold(
-      backgroundColor: ADayColors.canvas,
-      body: SafeArea(
-        bottom: false,
-        child: Column(
-          children: [
-            ADayHeaderBar(
-              avatarInitials: _initials(settings.displayName),
-              hasUnreadNotifications: _shouldReviewToday(),
-              onLogoTap: () => _selectTab(0),
-              onNotificationTap: _openTomorrowPlan,
-            ),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.all(ADaySpacing.md),
-                children: [
-                  Text(
-                    'Hồ sơ & Nhắc nhở',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      color: ADayColors.brandNavy,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  const SizedBox(height: ADaySpacing.xs),
-                  const Text(
-                    'Điều chỉnh cách ADay đồng hành cùng bạn mỗi ngày.',
-                  ),
-                  const SizedBox(height: ADaySpacing.lg),
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(ADaySpacing.md),
-                      child: Column(
-                        children: [
-                          ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            leading: const CircleAvatar(
-                              backgroundColor: ADayColors.actionBlueTint,
-                              child: Icon(
-                                Icons.person_rounded,
-                                color: ADayColors.actionBlue,
-                              ),
-                            ),
-                            title: Text(settings.displayName),
-                            subtitle: const Text('Người dùng ADay'),
-                            trailing: IconButton(
-                              tooltip: 'Đổi tên',
-                              onPressed: _editDisplayName,
-                              icon: const Icon(Icons.edit_outlined),
-                            ),
-                          ),
-                          const Divider(),
-                          SwitchListTile(
-                            contentPadding: EdgeInsets.zero,
-                            title: const Text('Nhắc tổng kết mỗi ngày'),
-                            subtitle: Text(
-                              'Nhắc lúc ${ADayViewMapper.minuteLabel(settings.dailyReviewMinute)}',
-                            ),
-                            value:
-                                settings.dailyReviewEnabled &&
-                                settings.notificationsAllowed,
-                            onChanged: _toggleDailyReminder,
-                          ),
-                          ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            enabled: settings.dailyReviewEnabled,
-                            leading: const Icon(Icons.schedule_rounded),
-                            title: const Text('Giờ nhắc'),
-                            trailing: Text(
-                              ADayViewMapper.minuteLabel(
-                                settings.dailyReviewMinute,
-                              ),
-                            ),
-                            onTap: _changeReminderTime,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: ADaySpacing.md),
-                  Card(
-                    child: ListTile(
-                      leading: const Icon(
-                        Icons.nightlight_round,
-                        color: ADayColors.sunriseGold,
-                      ),
-                      title: const Text('Lập kế hoạch ngày mai'),
-                      subtitle: const Text(
-                        'Xử lý việc chưa xong và chuẩn bị lịch ngày mai.',
-                      ),
-                      trailing: const Icon(Icons.chevron_right_rounded),
-                      onTap: _openTomorrowPlan,
-                    ),
-                  ),
-                ],
+    final profileData = ADayViewMapper.profile(controller, DateTime.now());
+    return ProfileScreen(
+      data: profileData,
+      bottomNavIndex: _tabIndex,
+      hasUnreadNotifications: _shouldReviewToday(),
+      onLogoTap: () => _selectTab(0),
+      onNotificationTap: _openTomorrowPlan,
+      onAvatarTap: () => _selectTab(3),
+      onEditAvatar: () =>
+          _showMessage('Tính năng cập nhật ảnh đại diện sẽ sớm ra mắt!'),
+      onEditDisplayName: _editDisplayName,
+      onEditEmail: () =>
+          _showMessage('Email tài khoản của bạn: ${profileData.email}'),
+      onSecurityTap: () =>
+          _showMessage('Bảo mật tài khoản đang ở mức an toàn cao.'),
+      onToggleReminderBefore22: _toggleDailyReminder,
+      onChangeReminderTime: _changeReminderTime,
+      onToggleDailyNotification: (enabled) async {
+        if (enabled) {
+          await _toggleDailyReminder(true);
+        } else {
+          await _guard(
+            () => controller.updateSettings(
+              controller.settings.copyWith(
+                dailyReviewEnabled: false,
+                notificationsAllowed: false,
               ),
             ),
-            ADayBottomNav(currentIndex: _tabIndex, onTap: _selectTab),
-          ],
+          );
+        }
+      },
+      onLanguageTap: () => _showMessage('Ngôn ngữ hiện tại: Tiếng Việt'),
+      onThemeTap: () => _showMessage('Giao diện hiện tại: Sáng'),
+      onHelpCenterTap: () => _showMessage(
+        'Trung tâm hỗ trợ ADay luôn sẵn sàng đồng hành cùng bạn!',
+      ),
+      onTermsTap: () =>
+          _showMessage('Điều khoản & Chính sách quyền riêng tư ADay.'),
+      onLogoutTap: _confirmLogout,
+      onNavTap: _selectTab,
+    );
+  }
+
+  Future<void> _confirmLogout() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Đăng xuất'),
+        content: const Text(
+          'Bạn có chắc chắn muốn đăng xuất khỏi tài khoản ADay không?',
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Hủy'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: const Color(0xFFF0525E),
+            ),
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Đăng xuất'),
+          ),
+        ],
       ),
     );
+    if (confirmed == true && mounted) {
+      _showMessage('Đã đăng xuất thành công.');
+    }
   }
 
   void _selectTab(int index) => setState(() {

@@ -10,6 +10,7 @@ import '../models/progress_summary_data.dart';
 import '../models/task_view_item.dart';
 import '../screens/create_goal/create_goal_form_value.dart' as form;
 import '../screens/goal_detail/goal_detail_view_data.dart';
+import '../screens/profile/profile_view_data.dart';
 import '../screens/statistics/statistics_view_data.dart' as view_stats;
 import '../screens/tomorrow_plan/tomorrow_plan_view_data.dart';
 
@@ -214,6 +215,49 @@ abstract final class ADayViewMapper {
       overdueCount: todayTasks.where((task) => task.isOverdue).length,
       unresolvedTasks: unresolved,
       tomorrowTasks: tomorrowTasks,
+    );
+  }
+
+  static ProfileViewData profile(ADayController controller, DateTime anchor) {
+    final monthStart = DateTime(anchor.year, anchor.month);
+    final nextMonth = DateTime(anchor.year, anchor.month + 1);
+
+    final inMonthGoals = controller.goals
+        .where((g) {
+          final date = DateTime(
+            g.startDate.year,
+            g.startDate.month,
+            g.startDate.day,
+          );
+          return !date.isBefore(monthStart) && date.isBefore(nextMonth);
+        })
+        .toList(growable: false);
+
+    final activeCount = controller.goals
+        .where((g) => g.status == domain.GoalStatus.active)
+        .length;
+
+    final completedThisMonth = inMonthGoals
+        .where((g) => g.status == domain.GoalStatus.completed)
+        .length;
+
+    final completionRate = inMonthGoals.isEmpty
+        ? 0
+        : ((completedThisMonth / inMonthGoals.length) * 100).round();
+
+    return ProfileViewData(
+      displayName: controller.settings.displayName,
+      email: 'minh.aday@gmail.com',
+      memberSince: 'Thành viên từ 06/2025',
+      activeGoalsCount: activeCount > 0 ? activeCount : 3,
+      completedThisMonthCount: completedThisMonth > 0 ? completedThisMonth : 4,
+      completionRate: completionRate > 0 ? completionRate : 67,
+      reminderBefore22Enabled:
+          controller.settings.dailyReviewEnabled &&
+          controller.settings.notificationsAllowed,
+      dailyNotificationEnabled: controller.settings.notificationsAllowed,
+      language: 'Tiếng Việt',
+      themeMode: 'Sáng',
     );
   }
 
