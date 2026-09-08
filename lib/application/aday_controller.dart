@@ -353,11 +353,7 @@ class ADayController extends ChangeNotifier {
       updatedAt: now,
     );
     final goals = [..._snapshot.goals]..[index] = updated;
-    await _commit(
-      _snapshot.copyWith(
-        goals: goals,
-      ),
-    );
+    await _commit(_snapshot.copyWith(goals: goals));
   }
 
   Future<void> carryTaskToTomorrow({
