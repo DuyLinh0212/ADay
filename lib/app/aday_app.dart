@@ -162,12 +162,25 @@ class _ADayShellState extends State<ADayShell> {
       calendarData: statsViewData.calendar,
       selectedDay: _selectedDay,
       tasks: selectedDayTasks,
+      tasksForDay: (d) => ADayViewMapper.homeTasks(controller, d),
+      longTermGoals: controller.longTermGoals,
+      dailyReminderMinute: controller.settings.dailyReviewMinute,
       bottomNavIndex: _tabIndex,
       hasUnreadNotifications: _shouldReviewToday(),
       avatarInitials: _initials(controller.settings.displayName),
       onLogoTap: () => _selectTab(0),
       onNotificationTap: _openTomorrowPlan,
       onAvatarTap: () => setState(() => _tabIndex = 3),
+      onPrevDay: () => setState(() {
+        _selectedDay = _selectedDay.subtract(const Duration(days: 1));
+        _calendarMonth = DateTime(_selectedDay.year, _selectedDay.month);
+        controller.ensureRecurringGoalsFor(_selectedDay);
+      }),
+      onNextDay: () => setState(() {
+        _selectedDay = _selectedDay.add(const Duration(days: 1));
+        _calendarMonth = DateTime(_selectedDay.year, _selectedDay.month);
+        controller.ensureRecurringGoalsFor(_selectedDay);
+      }),
       onPrevMonth: () => setState(() {
         _calendarMonth = DateTime(
           _calendarMonth.year,
@@ -184,8 +197,15 @@ class _ADayShellState extends State<ADayShell> {
         final now = DateTime.now();
         _selectedDay = DateTime(now.year, now.month, now.day);
         _calendarMonth = DateTime(now.year, now.month);
+        controller.ensureRecurringGoalsFor(_selectedDay);
       }),
-      onDayTap: (day) => setState(() => _selectedDay = day.date),
+      onDayTap: (day) {
+        setState(() {
+          _selectedDay = day.date;
+          _calendarMonth = DateTime(day.date.year, day.date.month);
+        });
+        controller.ensureRecurringGoalsFor(day.date);
+      },
       onTodaySummaryTap: () {
         if (selectedDayTasks.isNotEmpty) {
           _openGoal(selectedDayTasks.first.goalId);
@@ -834,7 +854,7 @@ class _ADayShellState extends State<ADayShell> {
   }
 
   Future<void> _toggleDailyReminder(bool enabled) async {
-    await _guard(() async {
+    try {
       if (enabled) {
         final allowed = await widget.settingsService.enableDailyReview(
           minuteOfDay: controller.settings.dailyReviewMinute,
@@ -842,13 +862,18 @@ class _ADayShellState extends State<ADayShell> {
         if (!allowed) {
           _showMessage('Bạn chưa cấp quyền thông báo cho ADay.');
         } else {
-          await widget.settingsService.showTestNotification();
-          _showMessage('Đã lên lịch và gửi một thông báo thử.');
+          try {
+            await widget.settingsService.showTestNotification();
+          } catch (_) {}
+          _showMessage('Đã lên lịch nhắc nhở hằng ngày thành công.');
         }
       } else {
         await widget.settingsService.disableDailyReview();
+        _showMessage('Đã tắt nhắc nhở hằng ngày.');
       }
-    });
+    } catch (e) {
+      _showMessage('Không thể cập nhật thông báo: $e');
+    }
   }
 
   Future<void> _changeReminderTime() async {
@@ -873,11 +898,17 @@ class _ADayShellState extends State<ADayShell> {
     for (final goal in controller.goals) {
       if (goal.id == id) return goal;
     }
+    for (final goal in controller.goalsForDay(_selectedDay)) {
+      if (goal.id == id) return goal;
+    }
     return null;
   }
 
   domain.Goal? _ownerOfTask(String taskId) {
     for (final goal in controller.goals) {
+      if (goal.tasks.any((task) => task.id == taskId)) return goal;
+    }
+    for (final goal in controller.goalsForDay(_selectedDay)) {
       if (goal.tasks.any((task) => task.id == taskId)) return goal;
     }
     return null;

@@ -512,12 +512,7 @@ abstract final class ADayViewMapper {
     final today = DateTime.now();
     final days = List.generate(42, (index) {
       final date = gridStart.add(Duration(days: index));
-      final goals = controller.goals
-          .where((goal) {
-            if (_sameDay(goal.startDate, date)) return true;
-            return goal.tasks.any((task) => _sameDay(task.scheduledDate, date));
-          })
-          .toList(growable: false);
+      final goals = controller.goalsForDay(date);
       final tasks = goals
           .expand(
             (goal) =>

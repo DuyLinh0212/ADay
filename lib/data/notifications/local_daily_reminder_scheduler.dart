@@ -42,7 +42,6 @@ class LocalDailyReminderScheduler implements DailyReminderScheduler {
       }
     }
 
-    const android = AndroidInitializationSettings('ic_stat_aday');
     const darwin = DarwinInitializationSettings(
       requestAlertPermission: false,
       requestBadgePermission: false,
@@ -54,19 +53,45 @@ class LocalDailyReminderScheduler implements DailyReminderScheduler {
       appUserModelId: 'com.ngduylinh.aday',
       guid: 'c7ec9bde-f429-4a8a-92dd-53ce37b93610',
     );
-    const settings = InitializationSettings(
-      android: android,
-      iOS: darwin,
-      macOS: darwin,
-      linux: linux,
-      windows: windows,
-    );
-    await _plugin.initialize(settings: settings);
-    await _plugin
-        .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >()
-        ?.createNotificationChannel(_channel);
+
+    InitializationSettings makeSettings(String androidIcon) =>
+        InitializationSettings(
+          android: AndroidInitializationSettings(androidIcon),
+          iOS: darwin,
+          macOS: darwin,
+          linux: linux,
+          windows: windows,
+        );
+
+    bool initialized = false;
+    for (final icon in const [
+      'ic_stat_aday',
+      '@mipmap/ic_launcher',
+      '@drawable/ic_launcher',
+      'ic_launcher',
+    ]) {
+      try {
+        await _plugin.initialize(settings: makeSettings(icon));
+        initialized = true;
+        break;
+      } catch (_) {
+        // Try next candidate icon
+      }
+    }
+    if (!initialized) {
+      // Final attempt without throwing unhandled error
+      try {
+        await _plugin.initialize(settings: makeSettings('@mipmap/ic_launcher'));
+      } catch (_) {}
+    }
+
+    try {
+      await _plugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >()
+          ?.createNotificationChannel(_channel);
+    } catch (_) {}
     _initialized = true;
   }
 
@@ -190,7 +215,6 @@ class LocalDailyReminderScheduler implements DailyReminderScheduler {
               'Nhắc cập nhật tiến độ và lập kế hoạch cho ngày mai trước 22:00.',
           importance: Importance.high,
           priority: Priority.high,
-          icon: 'ic_stat_aday',
         ),
         iOS: DarwinNotificationDetails(),
         macOS: DarwinNotificationDetails(),

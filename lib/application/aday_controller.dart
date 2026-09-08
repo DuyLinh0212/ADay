@@ -52,18 +52,63 @@ class ADayController extends ChangeNotifier {
 
   List<Goal> goalsForDay(DateTime day) {
     final target = _dateOnly(day);
-    return _snapshot.goals
-        .where((goal) {
-          if (goal.status == GoalStatus.cancelled) return false;
-          if (goal.kind == GoalKind.daily &&
-              _isSameDay(goal.startDate, target)) {
-            return true;
-          }
-          return goal.tasks.any(
-            (task) => _isSameDay(task.scheduledDate, target),
-          );
-        })
-        .toList(growable: false);
+    final result = <Goal>[];
+    final processedRoots = <String>{};
+
+    for (final goal in _snapshot.goals) {
+      if (goal.status == GoalStatus.cancelled) continue;
+      final isDailyGoalForDay =
+          goal.kind == GoalKind.daily && _isSameDay(goal.startDate, target);
+      final hasTaskForDay = goal.tasks.any(
+        (task) => _isSameDay(task.scheduledDate, target),
+      );
+
+      if (isDailyGoalForDay || hasTaskForDay) {
+        result.add(goal);
+        final rootId = goal.recurrenceSourceId ?? goal.id;
+        processedRoots.add(rootId);
+      }
+    }
+
+    final recurring = _snapshot.goals.where(
+      (goal) =>
+          goal.repeatDaily &&
+          goal.kind == GoalKind.daily &&
+          goal.status != GoalStatus.cancelled,
+    );
+
+    for (final source in recurring) {
+      final rootId = source.recurrenceSourceId ?? source.id;
+      if (!processedRoots.add(rootId)) continue;
+      if (target.isBefore(_dateOnly(source.startDate))) continue;
+      if (source.deadline != null &&
+          target.isAfter(_dateOnly(source.deadline!))) {
+        continue;
+      }
+
+      final dateKey =
+          '${target.year}${target.month.toString().padLeft(2, '0')}${target.day.toString().padLeft(2, '0')}';
+      result.add(
+        source.copyWith(
+          id: '${rootId}_rec_$dateKey',
+          startDate: target,
+          status: GoalStatus.active,
+          recurrenceSourceId: rootId,
+          tasks: source.tasks
+              .map(
+                (task) => task.copyWith(
+                  id: '${task.id}_rec_$dateKey',
+                  scheduledDate: target,
+                  status: TaskStatus.pending,
+                  clearCompletedAt: true,
+                ),
+              )
+              .toList(growable: false),
+        ),
+      );
+    }
+
+    return result;
   }
 
   List<Goal> get longTermGoals => _snapshot.goals
@@ -75,7 +120,7 @@ class ADayController extends ChangeNotifier {
 
   List<TaskItem> tasksForDay(DateTime day) {
     final target = _dateOnly(day);
-    return _snapshot.goals
+    return goalsForDay(day)
         .where((goal) => goal.status != GoalStatus.cancelled)
         .expand((goal) => goal.tasks)
         .where((task) => _isSameDay(task.scheduledDate, target))
@@ -165,7 +210,45 @@ class ADayController extends ChangeNotifier {
     required bool completed,
   }) async {
     final now = _clock();
-    final index = _goalIndex(goalId);
+    int index;
+    try {
+      index = _goalIndex(goalId);
+    } catch (_) {
+      if (goalId.contains('_rec_')) {
+        final parts = goalId.split('_rec_');
+        final rootId = parts.first;
+        final datePart = parts.last;
+        if (datePart.length == 8) {
+          final y = int.parse(datePart.substring(0, 4));
+          final m = int.parse(datePart.substring(4, 6));
+          final d = int.parse(datePart.substring(6, 8));
+          final target = DateTime(y, m, d);
+          await ensureRecurringGoalsFor(target);
+          index = _snapshot.goals.indexWhere(
+            (g) =>
+                (g.id == rootId || g.recurrenceSourceId == rootId) &&
+                _isSameDay(g.startDate, target),
+          );
+          if (index >= 0) {
+            final originalTaskId = taskId.contains('_rec_')
+                ? taskId.split('_rec_').first
+                : taskId;
+            final realGoal = _snapshot.goals[index];
+            final realTask = realGoal.tasks.firstWhere(
+              (t) =>
+                  t.id == originalTaskId || t.id == taskId || t.title == taskId,
+              orElse: () => realGoal.tasks.first,
+            );
+            return setTaskCompleted(
+              goalId: realGoal.id,
+              taskId: realTask.id,
+              completed: completed,
+            );
+          }
+        }
+      }
+      rethrow;
+    }
     final goal = _snapshot.goals[index];
     final taskIndex = goal.tasks.indexWhere((task) => task.id == taskId);
     if (taskIndex < 0) {
@@ -370,6 +453,10 @@ class ADayController extends ChangeNotifier {
             _isSameDay(goal.startDate, target),
       );
       if (exists || target.isBefore(_dateOnly(source.startDate))) continue;
+      if (source.deadline != null &&
+          target.isAfter(_dateOnly(source.deadline!))) {
+        continue;
+      }
       additions.add(
         source.copyWith(
           id: _newId('goal', now),
