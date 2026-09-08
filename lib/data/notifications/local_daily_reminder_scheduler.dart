@@ -65,8 +65,8 @@ class LocalDailyReminderScheduler implements DailyReminderScheduler {
 
     bool initialized = false;
     for (final icon in const [
-      'ic_stat_aday',
       '@mipmap/ic_launcher',
+      'ic_stat_aday',
       '@drawable/ic_launcher',
       'ic_launcher',
     ]) {
