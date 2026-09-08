@@ -99,83 +99,101 @@ class CategoryPerformanceCard extends StatelessWidget {
 
           const SizedBox(height: ADaySpacing.md),
 
-          // Category rows
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: categories.map((cat) {
-              final ratio = (cat.percentage / 100.0).clamp(0.0, 1.0);
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.5),
-                child: Row(
-                  children: [
-                    // Category icon
-                    Icon(cat.icon, size: 18.0, color: cat.color),
-                    const SizedBox(width: 6.0),
+          if (categories.isEmpty)
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: ADaySpacing.sm,
+                vertical: ADaySpacing.md,
+              ),
+              decoration: BoxDecoration(
+                color: ADayColors.coolSurface,
+                borderRadius: ADaySpacing.controlRadius,
+              ),
+              child: Text(
+                'Chưa có nhiệm vụ trong kỳ này. Khi bạn thêm nhiệm vụ, tiến độ theo danh mục sẽ xuất hiện ở đây.',
+                style: ADayTypography.body.copyWith(
+                  fontSize: 13,
+                  color: ADayColors.mutedInk,
+                ),
+              ),
+            )
+          else
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: categories.map((cat) {
+                final ratio = (cat.percentage / 100.0).clamp(0.0, 1.0);
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.5),
+                  child: Row(
+                    children: [
+                      // Category icon
+                      Icon(cat.icon, size: 18.0, color: cat.color),
+                      const SizedBox(width: 6.0),
 
-                    // Name
-                    SizedBox(
-                      width: 58.0,
-                      child: Text(
-                        cat.name,
-                        style: TextStyle(
-                          fontFamily: ADayTypography.fontFamily,
-                          fontSize: 11.5,
-                          fontWeight: FontWeight.w600,
-                          color: ADayColors.brandNavy,
+                      // Name
+                      SizedBox(
+                        width: 58.0,
+                        child: Text(
+                          cat.name,
+                          style: TextStyle(
+                            fontFamily: ADayTypography.fontFamily,
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w600,
+                            color: ADayColors.brandNavy,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
 
-                    const SizedBox(width: 6.0),
+                      const SizedBox(width: 6.0),
 
-                    // Progress Track & Bar
-                    Expanded(
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          return Container(
-                            height: 7.0,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFEFF6FB),
-                              borderRadius: BorderRadius.circular(3.5),
-                            ),
-                            alignment: Alignment.centerLeft,
-                            child: FractionallySizedBox(
-                              widthFactor: ratio,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: cat.color,
-                                  borderRadius: BorderRadius.circular(3.5),
+                      // Progress Track & Bar
+                      Expanded(
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            return Container(
+                              height: 7.0,
+                              decoration: BoxDecoration(
+                                color: ADayColors.coolSurface,
+                                borderRadius: BorderRadius.circular(3.5),
+                              ),
+                              alignment: Alignment.centerLeft,
+                              child: FractionallySizedBox(
+                                widthFactor: ratio,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: cat.color,
+                                    borderRadius: BorderRadius.circular(3.5),
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-
-                    const SizedBox(width: 8.0),
-
-                    // Percentage
-                    SizedBox(
-                      width: 32.0,
-                      child: Text(
-                        '${cat.percentage}%',
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          fontFamily: ADayTypography.fontFamily,
-                          fontSize: 12.0,
-                          fontWeight: FontWeight.w700,
-                          color: ADayColors.brandNavy,
+                            );
+                          },
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
+
+                      const SizedBox(width: 8.0),
+
+                      // Percentage
+                      SizedBox(
+                        width: 32.0,
+                        child: Text(
+                          '${cat.percentage}%',
+                          textAlign: TextAlign.right,
+                          style: TextStyle(
+                            fontFamily: ADayTypography.fontFamily,
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.w700,
+                            color: ADayColors.brandNavy,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
         ],
       ),
     );

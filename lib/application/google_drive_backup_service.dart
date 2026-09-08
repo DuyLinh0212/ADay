@@ -16,16 +16,20 @@ class DriveBackupResult {
 /// Uploads a private JSON copy to the Google account chosen by the user.
 /// The app-data scope means ADay cannot browse the user's ordinary Drive files.
 class GoogleDriveBackupService {
-  GoogleDriveBackupService({GoogleSignIn? signIn})
-    : _signIn =
-          signIn ??
-          GoogleSignIn(scopes: const [drive.DriveApi.driveAppdataScope]);
+  GoogleDriveBackupService({GoogleSignIn? signIn}) : _signIn = signIn;
 
   static const _fileName = 'aday-backup.json';
-  final GoogleSignIn _signIn;
+  GoogleSignIn? _signIn;
+
+  /// Google Sign-In validates the Web Client ID while it is constructed.
+  /// Keep that platform-specific setup out of app start-up: Drive is optional
+  /// and should only be initialized when the user actually requests a backup.
+  GoogleSignIn get _activeSignIn => _signIn ??= GoogleSignIn(
+    scopes: const [drive.DriveApi.driveAppdataScope],
+  );
 
   Future<DriveBackupResult> backup(ADaySnapshot snapshot) async {
-    final account = await _signIn.signIn();
+    final account = await _activeSignIn.signIn();
     if (account == null) {
       throw StateError('Bạn đã hủy chọn tài khoản Google.');
     }

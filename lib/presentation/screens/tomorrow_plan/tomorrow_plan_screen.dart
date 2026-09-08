@@ -13,7 +13,9 @@ import 'tomorrow_plan_view_data.dart';
 
 /// Evening moon and window custom painter for the hero illustration.
 class EveningRestVisualPainter extends CustomPainter {
-  const EveningRestVisualPainter();
+  const EveningRestVisualPainter({required this.palette});
+
+  final ADayThemePalette palette;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -30,10 +32,12 @@ class EveningRestVisualPainter extends CustomPainter {
     );
 
     final bgPaint = Paint()
-      ..shader = const LinearGradient(
+      ..shader = LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [Color(0xFF3892EA), Color(0xFF8CD7F6)],
+        colors: palette.isDark
+            ? [palette.canvas, palette.coolSurface]
+            : [palette.actionBlue, palette.skyCyan],
       ).createShader(archRect.outerRect);
 
     canvas.drawRRect(archRect, bgPaint);
@@ -55,7 +59,7 @@ class EveningRestVisualPainter extends CustomPainter {
       )
       ..close();
 
-    final moonPaint = Paint()..color = const Color(0xFFFFDF6D);
+    final moonPaint = Paint()..color = palette.sunriseGold;
     canvas.drawPath(moonPath, moonPaint);
 
     // Subtle twinkling stars
@@ -65,7 +69,8 @@ class EveningRestVisualPainter extends CustomPainter {
     canvas.drawCircle(Offset(w * 0.78, h * 0.48), 2.0, starPaint);
 
     // Soft hills at bottom of window
-    final hillPaint = Paint()..color = const Color(0xFF67C2F0);
+    final hillPaint = Paint()
+      ..color = palette.progressTeal.withValues(alpha: .72);
     final hillPath = Path()
       ..moveTo(w * 0.15, h)
       ..quadraticBezierTo(w * 0.5, h * 0.75, w, h * 0.85)
@@ -75,7 +80,8 @@ class EveningRestVisualPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant EveningRestVisualPainter oldDelegate) =>
+      oldDelegate.palette != palette;
 }
 
 /// The Tomorrow Plan presentation screen strictly matching LapKeHoachNgayMai.png.
@@ -236,7 +242,9 @@ class TomorrowPlanScreen extends StatelessWidget {
           top: 0,
           bottom: 0,
           width: 125.0,
-          child: const CustomPaint(painter: EveningRestVisualPainter()),
+          child: CustomPaint(
+            painter: EveningRestVisualPainter(palette: ADayColors.current),
+          ),
         ),
 
         // Left Content
@@ -252,7 +260,7 @@ class TomorrowPlanScreen extends StatelessWidget {
                   vertical: 4.0,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE2F3FD),
+                  color: ADayColors.actionBlueTint,
                   borderRadius: ADaySpacing.pillRadius,
                 ),
                 child: Text(
@@ -296,9 +304,9 @@ class TomorrowPlanScreen extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: ADayColors.heroGradient,
         borderRadius: ADaySpacing.surfaceRadius,
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Color(0x1F168AF2),
+            color: ADayColors.actionBlueTint,
             offset: Offset(0, 4),
             blurRadius: 10.0,
           ),
@@ -399,10 +407,10 @@ class TomorrowPlanScreen extends StatelessWidget {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.check_circle_rounded,
                           size: 14.0,
-                          color: Color(0xFF20C99A),
+                          color: ADayColors.successMint,
                         ),
                         const SizedBox(width: 5.0),
                         Text(
@@ -473,9 +481,12 @@ class TomorrowPlanScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(ADaySpacing.md),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFFBF0),
+        color: ADayColors.sunriseGoldTint,
         borderRadius: ADaySpacing.surfaceRadius,
-        border: Border.all(color: const Color(0xFFFFEDBE), width: 1.0),
+        border: Border.all(
+          color: ADayColors.sunriseGold.withValues(alpha: .35),
+          width: 1.0,
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -484,13 +495,13 @@ class TomorrowPlanScreen extends StatelessWidget {
             width: 38.0,
             height: 38.0,
             decoration: BoxDecoration(
-              color: const Color(0xFFFFF1CE),
+              color: ADayColors.sunriseGoldTint,
               borderRadius: BorderRadius.circular(10.0),
             ),
-            child: const Center(
+            child: Center(
               child: Icon(
                 Icons.emoji_events_rounded,
-                color: Color(0xFFFFB52E),
+                color: ADayColors.sunriseGold,
                 size: 22.0,
               ),
             ),
@@ -529,7 +540,7 @@ class TomorrowPlanScreen extends StatelessWidget {
       title: 'Các nhiệm vụ chưa hoàn thành',
       icon: Icons.alarm_rounded,
       iconColor: ADayColors.actionBlue,
-      iconBackgroundColor: const Color(0xFFE8F3FD),
+      iconBackgroundColor: ADayColors.actionBlueTint,
       child: Column(
         children: [
           Padding(
@@ -778,7 +789,7 @@ class TomorrowPlanScreen extends StatelessWidget {
       title: 'Lên lịch cho ngày mai',
       icon: Icons.add_circle_rounded,
       iconColor: ADayColors.actionBlue,
-      iconBackgroundColor: const Color(0xFFE8F3FD),
+      iconBackgroundColor: ADayColors.actionBlueTint,
       headerTrailing: Semantics(
         button: true,
         label: 'Thêm nhanh mục tiêu cho ngày mai',
@@ -996,9 +1007,12 @@ class TomorrowPlanScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(ADaySpacing.md),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1FAF6),
+        color: ADayColors.progressTealTint,
         borderRadius: ADaySpacing.surfaceRadius,
-        border: Border.all(color: const Color(0xFFD6F3E6), width: 1.0),
+        border: Border.all(
+          color: ADayColors.progressTeal.withValues(alpha: .3),
+          width: 1.0,
+        ),
       ),
       child: Row(
         children: [
@@ -1006,13 +1020,13 @@ class TomorrowPlanScreen extends StatelessWidget {
             width: 36.0,
             height: 36.0,
             decoration: BoxDecoration(
-              color: const Color(0xFFDCF6EB),
+              color: ADayColors.progressTealTint,
               borderRadius: BorderRadius.circular(10.0),
             ),
-            child: const Center(
+            child: Center(
               child: Icon(
                 Icons.eco_rounded,
-                color: Color(0xFF20C99A),
+                color: ADayColors.successMint,
                 size: 20.0,
               ),
             ),

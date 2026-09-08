@@ -317,19 +317,19 @@ class WidgetSetupScreen extends StatefulWidget {
     super.key,
     required this.themeId,
     required this.onAddWidget,
-    this.todayTasks,
-    this.completedCount,
-    this.totalCount,
-    this.completionPercent,
+    required this.todayTasks,
+    required this.completedCount,
+    required this.totalCount,
+    required this.completionPercent,
     this.onApplyTheme,
   });
 
   final String themeId;
   final Future<bool> Function() onAddWidget;
-  final List<TaskViewItem>? todayTasks;
-  final int? completedCount;
-  final int? totalCount;
-  final int? completionPercent;
+  final List<TaskViewItem> todayTasks;
+  final int completedCount;
+  final int totalCount;
+  final int completionPercent;
   final ValueChanged<String>? onApplyTheme;
 
   @override
@@ -440,9 +440,9 @@ class _WidgetSetupScreenState extends State<WidgetSetupScreen> {
                 themeId: _selectedThemeId,
                 palette: palette,
                 todayTasks: widget.todayTasks,
-                completedCount: widget.completedCount ?? 4,
-                totalCount: widget.totalCount ?? 6,
-                completionPercent: widget.completionPercent ?? 67,
+                completedCount: widget.completedCount,
+                totalCount: widget.totalCount,
+                completionPercent: widget.completionPercent,
               )
             else
               ClipRRect(
@@ -525,15 +525,15 @@ class ADayFaithfulWidgetPreview extends StatelessWidget {
     super.key,
     required this.themeId,
     required this.palette,
-    this.todayTasks,
-    this.completedCount = 4,
-    this.totalCount = 6,
-    this.completionPercent = 67,
+    required this.todayTasks,
+    required this.completedCount,
+    required this.totalCount,
+    required this.completionPercent,
   });
 
   final String themeId;
   final ADayThemePalette palette;
-  final List<TaskViewItem>? todayTasks;
+  final List<TaskViewItem> todayTasks;
   final int completedCount;
   final int totalCount;
   final int completionPercent;
@@ -1022,58 +1022,36 @@ class ADayFaithfulWidgetPreview extends StatelessWidget {
   }
 
   List<Widget> _buildWidgetTasks(bool isDark) {
-    // Up to 4 tasks from user or faithfully mapped to template
-    final templateMocks = [
-      (
-        title: 'Đọc sách 30 phút',
-        sub: 'Phát triển bản thân',
-        icon: '📖',
-        time: 'Cả ngày',
-        done: true,
-      ),
-      (
-        title: 'Tập thể dục',
-        sub: 'Sức khỏe là nền tảng',
-        icon: '🏋️',
-        time: 'Cả ngày',
-        done: true,
-      ),
-      (
-        title: 'Học Flutter 1 giờ',
-        sub: 'Nâng cao kỹ năng',
-        icon: '💻',
-        time: '20:00',
-        done: false,
-      ),
-      (
-        title: 'Họp nhóm dự án',
-        sub: 'Trao đổi tiến độ tuần này',
-        icon: '👥',
-        time: '10:00',
-        done: false,
-      ),
-    ];
-
     final items =
         <(String title, String sub, String icon, String time, bool done)>[];
 
-    if (todayTasks != null && todayTasks!.isNotEmpty) {
-      for (final t in todayTasks!.take(4)) {
-        items.add((
-          t.title,
-          (t.category != null && t.category!.isNotEmpty)
-              ? t.category!
-              : 'Nhiệm vụ',
-          t.isCompleted ? '✅' : '📌',
-          t.isAllDay ? 'Cả ngày' : (t.timeLabel ?? 'Hôm nay'),
-          t.isCompleted,
-        ));
-      }
+    for (final t in todayTasks.take(4)) {
+      items.add((
+        t.title,
+        (t.category != null && t.category!.isNotEmpty)
+            ? t.category!
+            : 'Nhiệm vụ',
+        t.isCompleted ? '✅' : '📌',
+        t.isAllDay ? 'Cả ngày' : (t.timeLabel ?? 'Hôm nay'),
+        t.isCompleted,
+      ));
     }
 
-    while (items.length < 4) {
-      final mock = templateMocks[items.length];
-      items.add((mock.title, mock.sub, mock.icon, mock.time, mock.done));
+    if (items.isEmpty) {
+      return [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Text(
+            'Chưa có nhiệm vụ hôm nay',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 9,
+              color: palette.mutedInk,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ];
     }
 
     return items.map((item) {

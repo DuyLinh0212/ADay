@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="24dp" />
+            <gradient android:angle="270" android:startColor="#818CF8" android:centerColor="#1D4ED8" android:endColor="#08122B" />
+        </shape>
+    </item>
+    <item android:drawable="@drawable/launcher_theme_mark" />
+</layer-list>

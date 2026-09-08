@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 /// Small, explicit bridge to Android's AppWidget system. It has only two
@@ -26,7 +27,7 @@ abstract final class HomeWidgetBridge {
     bool? task3Done,
     String? task3Time,
   }) async {
-    if (!Platform.isAndroid) return;
+    if (kIsWeb || !Platform.isAndroid) return;
     await _channel.invokeMethod<void>('updateWidget', {
       'themeId': themeId,
       'taskCount': taskCount,
@@ -46,12 +47,12 @@ abstract final class HomeWidgetBridge {
   }
 
   static Future<bool> requestPin() async {
-    if (!Platform.isAndroid) return false;
+    if (kIsWeb || !Platform.isAndroid) return false;
     return await _channel.invokeMethod<bool>('requestPin') ?? false;
   }
 
   static Future<void> setLauncherIcon(String themeId) async {
-    if (!Platform.isAndroid) return;
+    if (kIsWeb || !Platform.isAndroid) return;
     await _channel.invokeMethod<void>('setLauncherIcon', {'themeId': themeId});
   }
 }

@@ -13,7 +13,19 @@ import '../../core/theme/aday_typography.dart';
 /// - Bold white humanist letter "A"
 /// - Embedded teal checkmark symbol in the crossbar
 class ADayAppIconPainter extends CustomPainter {
-  const ADayAppIconPainter();
+  const ADayAppIconPainter({
+    required this.background,
+    required this.sunColor,
+    required this.hillColor,
+    required this.checkColor,
+    required this.isDark,
+  });
+
+  final LinearGradient background;
+  final Color sunColor;
+  final Color hillColor;
+  final Color checkColor;
+  final bool isDark;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -25,12 +37,7 @@ class ADayAppIconPainter extends CustomPainter {
     canvas.clipRRect(rrect);
 
     // 1. Sky Gradient Background
-    final skyPaint = Paint()
-      ..shader = const LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [Color(0xFF32B3F0), Color(0xFF0CB6AA)],
-      ).createShader(rect);
+    final skyPaint = Paint()..shader = background.createShader(rect);
     canvas.drawRect(rect, skyPaint);
 
     // 2. Rising Sun with Rays
@@ -39,7 +46,7 @@ class ADayAppIconPainter extends CustomPainter {
 
     // Sun rays
     final rayPaint = Paint()
-      ..color = const Color(0xFFFFC043)
+      ..color = sunColor
       ..strokeWidth = size.width * 0.055
       ..strokeCap = StrokeCap.round;
 
@@ -61,15 +68,22 @@ class ADayAppIconPainter extends CustomPainter {
     }
 
     // Sun disc
-    final sunPaint = Paint()..color = const Color(0xFFFFB52E);
+    final sunPaint = Paint()..color = sunColor;
     canvas.drawCircle(sunCenter, sunRadius, sunPaint);
+    if (isDark) {
+      canvas.drawCircle(
+        sunCenter.translate(sunRadius * .42, -sunRadius * .15),
+        sunRadius * .88,
+        Paint()..color = background.colors.first,
+      );
+    }
 
     // 3. Rolling Hills in the background
     final hillPaint = Paint()
-      ..shader = const LinearGradient(
+      ..shader = LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [Color(0xFF1CB496), Color(0xFF0A988D)],
+        colors: [hillColor.withValues(alpha: .88), hillColor],
       ).createShader(rect);
 
     final hillPath = Path()
@@ -135,7 +149,7 @@ class ADayAppIconPainter extends CustomPainter {
 
     // 5. Embedded Checkmark in Crossbar
     final checkPaint = Paint()
-      ..color = const Color(0xFF0EB8AC)
+      ..color = checkColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = size.width * 0.10
       ..strokeCap = StrokeCap.round
@@ -152,7 +166,12 @@ class ADayAppIconPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant ADayAppIconPainter oldDelegate) =>
+      oldDelegate.background != background ||
+      oldDelegate.sunColor != sunColor ||
+      oldDelegate.hillColor != hillColor ||
+      oldDelegate.checkColor != checkColor ||
+      oldDelegate.isDark != isDark;
 }
 
 /// Standalone visual widget for the ADay App Icon.
@@ -163,12 +182,23 @@ class ADayAppIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = ADayColors.current;
     return Semantics(
       label: 'Biểu tượng ADay',
       child: SizedBox(
         width: size,
         height: size,
-        child: const CustomPaint(painter: ADayAppIconPainter()),
+        child: CustomPaint(
+          painter: ADayAppIconPainter(
+            background: palette.appIconGradient,
+            sunColor: palette.id == 'theme_3'
+                ? palette.skyCyan
+                : palette.sunriseGold,
+            hillColor: palette.progressTeal,
+            checkColor: palette.isDark ? palette.skyCyan : palette.progressTeal,
+            isDark: palette.isDark,
+          ),
+        ),
       ),
     );
   }

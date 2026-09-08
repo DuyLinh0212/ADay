@@ -1,5 +1,6 @@
 import 'package:aday/domain/models/activity_event.dart';
 import 'package:aday/domain/models/goal.dart';
+import 'package:aday/domain/models/task_item.dart';
 import 'package:aday/domain/services/statistics_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -138,5 +139,64 @@ void main() {
     expect(sucKhoe.total, 1);
     expect(sucKhoe.completed, 1);
     expect(sucKhoe.completionRatePercent, 100);
+  });
+
+  test('uses scheduled tasks as the real statistical unit', () {
+    const service = StatisticsService();
+    final goal = Goal(
+      id: 'goal',
+      title: 'Mục tiêu dài hạn',
+      kind: GoalKind.longTerm,
+      category: 'Học tập',
+      startDate: DateTime(2026, 1, 1),
+      createdAt: DateTime(2026, 1, 1),
+      updatedAt: DateTime(2026, 9, 8),
+      tasks: [
+        TaskItem(
+          id: 'done',
+          title: 'Đã học',
+          scheduledDate: DateTime(2026, 9, 7),
+          status: TaskStatus.completed,
+        ),
+        TaskItem(
+          id: 'pending',
+          title: 'Sắp học',
+          scheduledDate: DateTime(2026, 9, 8),
+        ),
+        TaskItem(
+          id: 'outside',
+          title: 'Ngoài kỳ',
+          scheduledDate: DateTime(2026, 8, 1),
+          status: TaskStatus.completed,
+        ),
+      ],
+    );
+
+    final stats = service.calculate(
+      goals: [goal],
+      events: const [],
+      period: StatisticsPeriod.week,
+      anchor: DateTime(2026, 9, 8),
+    );
+
+    expect(stats.total, 2);
+    expect(stats.completed, 1);
+    expect(stats.completionRate, .5);
+    expect(stats.categories.single.total, 2);
+    expect(stats.categories.single.completed, 1);
+  });
+
+  test('does not manufacture empty categories', () {
+    const service = StatisticsService();
+    final stats = service.calculate(
+      goals: const [],
+      events: const [],
+      period: StatisticsPeriod.month,
+      anchor: DateTime(2026, 9, 8),
+    );
+
+    expect(stats.total, 0);
+    expect(stats.categories, isEmpty);
+    expect(stats.completionRate, 0);
   });
 }

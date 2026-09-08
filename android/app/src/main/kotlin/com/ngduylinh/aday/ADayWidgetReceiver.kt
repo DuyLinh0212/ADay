@@ -9,6 +9,11 @@ import android.view.View
 import android.widget.RemoteViews
 
 class ADayWidgetReceiver : AppWidgetProvider() {
+    override fun onEnabled(context: Context) {
+        super.onEnabled(context)
+        updateAll(context)
+    }
+
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         appWidgetIds.forEach { appWidgetManager.updateAppWidget(it, views(context)) }
     }
@@ -64,6 +69,7 @@ class ADayWidgetReceiver : AppWidgetProvider() {
                 setTextColor(R.id.widget_remaining, subColor)
                 setTextColor(R.id.widget_date, titleColor)
                 setTextColor(R.id.widget_tasks_header, titleColor)
+                setTextColor(R.id.widget_empty, subColor)
                 setTextColor(R.id.widget_footer, subColor)
 
                 setTextViewText(R.id.widget_percent, "$percent%")
@@ -72,9 +78,15 @@ class ADayWidgetReceiver : AppWidgetProvider() {
                 setTextViewText(R.id.widget_date, dateLabel)
                 setProgressBar(R.id.widget_progress_bar, 100, percent, false)
 
+                setViewVisibility(R.id.widget_task1_container, View.GONE)
+                setViewVisibility(R.id.widget_task2_container, View.GONE)
+                setViewVisibility(R.id.widget_task3_container, View.GONE)
+                setViewVisibility(R.id.widget_empty, View.VISIBLE)
+
                 // Task 1
                 val t1Title = prefs.getString("task1Title", null)
                 if (!t1Title.isNullOrEmpty()) {
+                    setViewVisibility(R.id.widget_empty, View.GONE)
                     setViewVisibility(R.id.widget_task1_container, View.VISIBLE)
                     setTextViewText(R.id.widget_task1_title, t1Title)
                     setTextColor(R.id.widget_task1_title, titleColor)
@@ -88,6 +100,7 @@ class ADayWidgetReceiver : AppWidgetProvider() {
                 // Task 2
                 val t2Title = prefs.getString("task2Title", null)
                 if (!t2Title.isNullOrEmpty()) {
+                    setViewVisibility(R.id.widget_empty, View.GONE)
                     setViewVisibility(R.id.widget_task2_container, View.VISIBLE)
                     setTextViewText(R.id.widget_task2_title, t2Title)
                     setTextColor(R.id.widget_task2_title, titleColor)
@@ -101,6 +114,7 @@ class ADayWidgetReceiver : AppWidgetProvider() {
                 // Task 3
                 val t3Title = prefs.getString("task3Title", null)
                 if (!t3Title.isNullOrEmpty()) {
+                    setViewVisibility(R.id.widget_empty, View.GONE)
                     setViewVisibility(R.id.widget_task3_container, View.VISIBLE)
                     setTextViewText(R.id.widget_task3_title, t3Title)
                     setTextColor(R.id.widget_task3_title, titleColor)
@@ -124,4 +138,3 @@ class ADayWidgetReceiver : AppWidgetProvider() {
         }
     }
 }
-

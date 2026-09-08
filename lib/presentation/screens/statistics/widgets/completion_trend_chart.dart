@@ -52,7 +52,10 @@ class CompletionTrendChart extends StatelessWidget {
             child: Semantics(
               label: _buildAccessibleSummary(),
               child: CustomPaint(
-                painter: _TrendChartPainter(dataPoints: dataPoints),
+                painter: _TrendChartPainter(
+                  dataPoints: dataPoints,
+                  palette: ADayColors.current,
+                ),
                 size: const Size(double.infinity, 180.0),
               ),
             ),
@@ -143,9 +146,10 @@ class CompletionTrendChart extends StatelessWidget {
 
 /// CustomPainter drawing the Y-axis guidelines, percentage labels, and capsules.
 class _TrendChartPainter extends CustomPainter {
-  const _TrendChartPainter({required this.dataPoints});
+  const _TrendChartPainter({required this.dataPoints, required this.palette});
 
   final List<TrendDataPoint> dataPoints;
+  final ADayThemePalette palette;
 
   static const List<double> _ySteps = [1.0, 0.75, 0.50, 0.25, 0.0];
   static const List<String> _yLabels = ['100%', '75%', '50%', '25%', '0%'];
@@ -165,7 +169,7 @@ class _TrendChartPainter extends CustomPainter {
 
     // 1. Draw Grid Lines & Y-Axis Labels
     final linePaint = Paint()
-      ..color = ADayColors.dividerMist
+      ..color = palette.dividerMist
       ..strokeWidth = 1.0;
 
     for (int i = 0; i < _ySteps.length; i++) {
@@ -187,7 +191,7 @@ class _TrendChartPainter extends CustomPainter {
             fontFamily: ADayTypography.fontFamily,
             fontSize: 10.5,
             fontWeight: FontWeight.w500,
-            color: ADayColors.mutedInk,
+            color: palette.mutedInk,
           ),
         ),
         textDirection: TextDirection.ltr,
@@ -228,9 +232,7 @@ class _TrendChartPainter extends CustomPainter {
             fontFamily: ADayTypography.fontFamily,
             fontSize: 10.0,
             fontWeight: FontWeight.w700,
-            color: point.isHighlighted
-                ? ADayColors.actionBlue
-                : ADayColors.brandNavy,
+            color: point.isHighlighted ? palette.actionBlue : palette.brandNavy,
           ),
         ),
         textDirection: TextDirection.ltr,
@@ -245,7 +247,7 @@ class _TrendChartPainter extends CustomPainter {
       );
 
       // A. Background track capsule
-      final trackPaint = Paint()..color = const Color(0xFFEFF6FB);
+      final trackPaint = Paint()..color = palette.coolSurface;
       final rrectTrack = RRect.fromRectAndRadius(
         barRect,
         Radius.circular(barWidth / 2),
@@ -264,10 +266,10 @@ class _TrendChartPainter extends CustomPainter {
         );
 
         final fillPaint = Paint()
-          ..shader = const LinearGradient(
+          ..shader = LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF20C99A), Color(0xFF0EB8AC)],
+            colors: [palette.skyCyan, palette.progressTeal],
           ).createShader(fillRect);
 
         final rrectFill = RRect.fromRectAndRadius(
@@ -285,9 +287,7 @@ class _TrendChartPainter extends CustomPainter {
             fontFamily: ADayTypography.fontFamily,
             fontSize: 11.5,
             fontWeight: point.isHighlighted ? FontWeight.w700 : FontWeight.w500,
-            color: point.isHighlighted
-                ? ADayColors.actionBlue
-                : ADayColors.brandNavy,
+            color: point.isHighlighted ? palette.actionBlue : palette.brandNavy,
           ),
         ),
         textDirection: TextDirection.ltr,
@@ -302,6 +302,7 @@ class _TrendChartPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _TrendChartPainter oldDelegate) {
-    return oldDelegate.dataPoints != dataPoints;
+    return oldDelegate.dataPoints != dataPoints ||
+        oldDelegate.palette != palette;
   }
 }

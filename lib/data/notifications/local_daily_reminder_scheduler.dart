@@ -12,6 +12,15 @@ class LocalDailyReminderScheduler implements DailyReminderScheduler {
 
   static const dailyReviewNotificationId = 2200;
   static const channelId = 'aday_daily_review';
+  static const _channel = AndroidNotificationChannel(
+    channelId,
+    'Nhắc tổng kết mỗi ngày',
+    description:
+        'Nhắc cập nhật tiến độ và lập kế hoạch cho ngày mai trước 22:00.',
+    importance: Importance.high,
+    playSound: true,
+    enableVibration: true,
+  );
 
   final FlutterLocalNotificationsPlugin _plugin;
   bool _initialized = false;
@@ -24,10 +33,16 @@ class LocalDailyReminderScheduler implements DailyReminderScheduler {
       final local = await FlutterTimezone.getLocalTimezone();
       tz.setLocalLocation(tz.getLocation(local.identifier));
     } catch (_) {
-      tz.setLocalLocation(tz.UTC);
+      // ADay currently targets Vietnamese users. UTC made a 21:45 reminder
+      // appear seven hours late whenever an OEM returned an unknown timezone.
+      try {
+        tz.setLocalLocation(tz.getLocation('Asia/Ho_Chi_Minh'));
+      } catch (_) {
+        tz.setLocalLocation(tz.UTC);
+      }
     }
 
-    const android = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const android = AndroidInitializationSettings('ic_stat_aday');
     const darwin = DarwinInitializationSettings(
       requestAlertPermission: false,
       requestBadgePermission: false,
@@ -47,6 +62,11 @@ class LocalDailyReminderScheduler implements DailyReminderScheduler {
       windows: windows,
     );
     await _plugin.initialize(settings: settings);
+    await _plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
+        ?.createNotificationChannel(_channel);
     _initialized = true;
   }
 
@@ -56,12 +76,14 @@ class LocalDailyReminderScheduler implements DailyReminderScheduler {
     await initialize();
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        return await _plugin
-                .resolvePlatformSpecificImplementation<
-                  AndroidFlutterLocalNotificationsPlugin
-                >()
-                ?.requestNotificationsPermission() ??
-            true;
+        final android = _plugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >();
+        if (android == null) return false;
+        final requested = await android.requestNotificationsPermission();
+        if (requested == false) return false;
+        return await android.areNotificationsEnabled() ?? requested ?? false;
       case TargetPlatform.iOS:
         return await _plugin
                 .resolvePlatformSpecificImplementation<
@@ -84,6 +106,21 @@ class LocalDailyReminderScheduler implements DailyReminderScheduler {
   }
 
   @override
+  Future<bool> notificationsEnabled() async {
+    if (kIsWeb) return false;
+    await initialize();
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      return await _plugin
+              .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin
+              >()
+              ?.areNotificationsEnabled() ??
+          false;
+    }
+    return true;
+  }
+
+  @override
   Future<void> scheduleDailyReview({required int minuteOfDay}) async {
     if (minuteOfDay < 0 || minuteOfDay >= 1440) {
       throw ArgumentError.value(
@@ -94,6 +131,9 @@ class LocalDailyReminderScheduler implements DailyReminderScheduler {
     }
     if (kIsWeb) return;
     await initialize();
+    if (!await notificationsEnabled()) {
+      throw StateError('Quyền thông báo đang bị tắt trong hệ thống.');
+    }
     final hour = minuteOfDay ~/ 60;
     final minute = minuteOfDay % 60;
     final now = tz.TZDateTime.now(tz.local);
@@ -107,6 +147,7 @@ class LocalDailyReminderScheduler implements DailyReminderScheduler {
     );
     if (!next.isAfter(now)) next = next.add(const Duration(days: 1));
 
+    await _plugin.cancel(id: dailyReviewNotificationId);
     await _plugin.zonedSchedule(
       id: dailyReviewNotificationId,
       title: 'Đừng quên tổng kết hôm nay nhé',
@@ -126,6 +167,34 @@ class LocalDailyReminderScheduler implements DailyReminderScheduler {
       ),
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.time,
+      payload: 'aday://plan-tomorrow',
+    );
+  }
+
+  @override
+  Future<void> showTestNotification() async {
+    if (kIsWeb) return;
+    await initialize();
+    if (!await notificationsEnabled()) {
+      throw StateError('Quyền thông báo đang bị tắt trong hệ thống.');
+    }
+    await _plugin.show(
+      id: dailyReviewNotificationId + 1,
+      title: 'Thông báo ADay đã sẵn sàng',
+      body: 'Bạn sẽ nhận lời nhắc tổng kết vào giờ đã chọn.',
+      notificationDetails: const NotificationDetails(
+        android: AndroidNotificationDetails(
+          channelId,
+          'Nhắc tổng kết mỗi ngày',
+          channelDescription:
+              'Nhắc cập nhật tiến độ và lập kế hoạch cho ngày mai trước 22:00.',
+          importance: Importance.high,
+          priority: Priority.high,
+          icon: 'ic_stat_aday',
+        ),
+        iOS: DarwinNotificationDetails(),
+        macOS: DarwinNotificationDetails(),
+      ),
       payload: 'aday://plan-tomorrow',
     );
   }

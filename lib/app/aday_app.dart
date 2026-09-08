@@ -239,14 +239,7 @@ class _ADayShellState extends State<ADayShell> {
         if (enabled) {
           await _toggleDailyReminder(true);
         } else {
-          await _guard(
-            () => controller.updateSettings(
-              controller.settings.copyWith(
-                dailyReviewEnabled: false,
-                notificationsAllowed: false,
-              ),
-            ),
-          );
+          await _guard(widget.settingsService.disableDailyReview);
         }
       },
       onLanguageTap: () => _showMessage('Ngôn ngữ hiện tại: Tiếng Việt'),
@@ -846,7 +839,12 @@ class _ADayShellState extends State<ADayShell> {
         final allowed = await widget.settingsService.enableDailyReview(
           minuteOfDay: controller.settings.dailyReviewMinute,
         );
-        if (!allowed) _showMessage('Bạn chưa cấp quyền thông báo cho ADay.');
+        if (!allowed) {
+          _showMessage('Bạn chưa cấp quyền thông báo cho ADay.');
+        } else {
+          await widget.settingsService.showTestNotification();
+          _showMessage('Đã lên lịch và gửi một thông báo thử.');
+        }
       } else {
         await widget.settingsService.disableDailyReview();
       }

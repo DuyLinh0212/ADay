@@ -66,11 +66,17 @@ class MainActivity : FlutterActivity() {
             "theme_5" -> "LauncherGreen"
             else -> "LauncherDefault"
         }
-        aliases.forEach { alias ->
+        // Enable the selected alias first so launchers never observe a moment
+        // where the application has no launcher component.
+        packageManager.setComponentEnabledSetting(
+            ComponentName(this, "$packageName.$selected"),
+            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+            PackageManager.DONT_KILL_APP,
+        )
+        aliases.filterNot { it == selected }.forEach { alias ->
             packageManager.setComponentEnabledSetting(
                 ComponentName(this, "$packageName.$alias"),
-                if (alias == selected) PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-                else PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                 PackageManager.DONT_KILL_APP,
             )
         }

@@ -26,16 +26,32 @@ class SettingsService {
     return allowed;
   }
 
+  Future<void> showTestNotification() =>
+      _reminderScheduler.showTestNotification();
+
   Future<void> disableDailyReview() async {
     await _reminderScheduler.cancelDailyReview();
     await _controller.updateSettings(
-      _controller.settings.copyWith(dailyReviewEnabled: false),
+      _controller.settings.copyWith(
+        dailyReviewEnabled: false,
+        notificationsAllowed: false,
+      ),
     );
   }
 
   Future<void> restoreSchedule() async {
     final AppSettings settings = _controller.settings;
     if (settings.dailyReviewEnabled && settings.notificationsAllowed) {
+      final allowed = await _reminderScheduler.notificationsEnabled();
+      if (!allowed) {
+        await _controller.updateSettings(
+          settings.copyWith(
+            dailyReviewEnabled: false,
+            notificationsAllowed: false,
+          ),
+        );
+        return;
+      }
       await _reminderScheduler.scheduleDailyReview(
         minuteOfDay: settings.dailyReviewMinute,
       );

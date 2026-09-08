@@ -5,6 +5,7 @@ import '../../application/goal_draft.dart';
 import '../../domain/models/goal.dart' as domain;
 import '../../domain/models/task_item.dart';
 import '../../domain/services/statistics_service.dart' as domain_stats;
+import '../../core/theme/aday_colors.dart';
 import '../models/goal_view_item.dart';
 import '../models/progress_summary_data.dart';
 import '../models/task_view_item.dart';
@@ -293,7 +294,9 @@ abstract final class ADayViewMapper {
     final completion = (result.completionRate * 100).round();
     final postponed = (result.postponementRate * 100).round();
     final cancelled = (result.cancellationRate * 100).round();
-    final remaining = (100 - completion - postponed - cancelled).clamp(0, 100);
+    final remaining = result.total == 0
+        ? 0
+        : (result.remainingRate * 100).round();
 
     final periodCompareLabel = switch (period) {
       view_stats.StatisticsPeriod.week => 'so với tuần trước',
@@ -327,8 +330,8 @@ abstract final class ADayViewMapper {
         deltaText: formatDeltaPercent(result.completionRateDeltaPercent),
         isPositiveDelta: result.completionRateDeltaPercent >= 0,
         icon: Icons.check_circle_rounded,
-        iconColor: const Color(0xFF20C99A),
-        iconBgColor: const Color(0xFFEAF8F4),
+        iconColor: ADayColors.progressTeal,
+        iconBgColor: ADayColors.progressTealTint,
       ),
       view_stats.OverviewMetricItem(
         title: 'Đã hoàn thành',
@@ -336,8 +339,8 @@ abstract final class ADayViewMapper {
         deltaText: formatDeltaPercent(result.completedDeltaPercent),
         isPositiveDelta: result.completedDeltaPercent >= 0,
         icon: Icons.description_rounded,
-        iconColor: const Color(0xFF168AF2),
-        iconBgColor: const Color(0xFFEBF4FE),
+        iconColor: ADayColors.actionBlue,
+        iconBgColor: ADayColors.actionBlueTint,
       ),
       view_stats.OverviewMetricItem(
         title: 'Tạm hoãn',
@@ -345,8 +348,8 @@ abstract final class ADayViewMapper {
         deltaText: formatDeltaPercent(result.postponedDeltaPercent),
         isPositiveDelta: result.postponedDeltaPercent <= 0,
         icon: Icons.schedule_rounded,
-        iconColor: const Color(0xFFFFB52E),
-        iconBgColor: const Color(0xFFFFF6E9),
+        iconColor: ADayColors.sunriseGold,
+        iconBgColor: ADayColors.sunriseGoldTint,
       ),
       view_stats.OverviewMetricItem(
         title: 'Đã hủy',
@@ -354,8 +357,8 @@ abstract final class ADayViewMapper {
         deltaText: formatDeltaPercent(result.cancelledDeltaPercent),
         isPositiveDelta: result.cancelledDeltaPercent <= 0,
         icon: Icons.cancel_rounded,
-        iconColor: const Color(0xFFF0525E),
-        iconBgColor: const Color(0xFFFDEEEE),
+        iconColor: ADayColors.cancelCoral,
+        iconBgColor: ADayColors.cancelCoralTint,
       ),
       view_stats.OverviewMetricItem(
         title: 'Ngày liên tiếp',
@@ -363,8 +366,8 @@ abstract final class ADayViewMapper {
         deltaText: formatDeltaDays(result.streakDeltaDays),
         isPositiveDelta: result.streakDeltaDays >= 0,
         icon: Icons.local_fire_department_rounded,
-        iconColor: const Color(0xFF8E59FF),
-        iconBgColor: const Color(0xFFF3EDFF),
+        iconColor: ADayColors.skyCyan,
+        iconBgColor: ADayColors.actionBlueTint,
       ),
     ];
 
@@ -372,40 +375,40 @@ abstract final class ADayViewMapper {
       view_stats.CompletionBreakdownItem(
         label: 'Đã hoàn thành',
         percentage: completion,
-        color: const Color(0xFF20C99A),
+        color: ADayColors.progressTeal,
       ),
       view_stats.CompletionBreakdownItem(
         label: 'Còn lại',
         percentage: remaining,
-        color: const Color(0xFF38B8F8),
+        color: ADayColors.skyCyan,
       ),
       view_stats.CompletionBreakdownItem(
         label: 'Tạm hoãn',
         percentage: postponed,
-        color: const Color(0xFFFFB52E),
+        color: ADayColors.sunriseGold,
       ),
       view_stats.CompletionBreakdownItem(
         label: 'Đã hủy',
         percentage: cancelled,
-        color: const Color(0xFFF0525E),
+        color: ADayColors.cancelCoral,
       ),
     ];
 
     (Color, IconData) categoryStyle(String cat) {
       final lower = cat.toLowerCase();
       if (lower.contains('học')) {
-        return (const Color(0xFF0EB8AC), Icons.menu_book_rounded);
+        return (ADayColors.progressTeal, Icons.menu_book_rounded);
       }
       if (lower.contains('khỏe')) {
-        return (const Color(0xFF168AF2), Icons.fitness_center_rounded);
+        return (ADayColors.actionBlue, Icons.fitness_center_rounded);
       }
       if (lower.contains('việc')) {
-        return (const Color(0xFF8E59FF), Icons.business_center_rounded);
+        return (ADayColors.skyCyan, Icons.business_center_rounded);
       }
       if (lower.contains('nhân')) {
-        return (const Color(0xFFFFB52E), Icons.person_rounded);
+        return (ADayColors.sunriseGold, Icons.person_rounded);
       }
-      return (const Color(0xFF38B8F8), Icons.folder_rounded);
+      return (ADayColors.mutedInk, Icons.folder_rounded);
     }
 
     final categoryItems = result.categories

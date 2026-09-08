@@ -14,6 +14,8 @@ import 'aday_button.dart';
 /// - Optional summit flag for milestone/goal tracking
 class MountainSunPainter extends CustomPainter {
   const MountainSunPainter({
+    this.themeId = 'default',
+    this.canvasColor = const Color(0xFFF7FCFF),
     this.showFlag = false,
     this.showSunRays = true,
     this.sunPosition = const Offset(0.78, 0.32),
@@ -22,6 +24,8 @@ class MountainSunPainter extends CustomPainter {
     this.ridgeSecondary = const Color(0xFF27BCEB),
   });
 
+  final String themeId;
+  final Color canvasColor;
   final bool showFlag;
   final bool showSunRays;
   final Offset sunPosition;
@@ -35,11 +39,12 @@ class MountainSunPainter extends CustomPainter {
     final w = size.width;
     final h = size.height;
 
-    // 1. Draw Rising Sun
+    // 1. Draw the theme's sky marker. Midnight uses a crescent; the four
+    // daylight themes use the warm sun present in their reference boards.
     final sunCenter = Offset(w * sunPosition.dx, h * sunPosition.dy);
     final sunRadius = math.min(w, h) * 0.22;
 
-    if (showSunRays) {
+    if (showSunRays && themeId != 'theme_3') {
       final rayPaint = Paint()
         ..color = effectiveSunColor.withValues(alpha: 0.45)
         ..strokeWidth = math.max(2.0, w * 0.015)
@@ -66,8 +71,28 @@ class MountainSunPainter extends CustomPainter {
 
     // Sun disc with soft glow
     final sunDiscPaint = Paint()
-      ..color = effectiveSunColor.withValues(alpha: 0.85);
+      ..color = effectiveSunColor.withValues(alpha: .9);
     canvas.drawCircle(sunCenter, sunRadius, sunDiscPaint);
+    if (themeId == 'theme_3') {
+      canvas.drawCircle(
+        sunCenter.translate(sunRadius * .38, -sunRadius * .12),
+        sunRadius * .9,
+        Paint()..color = canvasColor,
+      );
+      final starPaint = Paint()..color = ridgeSecondary.withValues(alpha: .8);
+      for (final star in const [
+        Offset(.12, .18),
+        Offset(.28, .34),
+        Offset(.54, .15),
+        Offset(.9, .22),
+      ]) {
+        canvas.drawCircle(
+          Offset(w * star.dx, h * star.dy),
+          math.max(1.1, w * .008),
+          starPaint,
+        );
+      }
+    }
 
     // 2. Far Mountain Ridge (Soft Cyan / Sky tint)
     final farRidgePaint = Paint()
@@ -117,8 +142,8 @@ class MountainSunPainter extends CustomPainter {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          const Color(0xFF0EB8AC).withValues(alpha: 0.40),
-          const Color(0xFF0EB8AC).withValues(alpha: 0.18),
+          ridgePrimary.withValues(alpha: 0.46),
+          ridgePrimary.withValues(alpha: 0.18),
         ],
       ).createShader(Rect.fromLTWH(0, 0, w, h));
 
@@ -130,6 +155,23 @@ class MountainSunPainter extends CustomPainter {
       ..lineTo(0, h)
       ..close();
     canvas.drawPath(forePath, foreRidgePaint);
+
+    if (themeId == 'theme_5' || themeId == 'theme_3') {
+      final silhouette = Paint()
+        ..color = ridgePrimary.withValues(
+          alpha: themeId == 'theme_3' ? .62 : .5,
+        );
+      for (final treeX in const [.1, .2, .86, .94]) {
+        final base = Offset(w * treeX, h * .9);
+        final treeHeight = h * (treeX == .2 || treeX == .86 ? .32 : .22);
+        final crown = Path()
+          ..moveTo(base.dx, base.dy - treeHeight)
+          ..lineTo(base.dx - w * .035, base.dy - treeHeight * .32)
+          ..lineTo(base.dx + w * .035, base.dy - treeHeight * .32)
+          ..close();
+        canvas.drawPath(crown, silhouette);
+      }
+    }
 
     // 5. Summit Flag (Optional milestone marker)
     if (showFlag) {
@@ -158,9 +200,13 @@ class MountainSunPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant MountainSunPainter oldDelegate) {
     return oldDelegate.showFlag != showFlag ||
+        oldDelegate.themeId != themeId ||
+        oldDelegate.canvasColor != canvasColor ||
         oldDelegate.showSunRays != showSunRays ||
         oldDelegate.sunPosition != sunPosition ||
-        oldDelegate.sunColor != sunColor;
+        oldDelegate.sunColor != sunColor ||
+        oldDelegate.ridgePrimary != ridgePrimary ||
+        oldDelegate.ridgeSecondary != ridgeSecondary;
   }
 }
 
@@ -183,15 +229,23 @@ class MountainSunVisual extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = ADayColors.current;
     return ExcludeSemantics(
       child: SizedBox(
         width: width ?? double.infinity,
         height: height,
         child: CustomPaint(
           painter: MountainSunPainter(
+            themeId: palette.id,
+            canvasColor: palette.canvas,
             showFlag: showFlag,
             showSunRays: showSunRays,
             sunPosition: sunPosition,
+            sunColor: palette.id == 'theme_3'
+                ? palette.skyCyan
+                : palette.sunriseGold,
+            ridgePrimary: palette.progressTeal,
+            ridgeSecondary: palette.skyCyan,
           ),
         ),
       ),

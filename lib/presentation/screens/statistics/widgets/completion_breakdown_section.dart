@@ -323,9 +323,9 @@ class CompletionBreakdownSection extends StatelessWidget {
       TextSpan(text: parts[0]),
       TextSpan(
         text: highlight,
-        style: const TextStyle(
+        style: TextStyle(
           fontWeight: FontWeight.w700,
-          color: Color(0xFF20C99A),
+          color: ADayColors.progressTeal,
         ),
       ),
       if (parts.length > 1) TextSpan(text: parts[1]),

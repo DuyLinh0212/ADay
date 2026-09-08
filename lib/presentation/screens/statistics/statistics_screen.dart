@@ -28,7 +28,7 @@ import 'widgets/status_breakdown_card.dart';
 class StatisticsScreen extends StatelessWidget {
   const StatisticsScreen({
     super.key,
-    this.data,
+    required this.data,
     this.showHeader = true,
     this.showBottomNav = true,
     this.bottomNavIndex = 2,
@@ -48,7 +48,7 @@ class StatisticsScreen extends StatelessWidget {
     this.onNavTap,
   });
 
-  final StatisticsViewData? data;
+  final StatisticsViewData data;
   final bool showHeader;
   final bool showBottomNav;
   final int bottomNavIndex;
@@ -70,8 +70,6 @@ class StatisticsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveData = data ?? StatisticsViewData.sample();
-
     return Scaffold(
       backgroundColor: ADayColors.canvas,
       body: SafeArea(
@@ -101,19 +99,19 @@ class StatisticsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // A. Screen Title with Mountain & Sunrise Illustration
-                    _buildTitleSection(context, effectiveData),
+                    _buildTitleSection(context, data),
 
                     const SizedBox(height: ADaySpacing.md),
 
                     // B. Period Selector (Tuần | Tháng | Năm)
-                    _buildPeriodSelector(context, effectiveData.selectedPeriod),
+                    _buildPeriodSelector(context, data.selectedPeriod),
 
                     const SizedBox(height: ADaySpacing.md),
 
                     // C. Overview 5 Metric Cards
                     OverviewMetricsCard(
-                      title: effectiveData.overviewTitle,
-                      metrics: effectiveData.overviewMetrics,
+                      title: data.overviewTitle,
+                      metrics: data.overviewMetrics,
                       onActionTap: onViewOverviewDetails,
                     ),
 
@@ -121,22 +119,22 @@ class StatisticsScreen extends StatelessWidget {
 
                     // D. Completion Trend Bar Chart
                     CompletionTrendChart(
-                      dataPoints: effectiveData.trendPoints,
+                      dataPoints: data.trendPoints,
                       onActionTap: onViewTrendDetails,
                     ),
 
                     const SizedBox(height: ADaySpacing.md),
 
                     // E. Side-by-side: Status Breakdown & Category Performance
-                    _buildDualCardsSection(context, effectiveData),
+                    _buildDualCardsSection(context, data),
 
                     const SizedBox(height: ADaySpacing.md),
 
                     // F. Encouragement Banner Card
                     EncouragementBannerCard(
-                      title: effectiveData.encouragementTitle,
-                      message: effectiveData.encouragementMessage,
-                      quote: effectiveData.encouragementQuote,
+                      title: data.encouragementTitle,
+                      message: data.encouragementMessage,
+                      quote: data.encouragementQuote,
                       onTap: onInsightTap,
                     ),
 
