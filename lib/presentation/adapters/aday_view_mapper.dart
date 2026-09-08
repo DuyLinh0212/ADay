@@ -165,6 +165,12 @@ abstract final class ADayViewMapper {
       reminderTimeLabel: minuteLabel(goal.reminderMinute),
       startDateLabel: shortDate(goal.startDate),
       dateLabel: dateLabel(goal.startDate),
+      isPostponed: goal.status == domain.GoalStatus.postponed,
+      isCancelled: goal.status == domain.GoalStatus.cancelled,
+      postponedUntilLabel: goal.postponedUntil != null
+          ? dateLabel(goal.postponedUntil!)
+          : null,
+      statusReason: goal.statusReason,
       tasks: goal.tasks
           .map(
             (task) => GoalDetailTaskItem(

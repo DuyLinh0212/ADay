@@ -185,7 +185,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
       category: _category,
       priority: _priority,
       startDate: _startDate,
-      endDate: _endDate,
+      endDate: _goalType == CreateGoalType.daily ? null : _endDate,
       hasReminder: _hasReminder,
       reminderMinute: _hasReminder ? _reminderMinute : null,
       isRepeating: _goalType == CreateGoalType.daily && _isRepeating,
@@ -808,6 +808,8 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                             onTap: () {
                               setState(() {
                                 _goalType = CreateGoalType.daily;
+                                _endDate = null;
+                                _dateError = null;
                               });
                             },
                             borderRadius: BorderRadius.circular(10.0),
@@ -1202,6 +1204,60 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
   }
 
   Widget _buildDateSelectionRow() {
+    if (_goalType == CreateGoalType.daily) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Ngày thực hiện', style: ADayTypography.label),
+          const SizedBox(height: ADaySpacing.xs),
+          Semantics(
+            button: true,
+            label: 'Ngày thực hiện: ${_formatDateVietnamese(_startDate)}',
+            child: InkWell(
+              onTap: _pickStartDate,
+              borderRadius: ADaySpacing.controlRadius,
+              child: Container(
+                height: 50.0,
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                decoration: BoxDecoration(
+                  color: ADayColors.surface,
+                  borderRadius: ADaySpacing.controlRadius,
+                  border: Border.all(color: ADayColors.dividerMist, width: 1.0),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.calendar_today_rounded,
+                      size: 18.0,
+                      color: ADayColors.actionBlue,
+                    ),
+                    const SizedBox(width: 8.0),
+                    Expanded(
+                      child: Text(
+                        _formatDateVietnamese(_startDate),
+                        style: ADayTypography.body.copyWith(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w600,
+                          color: ADayColors.brandNavy,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      size: 20.0,
+                      color: ADayColors.mutedInk,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1266,13 +1322,13 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
             ),
             const SizedBox(width: ADaySpacing.md),
 
-            // Thời hạn (không bắt buộc)
+            // Thời hạn (Deadline)
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Thời hạn (không bắt buộc)',
+                    'Thời hạn (Deadline)',
                     style: ADayTypography.label,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -1302,9 +1358,9 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                         child: Row(
                           children: [
                             Icon(
-                              Icons.calendar_month_outlined,
+                              Icons.event_available_rounded,
                               size: 16.0,
-                              color: ADayColors.mutedInk,
+                              color: ADayColors.actionBlue,
                             ),
                             const SizedBox(width: 6.0),
                             Expanded(

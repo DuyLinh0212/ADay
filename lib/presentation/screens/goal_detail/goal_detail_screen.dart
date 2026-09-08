@@ -32,6 +32,7 @@ class GoalDetailScreen extends StatefulWidget {
     this.onEdit,
     this.onComplete,
     this.onPostpone,
+    this.onResume,
     this.onCancel,
     this.onUpdateProgress,
     this.onBackTap,
@@ -53,8 +54,11 @@ class GoalDetailScreen extends StatefulWidget {
   /// Callback to mark the goal completed.
   final VoidCallback? onComplete;
 
-  /// Callback when the goal is postponed with a reason.
-  final void Function(String reason)? onPostpone;
+  /// Callback when the goal is postponed with a target date and reason.
+  final void Function(PostponeSelection selection)? onPostpone;
+
+  /// Callback to resume / reactivate a postponed goal.
+  final VoidCallback? onResume;
 
   /// Callback when the goal is cancelled with a reason.
   final void Function(String reason)? onCancel;
@@ -97,20 +101,14 @@ class _GoalDetailScreenState extends State<GoalDetailScreen> {
   }
 
   Future<void> _handlePostpone() async {
-    final reason = await ReasonPickerSheet.show(
-      context,
-      type: ReasonPickerType.postpone,
-    );
-    if (reason != null && mounted) {
-      widget.onPostpone?.call(reason);
+    final selection = await ReasonPickerSheet.showPostpone(context);
+    if (selection != null && mounted) {
+      widget.onPostpone?.call(selection);
     }
   }
 
   Future<void> _handleCancel() async {
-    final reason = await ReasonPickerSheet.show(
-      context,
-      type: ReasonPickerType.cancel,
-    );
+    final reason = await ReasonPickerSheet.showCancel(context);
     if (reason != null && mounted) {
       widget.onCancel?.call(reason);
     }
@@ -168,6 +166,11 @@ class _GoalDetailScreenState extends State<GoalDetailScreen> {
                   children: [
                     // --- 1. Goal Header & Edit Button ---
                     _buildGoalHeader(data),
+
+                    if (data.isPostponed) ...[
+                      const SizedBox(height: ADaySpacing.md),
+                      _buildPostponeStatusCard(data),
+                    ],
 
                     const SizedBox(height: ADaySpacing.md),
 
@@ -813,7 +816,188 @@ class _GoalDetailScreenState extends State<GoalDetailScreen> {
     );
   }
 
+  Widget _buildPostponeStatusCard(GoalDetailViewData data) {
+    return Container(
+      padding: const EdgeInsets.all(ADaySpacing.md),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF9EE),
+        borderRadius: ADaySpacing.surfaceRadius,
+        border: Border.all(color: const Color(0xFFFFD569), width: 1.2),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0A000000),
+            offset: Offset(0, 2),
+            blurRadius: 6.0,
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 38.0,
+                height: 38.0,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFECC1),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: const Icon(
+                  Icons.schedule_rounded,
+                  color: Color(0xFFD68A0A),
+                  size: 22.0,
+                ),
+              ),
+              const SizedBox(width: ADaySpacing.sm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Mục tiêu đang tạm hoãn',
+                            style: ADayTypography.titleMedium.copyWith(
+                              fontSize: 15.0,
+                              fontWeight: FontWeight.w700,
+                              color: const Color(0xFF8A5300),
+                            ),
+                          ),
+                        ),
+                        if (data.postponedUntilLabel != null)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0,
+                              vertical: 3.0,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFFE7A3),
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: Text(
+                              'Đến ${data.postponedUntilLabel}',
+                              style: ADayTypography.caption.copyWith(
+                                color: const Color(0xFF7A4800),
+                                fontWeight: FontWeight.w700,
+                                fontSize: 11.5,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    if (data.statusReason != null &&
+                        data.statusReason!.isNotEmpty) ...[
+                      const SizedBox(height: 4.0),
+                      Text(
+                        'Lý do: ${data.statusReason}',
+                        style: ADayTypography.body.copyWith(
+                          fontSize: 13.0,
+                          color: const Color(0xFF7A4800),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: ADaySpacing.sm),
+          Divider(
+            color: const Color(0xFFFFE28A).withValues(alpha: 0.6),
+            height: 1.0,
+          ),
+          const SizedBox(height: ADaySpacing.xs),
+          Row(
+            children: [
+              const Icon(
+                Icons.info_outline_rounded,
+                size: 15.0,
+                color: Color(0xFF9E6B15),
+              ),
+              const SizedBox(width: 6.0),
+              Expanded(
+                child: Text(
+                  'Các nhiệm vụ chưa xong đã được chuyển sang ngày mới.',
+                  style: ADayTypography.caption.copyWith(
+                    fontSize: 12.0,
+                    color: const Color(0xFF9E6B15),
+                  ),
+                ),
+              ),
+              if (widget.onResume != null)
+                TextButton(
+                  onPressed: widget.onResume,
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8.0,
+                      vertical: 4.0,
+                    ),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: Text(
+                    'Khôi phục ngay',
+                    style: ADayTypography.caption.copyWith(
+                      color: ADayColors.actionBlue,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildActionCardsRow() {
+    if (widget.data.isPostponed) {
+      return Row(
+        children: [
+          // 1. Hoàn thành
+          Expanded(
+            child: _buildActionCard(
+              icon: Icons.check_circle_rounded,
+              iconColor: ADayColors.progressTeal,
+              bgColor: const Color(0xFFE8FAF6),
+              title: 'Hoàn thành',
+              subtitle: 'Đã đạt mục tiêu',
+              onTap: widget.onComplete,
+            ),
+          ),
+          const SizedBox(width: 8.0),
+
+          // 2. Khôi phục
+          Expanded(
+            child: _buildActionCard(
+              icon: Icons.play_circle_outline_rounded,
+              iconColor: ADayColors.actionBlue,
+              bgColor: const Color(0xFFE8F3FD),
+              title: 'Khôi phục',
+              subtitle: 'Làm lại hôm nay',
+              onTap: widget.onResume,
+            ),
+          ),
+          const SizedBox(width: 8.0),
+
+          // 3. Đổi ngày hoãn
+          Expanded(
+            child: _buildActionCard(
+              icon: Icons.edit_calendar_rounded,
+              iconColor: const Color(0xFFD68A0A),
+              bgColor: const Color(0xFFFFF7E8),
+              title: 'Đổi ngày',
+              subtitle: 'Dời sang ngày khác',
+              onTap: _handlePostpone,
+            ),
+          ),
+        ],
+      );
+    }
+
     return Row(
       children: [
         // 1. Hoàn thành
@@ -836,7 +1020,7 @@ class _GoalDetailScreenState extends State<GoalDetailScreen> {
             iconColor: const Color(0xFFD68A0A),
             bgColor: const Color(0xFFFFF7E8),
             title: 'Tạm hoãn',
-            subtitle: 'Chọn lý do',
+            subtitle: 'Dời ngày thực hiện',
             onTap: _handlePostpone,
           ),
         ),

@@ -330,6 +330,36 @@ class ADayController extends ChangeNotifier {
     );
   }
 
+  Future<void> resumeGoal(String goalId) async {
+    final now = _clock();
+    final today = _dateOnly(now);
+    final index = _goalIndex(goalId);
+    final goal = _snapshot.goals[index];
+    final tasks = goal.tasks
+        .map((task) {
+          if (task.status == TaskStatus.completed) return task;
+          return task.copyWith(
+            scheduledDate: today,
+            status: TaskStatus.pending,
+          );
+        })
+        .toList(growable: false);
+    final updated = goal.copyWith(
+      status: GoalStatus.active,
+      startDate: goal.kind == GoalKind.daily ? today : goal.startDate,
+      tasks: tasks,
+      clearPostponedUntil: true,
+      clearStatusReason: true,
+      updatedAt: now,
+    );
+    final goals = [..._snapshot.goals]..[index] = updated;
+    await _commit(
+      _snapshot.copyWith(
+        goals: goals,
+      ),
+    );
+  }
+
   Future<void> carryTaskToTomorrow({
     required String goalId,
     required String taskId,
@@ -508,9 +538,28 @@ class ADayController extends ChangeNotifier {
                 ),
               )
               .toList(growable: false)
+        : status == GoalStatus.postponed && postponedUntil != null
+        ? goal.tasks
+              .map(
+                (task) => task.status == TaskStatus.completed
+                    ? task
+                    : task.copyWith(
+                        scheduledDate: postponedUntil,
+                        carriedFromDate: _dateOnly(task.scheduledDate),
+                        status: TaskStatus.pending,
+                      ),
+              )
+              .toList(growable: false)
         : goal.tasks;
+    final startDate =
+        (goal.kind == GoalKind.daily &&
+            status == GoalStatus.postponed &&
+            postponedUntil != null)
+        ? postponedUntil
+        : goal.startDate;
     final updated = goal.copyWith(
       status: status,
+      startDate: startDate,
       tasks: tasks,
       completedAt: completedAt,
       clearCompletedAt: completedAt == null,

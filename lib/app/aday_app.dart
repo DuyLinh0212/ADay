@@ -562,13 +562,14 @@ class _ADayShellState extends State<ADayShell> {
               },
               onEdit: () => _editGoal(goal),
               onComplete: () => _guard(() => controller.completeGoal(goalId)),
-              onPostpone: (reason) => _guard(
+              onPostpone: (selection) => _guard(
                 () => controller.postponeGoal(
                   goalId: goalId,
-                  until: DateTime.now().add(const Duration(days: 1)),
-                  reason: reason,
+                  until: selection.untilDate,
+                  reason: selection.reason,
                 ),
               ),
+              onResume: () => _guard(() => controller.resumeGoal(goalId)),
               onCancel: (reason) => _guard(
                 () => controller.cancelGoal(goalId: goalId, reason: reason),
               ),

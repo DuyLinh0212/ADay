@@ -187,4 +187,80 @@ void main() {
       expect(updatedTomorrowTasks.first.status, TaskStatus.completed);
     },
   );
+
+  test(
+    'postponeGoal moves uncompleted tasks and daily goal to postponed date',
+    () async {
+      final repository = _MemoryRepository();
+      final controller = ADayController(
+        repository: repository,
+        clock: () => now,
+      );
+      await controller.initialize();
+
+      final goal = await controller.createGoal(
+        GoalDraft(
+          title: 'Hoàn thành báo cáo sprint',
+          kind: GoalKind.daily,
+          startDate: now,
+          tasks: const [
+            TaskDraft(title: 'Viết tài liệu spec'),
+            TaskDraft(title: 'Kiểm thử e2e'),
+          ],
+        ),
+      );
+
+      // Complete the first task today
+      await controller.setTaskCompleted(
+        goalId: goal.id,
+        taskId: goal.tasks.first.id,
+        completed: true,
+      );
+
+      // Postpone goal to in 2 days
+      final postponeDate = now.add(const Duration(days: 2));
+      await controller.postponeGoal(
+        goalId: goal.id,
+        until: postponeDate,
+        reason: 'Bận việc đột xuất',
+      );
+
+      final updatedGoal = controller.goals.single;
+      expect(updatedGoal.status, GoalStatus.postponed);
+      expect(updatedGoal.postponedUntil, DateTime(2026, 9, 9));
+      expect(updatedGoal.statusReason, 'Bận việc đột xuất');
+
+      // The completed task stays on today (2026-09-07)
+      final completedTask = updatedGoal.tasks.firstWhere(
+        (t) => t.title == 'Viết tài liệu spec',
+      );
+      expect(completedTask.status, TaskStatus.completed);
+      expect(completedTask.scheduledDate, DateTime(2026, 9, 7));
+
+      // The uncompleted task moved to the postponed date (2026-09-09)
+      final uncompletedTask = updatedGoal.tasks.firstWhere(
+        (t) => t.title == 'Kiểm thử e2e',
+      );
+      expect(uncompletedTask.status, TaskStatus.pending);
+      expect(uncompletedTask.scheduledDate, DateTime(2026, 9, 9));
+      expect(uncompletedTask.carriedFromDate, DateTime(2026, 9, 7));
+
+      // Today's tasks only has the completed task
+      final todayTasks = controller.tasksForDay(now);
+      expect(todayTasks.length, 1);
+      expect(todayTasks.single.title, 'Viết tài liệu spec');
+
+      // Postponed day's tasks has the postponed task
+      final postponedTasks = controller.tasksForDay(postponeDate);
+      expect(postponedTasks.length, 1);
+      expect(postponedTasks.single.title, 'Kiểm thử e2e');
+
+      // Resuming the goal reactivates it
+      await controller.resumeGoal(goal.id);
+      final resumedGoal = controller.goals.single;
+      expect(resumedGoal.status, GoalStatus.active);
+      expect(resumedGoal.postponedUntil, isNull);
+      expect(resumedGoal.statusReason, isNull);
+    },
+  );
 }

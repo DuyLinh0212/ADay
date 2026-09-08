@@ -68,6 +68,10 @@ class GoalDetailViewData {
     this.note = '',
     this.bannerTitle = 'Kiến thức hôm nay, thành công ngày mai!',
     this.bannerSubtitle = 'Cố gắng thêm một chút nữa, bạn nhé! 💙',
+    this.isPostponed = false,
+    this.isCancelled = false,
+    this.postponedUntilLabel,
+    this.statusReason,
   });
 
   final String id;
@@ -85,6 +89,10 @@ class GoalDetailViewData {
   final String note;
   final String bannerTitle;
   final String bannerSubtitle;
+  final bool isPostponed;
+  final bool isCancelled;
+  final String? postponedUntilLabel;
+  final String? statusReason;
 
   /// Completion percentage ratio from 0.0 to 1.0.
   double get completionRate {
@@ -154,6 +162,10 @@ class GoalDetailViewData {
     String? note,
     String? bannerTitle,
     String? bannerSubtitle,
+    bool? isPostponed,
+    bool? isCancelled,
+    String? postponedUntilLabel,
+    String? statusReason,
   }) {
     return GoalDetailViewData(
       id: id ?? this.id,
@@ -171,6 +183,10 @@ class GoalDetailViewData {
       note: note ?? this.note,
       bannerTitle: bannerTitle ?? this.bannerTitle,
       bannerSubtitle: bannerSubtitle ?? this.bannerSubtitle,
+      isPostponed: isPostponed ?? this.isPostponed,
+      isCancelled: isCancelled ?? this.isCancelled,
+      postponedUntilLabel: postponedUntilLabel ?? this.postponedUntilLabel,
+      statusReason: statusReason ?? this.statusReason,
     );
   }
 
@@ -193,6 +209,10 @@ class GoalDetailViewData {
           note == other.note &&
           bannerTitle == other.bannerTitle &&
           bannerSubtitle == other.bannerSubtitle &&
+          isPostponed == other.isPostponed &&
+          isCancelled == other.isCancelled &&
+          postponedUntilLabel == other.postponedUntilLabel &&
+          statusReason == other.statusReason &&
           _listEquals(tasks, other.tasks);
 
   @override
@@ -211,6 +231,10 @@ class GoalDetailViewData {
     note,
     bannerTitle,
     bannerSubtitle,
+    isPostponed,
+    isCancelled,
+    postponedUntilLabel,
+    statusReason,
     Object.hashAll(tasks),
   );
 
